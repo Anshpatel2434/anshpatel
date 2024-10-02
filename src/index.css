@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Caveat font family */
+@import url("./assets/fonts/caveat.css");
+body::-webkit-scrollbar {
+	width: 0;
+	border-radius: 4.5rem;
+	background-color: transparent !important;
+}
+
+body::-webkit-scrollbar-track {
+	background-color: transparent !important;
+}
+
+body::-webkit-scrollbar-thumb {
+	background-color: transparent !important;
+}
+
+body::-webkit-scrollbar-track-piece {
+	display: none;
+}
+
+.swiper-pagination-bullet-active {
+	background-color: #a9927d !important;
+}
+
+.lazy-load-image-background.blur {
+	-webkit-filter: blur(15px);
+	filter: blur(15px);
+}
+
+.lazy-load-image-background.blur.lazy-load-image-loaded {
+	-webkit-filter: blur(0);
+	filter: blur(0);
+	transition: -webkit-filter 0.3s;
+	transition: filter 0.3s;
+	transition: filter 0.3s, -webkit-filter 0.3s;
+}
+
+.lazy-load-image-background.blur > img {
+	opacity: 0;
+}
+
+.lazy-load-image-background.blur.lazy-load-image-loaded > img {
+	opacity: 1;
+	transition: opacity 0.3s;
+}
+
+.timeline {
+	position: relative;
+	margin: 50px 0;
+}
+
+.timeline::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	width: 2px;
+	background-color: rgb(169 146 125); /* light-beige */
+	top: 0;
+	bottom: 0;
+}
+
+.timeline-item {
+	position: relative;
+	padding: 20px;
+	width: 45%;
+	margin-bottom: 40px;
+}
+
+.timeline-item.left {
+	left: 0;
+	text-align: right;
+}
+
+.timeline-item.right {
+	left: 55%;
+}
+
+.timeline-item .icon-container {
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	background-color: rgb(169 146 125); /* light-beige */
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	top: 20px;
+	z-index: 1;
+}
+
+.timeline-item.left .icon-container {
+	right: -60px;
+}
+
+.timeline-item.right .icon-container {
+	left: -60px;
+}
+
+.timeline-item .icon {
+	color: rgb(10 9 8); /* rich-black */
+}
+
+.timeline-item .date {
+	font-size: 0.9em;
+	margin-bottom: 10px;
+}
+
+.timeline-item.left .content {
+	margin-right: 40px;
+}
+
+.timeline-item.right .content {
+	margin-left: 40px;
+}
+
+@media (max-width: 768px) {
+	.timeline::before {
+		left: 20px;
+	}
+
+	.timeline-item {
+		width: 100%;
+		left: 0;
+		text-align: left;
+		padding-left: 60px;
+	}
+
+	.timeline-item.left,
+	.timeline-item.right {
+		left: 0;
+	}
+
+	.timeline-item.left .icon-container,
+	.timeline-item.right .icon-container {
+		left: 0;
+	}
+
+	.timeline-item.left .content,
+	.timeline-item.right .content {
+		margin-left: 20px;
+		margin-right: 0;
+	}
+}
