@@ -7,6 +7,7 @@ import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
 import Projects from "./components/Projects";
 import Skills from "./components/Skills";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
 	return (
@@ -20,6 +21,7 @@ function App() {
 			<Experience />
 			<Contact />
 			<Footer />
+			<Analytics />
 		</div>
 	);
 }
