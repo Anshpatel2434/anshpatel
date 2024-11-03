@@ -44,7 +44,7 @@ const Experience = () => {
 								<div className="date text-light-beige">{exp.duration}</div>
 								<div
 									className={`content ${
-										index % 2 === 0 ? "bg-dark-beige" : "bg-light-beige"
+										index % 2 === 0 ? "bg-dark-beige" : "bg-dark-beige"
 									} text-white rounded-lg p-6`}
 								>
 									<h3 className="text-xl font-bold text-white">{exp.role}</h3>
