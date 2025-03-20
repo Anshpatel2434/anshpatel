@@ -18,6 +18,8 @@ import {
 	ImageSkillsPython,
 	ImageSkillsPrisma,
 	ImageSkillsDjango,
+	ImageSkillsExpo,
+	ImageSkillsReactNative,
 } from "./imgs-imports";
 
 const skillsImages = [
@@ -139,6 +141,20 @@ const skillsImages = [
 		dataAOS: "zoom-out",
 		dataAOSDuration: "500",
 		dataAOSDelay: "1300",
+	},
+	{
+		imageSrc: ImageSkillsReactNative,
+		imageAlt: "React Native",
+		dataAOS: "zoom-out",
+		dataAOSDuration: "500",
+		dataAOSDelay: "1400",
+	},
+	{
+		imageSrc: ImageSkillsExpo,
+		imageAlt: "Expo",
+		dataAOS: "zoom-out",
+		dataAOSDuration: "500",
+		dataAOSDelay: "1500",
 	},
 ];
 

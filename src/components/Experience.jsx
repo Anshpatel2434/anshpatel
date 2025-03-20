@@ -51,7 +51,11 @@ const Experience = () => {
 									<h4 className="text-lg font-medium text-gray-200 mt-2">
 										{exp.company}
 									</h4>
-									<p className="text-gray-300 mt-2">{exp.description}</p>
+									<p
+										className={`text-gray-300 mt-2 whitespace-pre-line text-left`}
+									>
+										{exp.description}
+									</p>
 								</div>
 								<div className="icon-container">
 									<IconComponent size={24} className="icon" />

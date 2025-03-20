@@ -1,22 +1,28 @@
 const AllExperienceInfo = [
 	{
 		id: 1,
-		company: "UnlockDiscounts",
-		role: "Full Stack Developer",
-		duration: "Nov 2024 - Present",
-		description:
-			"Working on developing the website for this company with a dynamic team. Developing frontend using React.js and backend with MongoDB and Express.js",
+		company: "Glitch Over",
+		role: "React Native Developer",
+		duration: "Dec 2024 - Feb 2025",
+		description: `-> Developed 30+ functionalities, 10+ reusable components, and 10+ Redux actions, contributing over 10,000 lines of code.
+-> Implemented major features, including push notifications, Google & Discord authentication, invoice downloads, and dynamic link redirection for both app.
+-> Overcame technical challenges such as React Native environment configuration, and handling version conflicts between Node.js for web and mobile.
+-> Debugged and fixed issues, including authentication redirection across iOS and Android.
+-> Became proficient in reading documentation, troubleshooting dependencies, and efficiently integrating third-party services within React Native.`,
 		dataAOS: "fade-left",
 		dataAOSDuration: 1000,
 		delay: 100,
 	},
 	{
 		id: 2,
-		company: "Orinson Technologies Private Limited",
+		company: "UnlockDiscounts",
 		role: "Full Stack Developer",
-		duration: "Sep 2024 - Oct 2024",
-		description:
-			"Collaborated with a dynamic team to develop and optimize full stack web applications.Applied knowledge in frontend and backend technologies, including React.js, TailwindCSS, PrismORM, HONO, Cloudfare workers, PostgreSql and Typescripts.",
+		duration: "Oct 2024 - Dec 2024",
+		description: `Built a Full-Stack E-Commerce Website
+-> Transformed Figma designs into a production-ready website and deployed it on Hostinger, showcasing end-to-end development skills.
+-> Engineered 30+ reusable components and 6 custom hooks, optimizing development efficiency and scalability.
+-> Integrated frontend with backend APIs and collaborated with teammates to merge diverse codebases.
+-> Resolved 20+ critical bugs identified by the QA team, significantly improving website performance and user experience.`,
 		dataAOS: "fade-right",
 		dataAOSDuration: 1000,
 		delay: 100,

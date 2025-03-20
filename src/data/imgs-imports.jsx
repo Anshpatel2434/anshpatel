@@ -16,6 +16,8 @@ import ImageSkillsJava from "../assets/images/java.png"; // Adjust the file exte
 import ImageSkillsPython from "../assets/images/python.png"; // Adjust the file extension as needed
 import ImageSkillsPrisma from "../assets/images/prism.png"; // Adjust the file extension as needed
 import ImageSkillsDjango from "../assets/images/django.png"; // Adjust the file extension as needed
+import ImageSkillsReactNative from "../assets/images/ReactNative.svg";
+import ImageSkillsExpo from "../assets/images/Expo.png";
 import ImageProject1 from "../assets/images/UniAsk-Image.jpg";
 import ImageProject2 from "../assets/images/ecommerce-website-design.webp";
 import ImageProject3 from "../assets/images/StudyShare-Image.jpg";
@@ -40,6 +42,8 @@ export {
 	ImageSkillsPython,
 	ImageSkillsPrisma,
 	ImageSkillsDjango,
+	ImageSkillsReactNative,
+	ImageSkillsExpo,
 	ImageProject1,
 	ImageProject2,
 	ImageProject3,

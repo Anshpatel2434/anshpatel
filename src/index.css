@@ -1,9 +1,9 @@
+@import url("./assets/fonts/caveat.css");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Import Caveat font family */
-@import url("./assets/fonts/caveat.css");
 body::-webkit-scrollbar {
 	width: 0;
 	border-radius: 4.5rem;
