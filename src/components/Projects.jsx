@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { motion } from "react";
+import { motion } from "framer-motion";
 import AllProjectsImages from "../data/projects-imgs";
 import { Github, ExternalLink } from "lucide-react";
 

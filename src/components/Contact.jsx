@@ -1,7 +1,5 @@
-"use client";
-
-import { motion } from "react";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import contactData from "../data/contact-data";
 import { CheckCircle } from "lucide-react";
 
@@ -49,7 +47,7 @@ const Contact = () => {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <span className="text-white">Let's </span>
+            <span className="text-white">Let&apos;s </span>
             <span className="gradient-text">Connect</span>
           </motion.h2>
 

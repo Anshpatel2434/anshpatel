@@ -1,6 +1,4 @@
-"use client";
-
-import { motion } from "react";
+import { motion } from "framer-motion";
 import OrbitingSkills from "./ui/OrbitingSkills";
 import AllSkillsImages from "../data/skills-imgs";
 

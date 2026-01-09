@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowDown, Github, Linkedin, Twitter } from "lucide-react";
@@ -141,7 +139,7 @@ const Landing = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <span className="text-white">Hey, I'm </span>
+          <span className="text-white">Hey, I&apos;m </span>
           <span className="gradient-text">Ansh Patel</span>
         </motion.h1>
 

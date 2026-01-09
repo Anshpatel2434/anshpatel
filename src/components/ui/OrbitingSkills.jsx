@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect, useState, memo } from "react";
+import { useEffect, useState, memo } from "react";
 
 const iconComponents = {
   html: {

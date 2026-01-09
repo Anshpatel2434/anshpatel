@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef, memo } from "react";
 import { Code, Briefcase, Rocket, CheckCircle, Clock, Circle } from "lucide-react";
 

@@ -1,6 +1,4 @@
-"use client";
-
-import { motion } from "react";
+import { motion } from "framer-motion";
 import RadialOrbitalTimeline from "./ui/RadialOrbitalTimeline";
 import AllExperienceInfo from "../data/experience-info";
 import { Code } from "lucide-react";
