@@ -26,8 +26,8 @@ type Dot = { bx: number; by: number; x: number; y: number; ph: number; sp: numbe
 type Leg = { fx: number; fy: number; ox: number; oy: number; tx: number; ty: number; t: number; hold: number };
 
 const LEGS = 8;
-const REACH = 46;        /* how far a leg may trail before it steps */
-const SPAN = 34;         /* resting distance from body to foot      */
+const REACH = 62;        /* how far a leg may trail before it steps */
+const SPAN = 46;         /* resting distance from body to foot      */
 const STEP_MS = 230;
 const READ = 0.45;
 
@@ -119,7 +119,7 @@ export default function CrawlerField() {
       const wy = bodyY + Math.sin(a) * SPAN;
       let bx = wx;
       let by = wy;
-      let bd = 40 * 40; /* only snap to a dot that is genuinely close */
+      let bd = 52 * 52; /* only snap to a dot that is genuinely close */
       for (const d of dots) {
         const dx = d.x - wx;
         const dy = d.y - wy;
@@ -203,21 +203,18 @@ export default function CrawlerField() {
       const speed = Math.hypot(vx, vy);
       if (speed > 0.1) headAng = Math.atan2(vy, vx);
 
-      /* ---- in the hero only, it links itself to the nav ---- */
-      if (seg === 0 && t < 0.85) {
-        const navs = read("[data-cons]");
-        const fade = 1 - t / 0.85;
-        ctx.strokeStyle = `rgba(${accent}, ${0.26 * fade})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for (const n of navs) {
-          ctx.moveTo(bodyX, bodyY);
-          ctx.lineTo(n.x, n.y);
-        }
-        ctx.stroke();
+      /* ---- in the hero, the navigation nodes ARE its feet ----
+         The lines reaching the five labels are not a diagram drawn
+         next to the creature; they are its legs. It sits in the
+         hero gripping the five links, and lets go of them as soon
+         as you scroll, which is when the walk begins. */
+      const navs = read("[data-cons]");
+      const inHero = seg === 0 && t < 0.8 && navs.length >= 5;
+
+      if (inHero) {
         for (const n of navs) {
           ctx.beginPath();
-          ctx.fillStyle = `rgba(${accent}, ${0.7 * fade})`;
+          ctx.fillStyle = `rgba(${accent}, 0.75)`;
           ctx.arc(n.x, n.y, 3, 0, Math.PI * 2);
           ctx.fill();
         }
@@ -241,6 +238,18 @@ export default function CrawlerField() {
         if (!leg.fx && !leg.fy) {
           const f = foothold(i, headAng);
           leg.fx = f.x; leg.fy = f.y;
+          continue;
+        }
+
+        /* in the hero the front five grip the navigation nodes and
+           the back three stay tucked under the body, so the five
+           long limbs reaching the labels are the whole silhouette */
+        if (inHero) {
+          const target = i < 5 ? navs[i] : { x: bodyX, y: bodyY };
+          leg.fx += (target.x - leg.fx) * 0.14;
+          leg.fy += (target.y - leg.fy) * 0.14;
+          leg.t = 1;
+          leg.hold = 0;
           continue;
         }
 
@@ -275,18 +284,19 @@ export default function CrawlerField() {
       ctx.lineJoin = "round";
       for (let i = 0; i < LEGS; i++) {
         const leg = legs[i];
+        if (Math.hypot(leg.fx - bodyX, leg.fy - bodyY) < 7) continue;
         const mx = (bodyX + leg.fx) / 2;
         const my = (bodyY + leg.fy) / 2;
         const nx = -(leg.fy - bodyY);
         const ny = leg.fx - bodyX;
         const nl = Math.hypot(nx, ny) || 1;
-        const bend = i % 2 === 0 ? 7 : -7;
+        const bend = (i % 2 === 0 ? 9 : -9) * (inHero ? 2.4 : 1);
         const kx = mx + (nx / nl) * bend;
         const ky = my + (ny / nl) * bend - 5;
 
         ctx.beginPath();
         ctx.strokeStyle = `rgba(${accent}, ${leg.t < 1 ? 0.5 : 0.72})`;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 1.15;
         ctx.moveTo(bodyX, bodyY);
         ctx.quadraticCurveTo(kx, ky, leg.fx, leg.fy);
         ctx.stroke();
@@ -299,14 +309,14 @@ export default function CrawlerField() {
       ctx.rotate(headAng + Math.PI / 2);
       ctx.fillStyle = `rgba(${accent}, 0.09)`;
       ctx.beginPath();
-      ctx.ellipse(0, 0, 9, 10, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, 13, 15, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = `rgba(${accent}, 1)`;
       ctx.beginPath();
-      ctx.ellipse(0, 1.4, 2.9, 3.7, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 2, 4.2, 5.4, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.ellipse(0, -2.8, 1.9, 1.9, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, -4, 2.7, 2.7, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
