@@ -7,9 +7,7 @@ import Contact from "./sections/Contact";
 import Home from "./pages/Home";
 import AboutPage from "./pages/AboutPage";
 import WorkPage from "./pages/WorkPage";
-import ExperiencePage from "./pages/ExperiencePage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
-import StackPage from "./pages/StackPage";
 import { useSmoothScroll, useReveals } from "./lib/motion";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -18,7 +16,12 @@ import { Analytics } from "@vercel/analytics/react";
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
-    if (hash) return;
+    if (hash) {
+      const id = window.setTimeout(() => {
+        document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" });
+      }, 120);
+      return () => window.clearTimeout(id);
+    }
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [pathname, hash]);
   return null;
@@ -39,9 +42,7 @@ function Shell() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/work" element={<WorkPage />} />
-          <Route path="/experience" element={<ExperiencePage />} />
           <Route path="/case-studies" element={<CaseStudiesPage />} />
-          <Route path="/stack" element={<StackPage />} />
           <Route path="*" element={<Home />} />
         </Routes>
         <Contact />

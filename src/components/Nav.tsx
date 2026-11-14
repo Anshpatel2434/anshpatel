@@ -1,14 +1,34 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { identity, links } from "../data/profile";
 
-/* every one of these is its own page, not an anchor on the home page */
-const ITEMS = [
+/* ============================================================
+   NAV — a vertical rail down the left edge.
+
+   Not a centred pill at the top with a name on one side and a
+   button on the other; that is the shape every portfolio uses.
+   This runs down the edge like the spine of a book: monogram at
+   the top, labels set vertically in the middle reading bottom to
+   top, the contact mark at the foot. A hairline fills as you
+   scroll, so the rail doubles as a progress indicator.
+
+   It also frees the entire top of the page, which is what lets
+   the hero start at the very top of the viewport.
+
+   Under 980px the rail becomes a floating dock at the bottom —
+   thumb height, horizontal labels, no rotated text to squint at.
+   ============================================================ */
+
+type Item = { to: string; label: string; hash?: string };
+
+/* About, Work and Case studies are pages. Experience and Stack
+   live on the home page, so they navigate home and then scroll. */
+const ITEMS: Item[] = [
   { to: "/about", label: "About" },
   { to: "/work", label: "Work" },
-  { to: "/experience", label: "Experience" },
+  { to: "/", label: "Experience", hash: "#experience" },
   { to: "/case-studies", label: "Case studies" },
-  { to: "/stack", label: "Stack" },
+  { to: "/", label: "Stack", hash: "#stack" },
 ];
 
 function useLocalTime(timezone: string) {
@@ -28,66 +48,105 @@ function useLocalTime(timezone: string) {
   return time;
 }
 
+function useScrollProgress() {
+  const [pct, setPct] = useState(0);
+  useEffect(() => {
+    let queued = 0;
+    const read = () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      setPct(h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0);
+    };
+    const onScroll = () => {
+      if (queued) return;
+      queued = requestAnimationFrame(() => {
+        queued = 0;
+        read();
+      });
+    };
+    read();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", read, { passive: true });
+    return () => {
+      cancelAnimationFrame(queued);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", read);
+    };
+  }, []);
+  return pct;
+}
+
 export default function Nav() {
   const time = useLocalTime(identity.timezone);
-  const [open, setOpen] = useState(false);
+  const progress = useScrollProgress();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  /* a hash item is "active" only when we are on the home page */
+  const isOn = (item: Item) =>
+    item.hash ? pathname === "/" : pathname === item.to;
+
+  const goHash = (e: React.MouseEvent, item: Item) => {
+    if (!item.hash) return;
+    e.preventDefault();
+    if (pathname !== "/") {
+      navigate("/" + item.hash);
+      /* let the home page mount before looking for the section */
+      window.setTimeout(() => {
+        document.querySelector(item.hash!)?.scrollIntoView({ behavior: "smooth" });
+      }, 90);
+    } else {
+      document.querySelector(item.hash)?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
-    <header className="nav">
-      <div className="wrap nav-in">
-        <Link to="/" className="nav-mark d-tight">
-          ANSH PATEL
-        </Link>
+    <nav className="spine" aria-label="Main">
+      <Link to="/" className="spine-mark" aria-label="Home">
+        <span className="rm-a">A</span>
+        <span className="rm-b">P</span>
+      </Link>
 
-        <nav className="nav-items" aria-label="Sections">
-          {ITEMS.map((i) => (
-            <NavLink
-              key={i.to}
-              to={i.to}
-              className={({ isActive }) => (isActive ? "on" : undefined)}
-            >
-              {i.label}
-            </NavLink>
-          ))}
-          <a href={links.resume} target="_blank" rel="noopener noreferrer">
-            Résumé
-          </a>
-        </nav>
+      <span className="spine-line" aria-hidden="true">
+        <span className="spine-fill" style={{ transform: `scaleY(${progress})` }} />
+      </span>
 
-        <div className="nav-right">
-          <span className="mono nav-clock">
-            {identity.city} {time}
-          </span>
-          <a className="pill" href="#contact">
-            Let&rsquo;s talk
-          </a>
-          <button
-            className="nav-burger"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span />
-            <span />
-          </button>
-        </div>
-      </div>
-
-      {/* mobile sheet — the pill nav has nowhere to go under ~720px,
-          so it becomes a full-width drawer instead of shrinking */}
-      <div className={"nav-sheet" + (open ? " open" : "")}>
+      <ul className="spine-items">
         {ITEMS.map((i) => (
-          <Link key={i.to} to={i.to} onClick={() => setOpen(false)}>
-            {i.label}
-          </Link>
+          <li key={i.label}>
+            {i.hash ? (
+              <a
+                href={i.hash}
+                onClick={(e) => goHash(e, i)}
+                className={isOn(i) ? "soft" : undefined}
+              >
+                {i.label}
+              </a>
+            ) : (
+              <NavLink
+                to={i.to}
+                className={({ isActive }) => (isActive ? "on" : undefined)}
+              >
+                {i.label}
+              </NavLink>
+            )}
+          </li>
         ))}
-        <a href={links.resume} target="_blank" rel="noopener noreferrer">
-          Résumé
+      </ul>
+
+      <div className="spine-foot">
+        <span className="spine-time mono">{time}</span>
+        <a className="spine-talk" href={`mailto:${identity.email}`}>
+          <span>Let&rsquo;s talk</span>
         </a>
-        <a href="#contact" onClick={() => setOpen(false)}>
-          Contact
+        <a
+          className="spine-cv mono"
+          href={links.resume}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          CV
         </a>
       </div>
-    </header>
+    </nav>
   );
 }

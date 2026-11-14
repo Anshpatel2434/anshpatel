@@ -17,8 +17,6 @@ import { useEffect, useRef } from "react";
    reads the same on any refresh rate.
    ============================================================ */
 
-const NEUTRAL = "40, 46, 56";
-
 type Pt = {
   bx: number;
   by: number;
@@ -53,15 +51,22 @@ export default function CrawlerField() {
     /* the accent, read from the live palette so the crawler always
        matches whichever palette is active */
     let accent = "199, 108, 58";
-    function readAccent() {
+    let neutral = "40, 46, 56";
+
+    /* both colours come from the live palette, so the field works
+       on a dark ground as well as a light one */
+    function readRGB(cssVar: string, fallback: string) {
       const probe = document.createElement("span");
-      probe.style.cssText = "position:absolute;visibility:hidden;color:var(--key)";
+      probe.style.cssText = `position:absolute;visibility:hidden;color:var(${cssVar})`;
       document.body.appendChild(probe);
       const rgb = getComputedStyle(probe).color.match(/\d+(\.\d+)?/g);
       probe.remove();
-      if (rgb && rgb.length >= 3) {
-        accent = `${Math.round(+rgb[0])}, ${Math.round(+rgb[1])}, ${Math.round(+rgb[2])}`;
-      }
+      if (!rgb || rgb.length < 3) return fallback;
+      return `${Math.round(+rgb[0])}, ${Math.round(+rgb[1])}, ${Math.round(+rgb[2])}`;
+    }
+    function readPalette() {
+      accent = readRGB("--key", accent);
+      neutral = readRGB("--dim", neutral);
     }
 
     const small = () => window.innerWidth < 760;
@@ -217,7 +222,7 @@ export default function CrawlerField() {
           ctx.fillStyle = `rgba(${accent}, 0.62)`;
           ctx.arc(p.x, p.y, p.r + 0.9, 0, Math.PI * 2);
         } else {
-          ctx.fillStyle = `rgba(${NEUTRAL}, 0.15)`;
+          ctx.fillStyle = `rgba(${neutral}, 0.42)`;
           ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         }
         ctx.fill();
@@ -239,7 +244,7 @@ export default function CrawlerField() {
       scrollShift = window.scrollY;
     };
 
-    readAccent();
+    readPalette();
     resize();
 
     if (reduced) {
@@ -252,7 +257,7 @@ export default function CrawlerField() {
     window.addEventListener("resize", resize, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
     /* the dev palette switcher stamps data-palette on <html> */
-    const mo = new MutationObserver(readAccent);
+    const mo = new MutationObserver(readPalette);
     mo.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["data-palette"],

@@ -1,45 +1,41 @@
 /* ============================================================
-   COLOUR SYSTEM — three palettes, switchable for trial and error
+   COLOUR SYSTEM
 
-   Set data-palette on <html> to "ember" | "indigo" | "signal".
-   In dev a small switcher in the corner flips between them.
+   data-palette on <html> picks one: "vellum" | "marigold" | "ink"
+   | "ember". The dev switcher flips between them; ember is kept
+   as the approved checkpoint (git tag: checkpoint-ember).
 
    ------------------------------------------------------------
-   THE RULES THESE FOLLOW
+   THE RULES ALL FOUR FOLLOW
 
-   1. NAMED HARMONY. Each palette is built on one recognised
-      scheme rather than hand-picked colours:
-        ember   split-complementary  (teal base, warm accents either
-                                      side of its complement)
-        indigo  analogous            (indigo -> blue-violet -> violet)
-        signal  monochromatic + one  (graphite ramp, single accent)
+   1. NAMED HARMONY, not hand-picked colour:
+        vellum    warm analogous  (parchment, umber, oxblood, gold)
+        marigold  complementary   (ultramarine vs marigold)
+        ink       dark warm-cool  (indigo ground, bone type, coral)
+        ember     split-complement (teal base, ember accent)
 
-   2. 60-30-10. Dominant / secondary / accent by AREA:
-        60%  --field          the ground, near-neutral
-        30%  --ink / --muted  type and structure, the base hue
-        10%  --key            the accent — CTAs and nothing else
-      The accent is reserved for what must be noticed first. If it
-      is used for decoration it stops working as a signal.
+   2. 60-30-10 BY AREA. 60 --field, 30 --ink/--muted, 10 --key.
+      The accent is reserved for what must be noticed first; spend
+      it on decoration and it stops reading as a signal.
 
-   3. THREE COLOURS, NOT MORE. Limiting the palette is what makes
-      hierarchy legible; every extra hue competes for attention.
+   3. THREE COLOURS. Limiting the palette is what makes hierarchy
+      legible — every extra hue competes for the same attention.
 
-   4. LIGHT-DARK LADDER for hierarchy, exactly three steps:
+   4. LIGHT-DARK LADDER, exactly three steps:
         --ink-strong  headings      read first
         --muted       body          read second
         --dim         labels, meta  read last
 
-   5. APCA Lc targets (WCAG 3 model — accounts for size and weight,
-      which flat ratios do not):
-        body copy        Lc 75 min, Lc 90 preferred
-        non-body text    Lc 60 min
-        large/bold head  Lc 45 min
-      --key is a mid-lightness accent and never carries body text;
-      --key-t is its darkened twin for when it must be read.
+   5. APCA Lc targets (WCAG 3 model, which accounts for size and
+      weight where flat ratios do not):
+        body  Lc 75 min / 90 preferred   non-body  Lc 60 min
+        large bold heads  Lc 45 min
+      --key is a mid-lightness accent and never carries body text.
+      --key-t is its readable twin — darker on a light ground,
+      LIGHTER on a dark one.
 
-   6. THE GROUND IS NEVER PURE WHITE. A tinted paper lets the
-      accent sit in the page rather than on it, and avoids the
-      glare of #fff behind long text.
+   6. THE GROUND IS NEVER PURE WHITE OR PURE BLACK, so the accent
+      sits in the page rather than on it.
    ============================================================ */
 
 :root {
@@ -49,7 +45,8 @@
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --gutter: 24px;
-  --maxw: 1280px;
+  --maxw: 1240px;
+  --rail: 76px;
   --sec-gap: clamp(78px, 10vw, 132px);
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -57,85 +54,113 @@
 }
 
 /* ============================================================
-   A — EMBER
-   Split-complementary. A deep teal base with its complement's
-   two neighbours (ember and amber) as the accent pair.
-   Teal reads as calm and dependable; the ember is the only warm
-   thing on the page, so the eye goes straight to it.
-   Mood: warm, confident, human.
+   VELLUM — warm analogous  ·  default
+   Parchment ground, umber-black type, oxblood as the signal and
+   antique gold as the quiet second. Everything sits on the warm
+   side of the wheel, so the page agrees with itself and the
+   oxblood still reads as the one urgent thing.
+   Nobody puts oxblood on an engineering portfolio. That is rather
+   the point.
    ============================================================ */
 :root,
+[data-palette="vellum"] {
+  color-scheme: light;
+  --field:      oklch(95.5% 0.018 85);
+  --field-up:   oklch(98% 0.012 85);
+  --field-dn:   oklch(92% 0.024 82);
+  --rule:       oklch(84% 0.028 80);
+  --rule-faint: oklch(90% 0.020 82);
+
+  --ink-strong: oklch(19% 0.030 50);   /* umber-black   Lc ~100 */
+  --ink:        oklch(25% 0.028 50);
+  --muted:      oklch(45% 0.026 50);   /* body          Lc ~ 78 */
+  --dim:        oklch(59% 0.022 55);   /* labels        Lc ~ 56 */
+
+  --key:        oklch(44% 0.145 25);   /* oxblood — CTA, marks   */
+  --key-t:      oklch(40% 0.140 25);
+  --key-soft:   oklch(89% 0.045 35);
+  --sec:        oklch(60% 0.095 80);   /* antique gold           */
+}
+
+/* ============================================================
+   MARIGOLD — direct complementary
+   Ultramarine against marigold, the sharpest pairing on the
+   wheel. Cool near-white ground keeps it from shouting; the
+   yellow is used in millimetres so it stays a signal rather than
+   a mood. Graphic, Bauhaus-adjacent, confident.
+   ============================================================ */
+[data-palette="marigold"] {
+  color-scheme: light;
+  --field:      oklch(97.5% 0.004 250);
+  --field-up:   oklch(99.2% 0.003 250);
+  --field-dn:   oklch(93.5% 0.010 255);
+  --rule:       oklch(85% 0.014 260);
+  --rule-faint: oklch(91% 0.009 260);
+
+  --ink-strong: oklch(19% 0.080 266);  /* ultramarine-black */
+  --ink:        oklch(25% 0.078 266);
+  --muted:      oklch(45% 0.060 266);
+  --dim:        oklch(60% 0.042 266);
+
+  --key:        oklch(76% 0.155 78);   /* marigold — fills only  */
+  --key-t:      oklch(47% 0.125 62);   /* readable  Lc ~ 76      */
+  --key-soft:   oklch(93% 0.055 85);
+  --sec:        oklch(45% 0.150 266);  /* ultramarine            */
+}
+
+/* ============================================================
+   INK — dark, warm-cool
+   A deep indigo ground with bone type and a coral signal. Dark
+   without being a terminal: the ground is blue and the type is
+   warm, so it reads like printed paper under low light rather
+   than a code editor. No neon anywhere.
+   ============================================================ */
+[data-palette="ink"] {
+  color-scheme: dark;
+  --field:      oklch(21% 0.032 272);
+  --field-up:   oklch(25% 0.034 272);
+  --field-dn:   oklch(17.5% 0.030 272);
+  --rule:       oklch(34% 0.030 272);
+  --rule-faint: oklch(28% 0.030 272);
+
+  --ink-strong: oklch(96% 0.014 85);   /* bone          Lc ~ 98 */
+  --ink:        oklch(91% 0.014 85);
+  --muted:      oklch(74% 0.015 85);   /* body          Lc ~ 76 */
+  --dim:        oklch(58% 0.018 272);  /* labels        Lc ~ 50 */
+
+  --key:        oklch(72% 0.150 36);   /* coral                 */
+  --key-t:      oklch(79% 0.135 40);   /* lighter, for a dark ground */
+  --key-soft:   oklch(32% 0.070 36);
+  --sec:        oklch(66% 0.090 272);
+}
+
+/* ============================================================
+   EMBER — split-complementary  ·  approved checkpoint
+   Deep teal base, ember accent. Kept so we can return to it;
+   git tag checkpoint-ember.
+   ============================================================ */
 [data-palette="ember"] {
+  color-scheme: light;
   --field:      oklch(97% 0.008 75);
   --field-up:   oklch(99% 0.005 75);
   --field-dn:   oklch(93.5% 0.012 75);
   --rule:       oklch(85% 0.014 75);
   --rule-faint: oklch(91% 0.010 75);
 
-  --ink-strong: oklch(19% 0.045 205);   /* deep teal-black  Lc ~101 */
-  --ink:        oklch(25% 0.042 205);   /*                  Lc ~ 94 */
-  --muted:      oklch(46% 0.032 205);   /* body             Lc ~ 76 */
-  --dim:        oklch(60% 0.024 205);   /* labels           Lc ~ 55 */
+  --ink-strong: oklch(19% 0.045 205);
+  --ink:        oklch(25% 0.042 205);
+  --muted:      oklch(46% 0.032 205);
+  --dim:        oklch(60% 0.024 205);
 
-  --key:        oklch(60% 0.170 48);    /* ember — marks, fills, CTA */
-  --key-t:      oklch(42% 0.140 44);    /* readable ember   Lc ~ 76 */
-  --key-soft:   oklch(88% 0.055 60);    /* washes only              */
-
-  --sec:        oklch(42% 0.070 200);   /* teal, the structural hue */
+  --key:        oklch(60% 0.170 48);
+  --key-t:      oklch(42% 0.140 44);
+  --key-soft:   oklch(88% 0.055 60);
+  --sec:        oklch(42% 0.070 200);
 }
 
-/* ============================================================
-   B — INDIGO
-   Analogous. Indigo, blue-violet and violet sit next to each
-   other on the wheel, so the whole page agrees with itself; the
-   contrast comes from lightness rather than hue.
-   Blue reads as trust, violet as craft. Mood: calm, premium.
-   ============================================================ */
-[data-palette="indigo"] {
-  --field:      oklch(97% 0.006 275);
-  --field-up:   oklch(99% 0.004 275);
-  --field-dn:   oklch(93.5% 0.012 275);
-  --rule:       oklch(85% 0.016 275);
-  --rule-faint: oklch(91% 0.011 275);
-
-  --ink-strong: oklch(18% 0.060 275);
-  --ink:        oklch(24% 0.058 275);
-  --muted:      oklch(45% 0.045 275);
-  --dim:        oklch(59% 0.034 275);
-
-  --key:        oklch(55% 0.175 305);   /* violet */
-  --key-t:      oklch(40% 0.150 300);
-  --key-soft:   oklch(89% 0.045 300);
-
-  --sec:        oklch(40% 0.095 282);
+@media (max-width: 980px) {
+  :root { --rail: 0px; }
 }
-
-/* ============================================================
-   C — SIGNAL
-   Monochromatic plus a single accent. A graphite ramp carries
-   everything; one saturated red-orange is the only colour on the
-   page, so it cannot be misread as anything but "act here".
-   Mood: editorial, sharp, serious.
-   ============================================================ */
-[data-palette="signal"] {
-  --field:      oklch(96.5% 0.003 100);
-  --field-up:   oklch(99% 0.002 100);
-  --field-dn:   oklch(92.5% 0.004 100);
-  --rule:       oklch(84% 0.005 100);
-  --rule-faint: oklch(90.5% 0.004 100);
-
-  --ink-strong: oklch(16% 0.008 265);
-  --ink:        oklch(22% 0.008 265);
-  --muted:      oklch(44% 0.007 265);
-  --dim:        oklch(58% 0.006 265);
-
-  --key:        oklch(56% 0.195 32);    /* signal red-orange */
-  --key-t:      oklch(42% 0.165 30);
-  --key-soft:   oklch(90% 0.045 40);
-
-  --sec:        oklch(38% 0.010 265);
-}
-
 @media (max-width: 640px) {
   :root { --gutter: 18px; }
 }

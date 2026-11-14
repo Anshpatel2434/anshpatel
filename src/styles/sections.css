@@ -12,9 +12,10 @@
      stack     a pinned schematic beside a scrolling list
      contact   two weights of type and a watermark
 
-   Colour follows Itten's contrast of extension throughout: each
-   section claims one of the four equals via .k-* and spends it only
-   on hairlines, dots, numerals and single words.
+   Colour follows Itten's contrast of extension: the palette accent
+   is spent only on hairlines, dots, numerals and single words, so
+   the little of it there is reads as a signal. Sections are told
+   apart by layout, not by hue.
    ============================================================ */
 
 /* ---------- the crawler ---------- */
@@ -28,59 +29,6 @@
   display: block;
 }
 main, .nav, .footer { position: relative; z-index: 1; }
-
-/* ---------- nav ---------- */
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  padding-block: 13px;
-  background: color-mix(in oklab, var(--field) 80%, transparent);
-  backdrop-filter: blur(10px);
-}
-.nav-in { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; }
-.nav-mark {
-  font-size: 13.5px; letter-spacing: 0.02em;
-  font-variation-settings: "wdth" 88;
-  color: var(--ink-strong); text-decoration: none;
-}
-.nav-items {
-  display: flex; gap: 2px; padding: 4px;
-  border: 1px solid var(--rule); border-radius: 999px;
-  background: color-mix(in oklab, var(--field-up) 78%, transparent);
-}
-.nav-items a {
-  font-size: 12.5px; color: var(--muted); text-decoration: none;
-  padding: 6px 13px; border-radius: 999px;
-  transition: color 0.25s var(--ease), background 0.25s var(--ease);
-}
-.nav-items a:hover { color: var(--ink-strong); background: var(--field-dn); }
-.nav-right { display: flex; align-items: center; gap: 13px; }
-.nav-clock { font-size: 11px; color: var(--dim); white-space: nowrap; }
-.nav-burger {
-  display: none; width: 38px; height: 34px;
-  border: 1px solid var(--rule); border-radius: 8px;
-  background: var(--field-up); cursor: pointer; padding: 0;
-  flex-direction: column; align-items: center; justify-content: center; gap: 5px;
-}
-.nav-burger span { display: block; width: 15px; height: 1.5px; background: var(--ink); }
-.nav-sheet { display: none; }
-
-@media (max-width: 1080px) {
-  .nav-items { display: none; }
-  .nav-clock { display: none; }
-  .nav-burger { display: flex; }
-  .nav-sheet.open {
-    display: flex; flex-direction: column; gap: 2px;
-    padding: 12px var(--gutter) 4px;
-    max-width: var(--maxw); margin-inline: auto;
-  }
-  .nav-sheet a {
-    font-size: 17px; font-weight: 600; color: var(--ink-strong);
-    text-decoration: none; padding: 11px 0;
-    border-bottom: 1px solid var(--rule-faint);
-  }
-}
 
 /* ============================================================
    ABOUT — the one filled band
@@ -562,8 +510,7 @@ main, .nav, .footer { position: relative; z-index: 1; }
    DEV ONLY — palette switcher
    ============================================================ */
 .pal-switch {
-  position: fixed; z-index: 90; left: 50%; bottom: 16px;
-  transform: translateX(-50%);
+  position: fixed; z-index: 90; right: 16px; bottom: 16px;
   display: flex; align-items: center; gap: 4px;
   padding: 5px 6px 5px 12px;
   border: 1px solid var(--rule); border-radius: 999px;
@@ -585,5 +532,136 @@ main, .nav, .footer { position: relative; z-index: 1; }
 .pal-btn:hover { color: var(--ink-strong); background: var(--field-dn); }
 .pal-btn.on { background: var(--key); color: var(--field); border-color: var(--key); }
 
-/* the nav marks the page you are on */
-.nav-items a.on { color: var(--ink-strong); background: var(--field-dn); }
+/* ============================================================
+   SPINE — the nav, down the left edge
+
+   A spine rather than a top bar: monogram at the head, labels set
+   vertically reading bottom-to-top, contact at the foot, and a
+   hairline that fills as the page scrolls. Freeing the top edge is
+   what lets the hero begin at the very top of the viewport.
+   ============================================================ */
+.spine {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: var(--rail);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 22px 20px;
+  border-right: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--field) 72%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.spine-mark {
+  display: flex; flex-direction: column; align-items: center;
+  line-height: 0.84; text-decoration: none;
+  font-weight: 900; font-variation-settings: "wdth" 68;
+  font-size: 21px; letter-spacing: -0.02em;
+  color: var(--ink-strong);
+}
+.spine-mark .rm-b { color: var(--key); }
+
+.spine-line {
+  flex: 0 0 auto;
+  width: 1px; height: 54px; margin-top: 18px;
+  background: var(--rule);
+  position: relative; overflow: hidden;
+}
+.spine-fill {
+  position: absolute; inset: 0;
+  background: var(--key);
+  transform-origin: top;
+  transform: scaleY(0);
+}
+
+.spine-items {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column-reverse;
+  align-items: center; gap: 26px;
+  flex: 1 1 auto; justify-content: center;
+}
+.spine-items a {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 2px 4px;
+  white-space: nowrap;
+  transition: color 0.25s var(--ease);
+}
+.spine-items a::after {
+  content: ""; display: block;
+  width: 0; height: 1px; margin: 5px auto 0;
+  background: var(--key);
+  transition: width 0.3s var(--ease);
+}
+.spine-items a:hover { color: var(--ink-strong); }
+.spine-items a:hover::after { width: 100%; }
+.spine-items a.on { color: var(--ink-strong); font-weight: 600; }
+.spine-items a.on::after { width: 100%; }
+
+.spine-foot { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.spine-time {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font-size: 10px; color: var(--dim); letter-spacing: 0.1em;
+}
+.spine-talk {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+  text-decoration: none;
+  color: var(--field);
+  background: var(--key);
+  border-radius: 999px;
+  padding: 14px 7px;
+  transition: background 0.3s var(--ease);
+}
+.spine-talk:hover { background: var(--ink-strong); }
+.spine-cv { font-size: 10px; color: var(--dim); text-decoration: none; letter-spacing: 0.08em; }
+.spine-cv:hover { color: var(--ink-strong); }
+
+/* content clears the rail */
+.wrap { padding-left: calc(var(--gutter) + var(--rail)); }
+
+/* ---------- under 980px the rail becomes a bottom dock ---------- */
+@media (max-width: 980px) {
+  .spine {
+    left: 50%; right: auto; top: auto; bottom: 14px;
+    transform: translateX(-50%);
+    width: auto; max-width: calc(100vw - 24px);
+    flex-direction: row; align-items: center; justify-content: flex-start;
+    gap: 4px;
+    padding: 6px 6px 6px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    box-shadow: 0 8px 26px color-mix(in oklab, var(--ink) 16%, transparent);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .spine-mark { flex-direction: row; font-size: 16px; margin-right: 6px; }
+  .spine-line { display: none; }
+  .spine-items {
+    flex-direction: row; gap: 2px; flex: 0 0 auto; justify-content: flex-start;
+  }
+  .spine-items a {
+    writing-mode: horizontal-tb; transform: none;
+    font-size: 12.5px; padding: 8px 11px; border-radius: 999px;
+  }
+  .spine-items a::after { display: none; }
+  .spine-items a.on { background: var(--field-dn); }
+  .spine-foot { flex-direction: row; gap: 8px; margin-left: 4px; }
+  .spine-time { display: none; }
+  .spine-talk {
+    writing-mode: horizontal-tb; transform: none;
+    padding: 9px 15px; font-size: 12.5px;
+  }
+  .spine-cv { display: none; }
+  .wrap { padding-left: var(--gutter); }
+  /* the dock floats over the footer, so make room under it */
+  .footer { padding-bottom: 72px; }
+  .pal-switch { bottom: 76px; }
+}

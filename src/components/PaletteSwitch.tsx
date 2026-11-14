@@ -5,18 +5,19 @@ import { useEffect, useState } from "react";
    is remembered so a reload does not reset it. */
 
 const PALETTES = [
-  { id: "ember", label: "Ember", note: "split-complementary" },
-  { id: "indigo", label: "Indigo", note: "analogous" },
-  { id: "signal", label: "Signal", note: "mono + accent" },
+  { id: "vellum", label: "Vellum", note: "warm analogous — parchment, umber, oxblood" },
+  { id: "marigold", label: "Marigold", note: "complementary — ultramarine vs marigold" },
+  { id: "ink", label: "Ink", note: "dark — indigo ground, bone type, coral signal" },
+  { id: "ember", label: "Ember", note: "approved checkpoint — teal + ember" },
 ];
 
 export default function PaletteSwitch() {
-  const [active, setActive] = useState("ember");
+  const [active, setActive] = useState("vellum");
 
   useEffect(() => {
-    let saved = "ember";
+    let saved = "vellum";
     try {
-      saved = localStorage.getItem("palette") || "ember";
+      saved = localStorage.getItem("palette") || "vellum";
     } catch {
       /* private window, blocked storage — the default is fine */
     }
