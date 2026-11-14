@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { products, moreWork } from "../data/profile";
+import { products, moreWork, sections } from "../data/profile";
 
 /* ============================================================
    WORK — alternating full-width bands.
@@ -16,16 +16,9 @@ export default function Work({ full = false }: { full?: boolean }) {
     <section className="section work" id="work">
       <div className="wrap">
         <span className="spine-node sn-r" data-spine="work" aria-hidden="true" />
-        <h2 className="h-lg d-tight sec-say">
-          Two of them are live right now.
-        </h2>
-        <div className="work-head">
-          <p className="note">
-            Both are deployed and running right now. Click through and use
-            them — a working link is worth more than a screenshot of one.
-          </p>
+        <h2 className="h-lg d-tight sec-say">{sections.work.say}</h2>
+        <p className="sec-sub">{sections.work.sub}</p>
         </div>
-      </div>
 
       <div className="bands">
         {products.map((p, i) => (
@@ -66,6 +59,18 @@ export default function Work({ full = false }: { full?: boolean }) {
                   >
                     Open {p.label}
                   </a>
+                  {p.repo ? (
+                    <a
+                      className="act-quiet"
+                      href={p.repo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Source on GitHub
+                    </a>
+                  ) : (
+                    <span className="act-quiet waiting">{p.repoNote}</span>
+                  )}
                   <span className="note band-when">{p.when}</span>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { caseStudies } from "../data/profile";
+import { caseStudies, sections } from "../data/profile";
 
 /* ============================================================
    CASE STUDIES — a dense index.
@@ -16,16 +16,8 @@ export default function CaseStudies({ full = false }: { full?: boolean }) {
     <section className="section cases" id="cases">
       <div className="wrap">
         <span className="spine-node sn-r" data-spine="cases" aria-hidden="true" />
-        <h2 className="h-lg d-tight sec-say">
-          And the ones that never shipped.
-        </h2>
-        <div className="work-head">
-          <p className="note">
-            Things made to answer a question rather than to ship. No live link
-            — the problem and the decision are the whole point.
-          </p>
-        </div>
-
+        <h2 className="h-lg d-tight sec-say">{sections.cases.say}</h2>
+        <p className="sec-sub">{sections.cases.sub}</p>
         <table className="idx">
           <thead>
             <tr>

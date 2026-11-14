@@ -116,6 +116,10 @@ export default function CrawlerField() {
     const smooth = (t: number) => t * t * (3 - 2 * t);
     let curX = 0;
     let curY = 0;
+    let prevX = 0;
+    let prevY = 0;
+    let heading = Math.PI / 2;
+    let gait = 0;
     let started = false;
 
     function frame(now: number) {
@@ -168,8 +172,8 @@ export default function CrawlerField() {
 
       /* a little lag so the travel feels like movement, not a readout */
       if (!started) {
-        curX = tx;
-        curY = ty;
+        curX = prevX = tx;
+        curY = prevY = ty;
         started = true;
       } else {
         curX += (tx - curX) * 0.12;
@@ -237,16 +241,82 @@ export default function CrawlerField() {
         }
       }
 
-      /* ---- the crawler ---- */
-      const idle = Math.sin(now * 0.0016) * 1.6;
+      /* ---- the crawler itself ----
+         Eight legs on a gait cycle, the body turned to face the way
+         it is going. The gait speeds up with travel and idles to a
+         slow breath when the page is still, so it always reads as
+         alive rather than as a marker parked on a line. */
+      const dx = curX - prevX;
+      const dy = curY - prevY;
+      const speed = Math.hypot(dx, dy);
+      prevX = curX;
+      prevY = curY;
+
+      if (speed > 0.12) heading = Math.atan2(dy, dx);
+      /* step faster the faster it travels; never fully stop */
+      gait += 0.055 + Math.min(speed * 0.16, 0.42);
+
+      const scale = 1 + Math.min(speed * 0.012, 0.22);
+      const bob = Math.sin(now * 0.0021) * 1.1;
+
+      ctx.save();
+      ctx.translate(curX, curY + bob);
+      ctx.rotate(heading + Math.PI / 2);
+      ctx.scale(scale, scale);
+
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      /* legs: four a side, each a two-segment limb with a knee.
+         Opposite sides are half a cycle apart, which is what makes
+         it read as walking rather than twitching. */
+      const LEGS = [
+        { base: -0.62, reach: 13.5, lift: 1.0 },
+        { base: -0.18, reach: 15.5, lift: 1.0 },
+        { base: 0.18, reach: 15.5, lift: 1.0 },
+        { base: 0.62, reach: 13.5, lift: 1.0 },
+      ];
+      ctx.strokeStyle = `rgba(${accent}, 0.82)`;
+      ctx.lineWidth = 1.15;
+
+      for (const side of [-1, 1]) {
+        LEGS.forEach((leg, i) => {
+          const phase = gait + (i * Math.PI) / 2 + (side < 0 ? Math.PI : 0);
+          const swing = Math.sin(phase) * 0.34;
+          const step = Math.max(0, Math.cos(phase)) * leg.lift;
+
+          const a = leg.base + swing;
+          const hipX = side * 2.2;
+          const hipY = leg.base * 3.4;
+
+          const kneeX = hipX + side * leg.reach * 0.52 * Math.cos(a);
+          const kneeY = hipY + leg.reach * 0.52 * Math.sin(a) - 3.4 - step * 1.6;
+          const footX = hipX + side * leg.reach * Math.cos(a * 0.82);
+          const footY = hipY + leg.reach * Math.sin(a * 0.82) + 1.6;
+
+          ctx.beginPath();
+          ctx.moveTo(hipX, hipY);
+          ctx.lineTo(kneeX, kneeY);
+          ctx.lineTo(footX, footY);
+          ctx.stroke();
+        });
+      }
+
+      /* body: abdomen and a smaller head, so it has a direction */
+      ctx.fillStyle = `rgba(${accent}, 0.14)`;
       ctx.beginPath();
-      ctx.fillStyle = `rgba(${accent}, 0.1)`;
-      ctx.arc(curX, curY + idle, 15, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, 13, 15, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.beginPath();
+
       ctx.fillStyle = `rgba(${accent}, 1)`;
-      ctx.arc(curX, curY + idle, 4, 0, Math.PI * 2);
+      ctx.beginPath();
+      ctx.ellipse(0, 2.1, 3.1, 4.1, 0, 0, Math.PI * 2);
       ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(0, -3.1, 2.1, 2.1, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
     }
 
     readPalette();

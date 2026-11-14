@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { offers } from "../data/profile";
+import { offers, sections } from "../data/profile";
 
 /* ============================================================
    WHAT I CAN DO
@@ -21,9 +21,8 @@ export default function Offer() {
     <section className="section offer" id="offer">
       <div className="wrap">
         <span className="spine-node sn-l" data-spine="offer" aria-hidden="true" />
-        <h2 className="h-lg d-tight sec-say">
-          So here is the other half.
-        </h2>
+        <h2 className="h-lg d-tight sec-say">{sections.offer.say}</h2>
+        <p className="sec-sub">{sections.offer.sub}</p>
 
         <div className="stickers">
           {offers.map((o, i) => (

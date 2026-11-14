@@ -1,4 +1,4 @@
-import { roles, awards, education } from "../data/profile";
+import { roles, awards, education, sections } from "../data/profile";
 
 /* ============================================================
    EXPERIENCE
@@ -15,9 +15,8 @@ export default function Experience() {
     <section className="section exp" id="experience">
       <div className="wrap">
         <span className="spine-node sn-l" data-spine="experience" aria-hidden="true" />
-        <h2 className="h-lg d-tight sec-say">
-          Before that, other people&rsquo;s deadlines.
-        </h2>
+        <h2 className="h-lg d-tight sec-say">{sections.experience.say}</h2>
+        <p className="sec-sub">{sections.experience.sub}</p>
 
         <div className="roles">
           {roles.map((r) => (

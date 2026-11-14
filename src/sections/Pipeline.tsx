@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { stages } from "../data/profile";
+import { stages, sections } from "../data/profile";
 
 /* ============================================================
    THE STACK, IN THE ORDER IT RUNS
@@ -81,17 +81,8 @@ export default function Pipeline() {
     <section className="section pipeline" id="stack">
       <div className="wrap">
         <span className="spine-node sn-l" data-spine="stack" aria-hidden="true" />
-        <h2 className="h-lg d-tight sec-say">
-          All of it, and where it runs.
-        </h2>
-        <div className="work-head">
-          <p className="note">
-            One question, followed from the screen it is typed on to the answer
-            that comes back. At every stage, the tools I actually reach for —
-            scroll, or tap a stage to jump to it.
-          </p>
-        </div>
-
+        <h2 className="h-lg d-tight sec-say">{sections.stack.say}</h2>
+        <p className="sec-sub">{sections.stack.sub}</p>
         <div className="pipe-grid">
           <aside className="panel">
             <div className="p-cap">

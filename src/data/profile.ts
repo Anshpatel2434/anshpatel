@@ -28,6 +28,31 @@ export const links = {
   resume: "/Resume.pdf",
 };
 
+/* Every section says its line, then explains it. The heading is the
+   voice; the subhead is for anyone who would otherwise have to guess. */
+export const sections = {
+  offer: {
+    say: "The other half is the hard part.",
+    sub: "Anyone can make a screen look right. Making it stay right — under load, under scrutiny, six months later — is the work. This is what I do on that side.",
+  },
+  work: {
+    say: "Two I would put my name on.",
+    sub: "Both happen to be live, but that is not the point. These are the two where every decision was mine, end to end, and I can defend all of them.",
+  },
+  experience: {
+    say: "Before that, other people's deadlines.",
+    sub: "Paid work inside someone else's team, to someone else's schedule — a different discipline from building your own thing, and worth listing separately.",
+  },
+  cases: {
+    say: "And the ones that never shipped.",
+    sub: "Case studies. Projects built to work something out rather than to launch — there is no live link, but the problem and the decision behind it are the part worth reading.",
+  },
+  stack: {
+    say: "All of it, and where it runs.",
+    sub: "Every tool I work with, placed at the layer it actually runs on. Follow one question from the screen it is typed on to the answer that comes back.",
+  },
+};
+
 export const education = {
   school: "Lok Jagruti Institute of Engineering and Technology",
   degree: "B.E. Computer Science Engineering",
@@ -64,21 +89,21 @@ export type Offer = {
 export const offers: Offer[] = [
   {
     n: "01",
-    title: "AI that explains itself",
-    line: "Retrieval that cites what it was grounded in, so an answer can be checked instead of trusted.",
+    title: "Interfaces people trust",
+    line: "The easy half, done properly — interfaces that are quick, legible and still there after six months of changes.",
     stack: [
-      "Retrieval-Augmented Generation",
-      "pgvector",
-      "Vector search",
-      "Knowledge graph",
-      "OpenAI GPT",
-      "Prompt engineering",
+      "React.js",
+      "TypeScript",
+      "TailwindCSS",
+      "Design systems",
+      "Redux",
+      "Motion",
     ],
   },
   {
     n: "02",
-    title: "Products, end to end, alone",
-    line: "Empty repo to live product without a handoff — interface, API, schema, deploy.",
+    title: "Architecture that holds",
+    line: "The part nobody sees. Schemas, APIs, queues and data models that stay correct when the load and the team both grow.",
     stack: [
       "React.js",
       "TypeScript",
@@ -92,22 +117,22 @@ export const offers: Offer[] = [
   },
   {
     n: "03",
-    title: "Real-time that stays correct",
-    line: "Open sockets, async consumers, and notifications that arrive without anyone refreshing.",
+    title: "AI that cites its sources",
+    line: "Retrieval that shows what it was grounded in, so an answer can be checked rather than believed. Real-time where it needs to be live.",
     stack: [
+      "Retrieval-Augmented Generation",
+      "pgvector",
+      "Knowledge graph",
+      "OpenAI GPT",
       "WebSockets",
       "Django Channels",
-      "Django",
-      "Node.js",
-      "Python",
-      "MongoDB",
     ],
   },
   {
     n: "04",
-    title: "Cross-platform mobile",
-    line: "One codebase, both stores — single sign-on, push, and deep links that survive the round trip.",
-    stack: ["React Native", "Expo", "Redux", "OAuth 2.0", "Android Studio"],
+    title: "Shipped, start to finish",
+    line: "Empty repo to something a person can open — design, build, deploy, both app stores. No handoff, because there is nobody to hand off to.",
+    stack: ["React Native", "Expo", "OAuth 2.0", "Vercel", "Git", "Android Studio"],
   },
 ];
 
@@ -202,6 +227,8 @@ export type Product = {
   when: string;
   href: string;
   label: string;
+  repo: string | null;
+  repoNote?: string;
   stack: string;
   what: string;
   detail: string[];
@@ -215,6 +242,8 @@ export const products: Product[] = [
     when: "February 2026",
     href: "https://preptodo.in",
     label: "preptodo.in",
+    repo: null,
+    repoNote: "repo link — send me the URL",
     stack: "React.js · TypeScript · TailwindCSS · Express.js · Drizzle ORM",
     what: "An AI-powered CAT VARC preparation platform built on a hybrid Retrieval-Augmented Generation pipeline — pgvector similarity search combined with a knowledge graph — using the OpenAI GPT API to generate reasoning-based explanations.",
     detail: [
@@ -229,6 +258,7 @@ export const products: Product[] = [
     when: "November 2024",
     href: "https://uni-ask.app",
     label: "uni-ask.app",
+    repo: "https://github.com/Anshpatel2434/UniAsk",
     stack: "React.js · TailwindCSS · Django · Django Channels · WebSockets",
     what: "A real-time academic Q&A platform enabling live messaging and instant notifications over WebSockets.",
     detail: [

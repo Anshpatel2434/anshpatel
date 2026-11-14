@@ -31,8 +31,25 @@ export default function Hero() {
           <p className="hero-note">
             I&rsquo;m {identity.name}. I design the thing, then I architect what
             holds it up &mdash; interfaces, retrieval systems, real-time
-            backends, mobile. {identity.city}, {identity.availability.toLowerCase()}.
+            backends, mobile. Based in {identity.city}.
           </p>
+
+          <div className="hero-cta">
+            <a className="btn" href="#work">
+              See the work
+            </a>
+            <a className="btn ghost" href={`mailto:${identity.email}`}>
+              Start a conversation
+            </a>
+          </div>
+
+          <div className="hero-reach">
+            <a href={`mailto:${identity.email}`}>{identity.email}</a>
+            <span className="hero-open">
+              <i aria-hidden="true" />
+              {identity.availability}
+            </span>
+          </div>
         </div>
 
         {/* the crawler's origin, and its first five neighbours */}

@@ -15,8 +15,8 @@ export default function PageHead({
   return (
     <header className="page-head">
       <div className="wrap">
-        <Link className="act-quiet" to="/">
-          Home
+        <Link className="btn ghost back-home" to="/">
+          Back to home
         </Link>
         <p className="label">{eyebrow}</p>
         <h1 className="h-lg d-tight page-title">{title}</h1>
