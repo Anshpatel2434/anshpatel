@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { identity, links } from "../data/profile";
 
 const ITEMS = [
+  { href: "#about", label: "About" },
   { href: "#offer", label: "Offer" },
-  { href: "#stack", label: "Stack" },
   { href: "#work", label: "Work" },
-  { href: "#career", label: "Career" },
+  { href: "#experience", label: "Experience" },
+  { href: "#cases", label: "Case studies" },
+  { href: "#stack", label: "Stack" },
 ];
 
 function useLocalTime(timezone: string) {

@@ -10,7 +10,7 @@ export default function Offer() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="section offer" id="offer">
+    <section className="section offer k-clay" id="offer">
       <div className="wrap">
         <p className="eyebrow">What you can hire me for</p>
 

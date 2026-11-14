@@ -68,32 +68,25 @@ export function useReveals() {
 
     const ctx = gsap.context(() => {
       /* hero: the two headline halves, then everything under them */
-      gsap.from(".hero-thesis span", {
-        yPercent: 104,
+      gsap.from(".hero-type .ht", {
+        yPercent: 106,
         opacity: 0,
         duration: 1.05,
         ease: "expo.out",
-        stagger: 0.09,
+        stagger: 0.08,
       });
-      gsap.from(".hero-intro, .hero-cta, .hero-avail", {
-        y: 18,
+      gsap.from(".hero-c, .hero-base > *", {
+        y: 16,
         opacity: 0,
         duration: 0.85,
         ease: "expo.out",
-        delay: 0.34,
+        delay: 0.36,
         stagger: 0.07,
-      });
-      gsap.from(".hero-art", {
-        opacity: 0,
-        scale: 0.965,
-        duration: 1.15,
-        ease: "expo.out",
-        delay: 0.18,
       });
 
       /* every section head and record rises once as it arrives */
       const risers = gsap.utils.toArray<HTMLElement>(
-        ".sec-head, .o-row, .prod, .case, .role, .award, .edu, .panel, .contact-grid"
+        ".sec-head, .o-row, .band-copy, .band-plate, .rail-item, .idx tbody tr, .panel, .contact-grid, .about-text, .about-pic, .about-facts"
       );
       risers.forEach((el) => {
         gsap.from(el, {

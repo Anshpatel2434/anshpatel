@@ -1,56 +1,99 @@
 /* ============================================================
-   PALETTE B — FLAT-LIGHTNESS DUOTONE
+   PALETTE C — "RECREATING LIGHT"
    See design/palettes.md.
 
-   The theoretical move: maximise hue distance, minimise LIGHTNESS
-   distance. Every UI palette does the opposite — a dark ground with
-   a bright accent. Here the two accent hues sit ~170 deg apart at
-   nearly identical lightness, so neither reads as "background" and
-   neither reads as "accent". They hold each other in tension.
+   The move: no accent at all. Four low-chroma hues at IDENTICAL
+   lightness and chroma, spaced evenly around the wheel so they sum
+   to neutral — the principle colourist Donald Kaufman calls
+   "recreating light". Because all four match in L and C, none of
+   them dominates. They read as one family of equals.
 
-   A flat pair at mid lightness cannot carry readable text, so the
-   duotone is the GRAPHIC signature (plates, fills, strokes, art)
-   while the page ground and type are a high-contrast pair drawn
-   from the same two hues at extreme lightness.
+   Each kind of content takes one hue, so the four sections of this
+   site are told apart by colour rather than by another heading.
 
    One theme. No light/dark switching.
+
+   ------------------------------------------------------------
+   CONTRAST DISCIPLINE  (Itten + APCA)
+
+   1. CONTRAST OF EXTENSION (Itten). Area is inversely proportional
+      to visual weight: the more chromatic a colour, the LESS of it
+      there should be. So the four hues appear as hairlines, dots,
+      numerals and single words — never as fills. The eye goes to
+      them precisely because there is so little of them.
+
+   2. LIGHT-DARK CONTRAST is the hierarchy. A deliberate three-step
+      ladder, never more:
+         --ink-strong  headings        read first
+         --muted       body            read second
+         --dim         labels, meta    read last
+
+   3. APCA Lc targets, which supersede flat WCAG ratios because they
+      account for size and weight:
+         body copy          Lc 75 min, Lc 90 preferred  -> --muted
+         non-body content   Lc 60 min                   -> --ink
+         large/bold heads   Lc 45 min                   -> any hue at L58
+         absolute floor     Lc 30
+      The four hues at L 58% land around Lc 55: fine for marks and
+      for 36px+ bold, never for body. Their L 38% variants clear
+      Lc 75 and are the only versions allowed to carry sentences.
+
+   4. SIMULTANEOUS CONTRAST. The ground is tinted (not pure white)
+      so the hues sit in it rather than on it, and no neutral is
+      ever truly neutral — which is the point Duru makes about
+      colour being relational.
    ============================================================ */
 
 :root {
   color-scheme: light;
 
-  /* ground + type */
-  --field:       oklch(96% 0.012 75);   /* faintest ochre-tinted paper   */
-  --field-up:    oklch(92% 0.016 75);   /* raised surface                */
-  --field-dn:    oklch(88% 0.020 75);   /* sunk surface                  */
-  --rule:        oklch(80% 0.020 75);   /* hairline                      */
-  --rule-faint:  oklch(87% 0.016 75);
+  /* ---- ground: the perceptual average of the four hues ---- */
+  --field:      oklch(95% 0.006 165);
+  --field-up:   oklch(97.5% 0.005 165);
+  --field-dn:   oklch(91.5% 0.008 165);
+  --rule:       oklch(84% 0.008 165);
+  --rule-faint: oklch(89.5% 0.007 165);
 
-  --ink:         oklch(20% 0.040 265);  /* body copy   ~15:1             */
-  --ink-strong:  oklch(14% 0.045 265);  /* display type                  */
-  --muted:       oklch(44% 0.030 265);  /* secondary   ~5.4:1            */
-  --dim:         oklch(58% 0.025 265);  /* labels, captions              */
+  /* ---- the light-dark ladder ---- */
+  --ink-strong: oklch(16% 0.014 165);  /* headings        ~Lc 105 */
+  --ink:        oklch(21% 0.012 165);  /* strong body     ~Lc 100 */
+  --muted:      oklch(45% 0.010 165);  /* body            ~Lc  78 */
+  --dim:        oklch(58% 0.009 165);  /* labels, meta    ~Lc  55 */
 
-  /* the flat pair — within 1% lightness of each other, by design.
-     MARKS ONLY. never put small text on these. */
-  --plate-a:     oklch(55% 0.085 265);  /* dusty ultramarine             */
-  --plate-b:     oklch(56% 0.090 75);   /* warm ochre                    */
+  /* ---- the four equals: identical L, identical C, 90deg apart ----
+     MARKS ONLY. Hairlines, dots, numerals, single words. */
+  --clay:  oklch(58% 0.05 30);
+  --moss:  oklch(58% 0.05 120);
+  --slate: oklch(58% 0.05 210);
+  --mauve: oklch(58% 0.05 300);
 
-  /* text-safe darkenings of the pair, when a label must be read */
-  --plate-a-txt: oklch(34% 0.090 265);
-  --plate-b-txt: oklch(36% 0.095 75);
+  /* ---- the same four, darkened until they can carry text ---- */
+  --clay-t:  oklch(38% 0.07 30);
+  --moss-t:  oklch(38% 0.07 120);
+  --slate-t: oklch(38% 0.07 210);
+  --mauve-t: oklch(38% 0.07 300);
+
+  /* ---- per-section assignment. each section sets --key/--key-t
+     on itself and everything inside inherits. ---- */
+  --key: var(--slate);
+  --key-t: var(--slate-t);
 
   --sans: "Archivo", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
-  /* rhythm */
   --gutter: 24px;
   --maxw: 1280px;
-  --sec-gap: clamp(76px, 10vw, 136px);
+  --sec-gap: clamp(84px, 11vw, 150px);
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* each section claims one of the four */
+.k-clay  { --key: var(--clay);  --key-t: var(--clay-t); }
+.k-moss  { --key: var(--moss);  --key-t: var(--moss-t); }
+.k-slate { --key: var(--slate); --key-t: var(--slate-t); }
+.k-mauve { --key: var(--mauve); --key-t: var(--mauve-t); }
 
 @media (max-width: 640px) {
   :root { --gutter: 18px; }

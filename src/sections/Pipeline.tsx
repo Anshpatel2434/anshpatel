@@ -78,7 +78,7 @@ export default function Pipeline() {
   const live = stages[at];
 
   return (
-    <section className="section pipeline" id="stack">
+    <section className="section pipeline k-slate" id="stack">
       <div className="wrap">
         <p className="eyebrow">The stack</p>
         <div className="sec-head">

@@ -35,6 +35,24 @@ export const education = {
   graduating: "June 2026",
 };
 
+/* ---------- about ---------- */
+export const about = {
+  lead:
+    "I am a final-year computer science student in Ahmedabad who spends most of his time on the part of software that has to be correct rather than the part that has to be impressive.",
+  body: [
+    "The work I care about is retrieval. Most AI features answer confidently and leave you no way to check them, which is fine in a demo and useless in a product. PrepToDo was built the other way round: a hybrid pipeline where pgvector finds candidates and a knowledge graph decides which of them are actually about the same thing, so the explanation that comes back is grounded in something a person can go and read.",
+    "I work the same way I build. I direct AI coding agents — Claude Code, Cursor — inside structured, verification-driven workflows, with harnesses and loops around them, because an agent that is not checked is just a faster way to ship a bug. Explanation and verification are the same discipline, applied once to the product and once to the process of making it.",
+    "Before the AI work I shipped for other people: React Native features at Glitch Over, a Figma-to-production site at Unlock Discounts. Two hackathons at DAIICT, one of them a top-14 finish out of a hundred teams.",
+  ],
+  facts: [
+    { k: "Based in", v: "Ahmedabad, Gujarat" },
+    { k: "Studying", v: "B.E. Computer Science, LJIET" },
+    { k: "Graduating", v: "June 2026" },
+    { k: "Working on", v: "Retrieval that explains itself" },
+    { k: "Open to", v: "Full-time roles and project work" },
+  ],
+};
+
 /* ---------- what you can hire me for ---------- */
 export type Offer = {
   n: string;
