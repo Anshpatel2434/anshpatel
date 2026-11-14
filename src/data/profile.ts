@@ -37,7 +37,7 @@ export const sections = {
   },
   work: {
     say: "Two I would put my name on.",
-    sub: "Both happen to be live, but that is not the point. These are the two where every decision was mine, end to end, and I can defend all of them. Everything else I have deployed is underneath.",
+    sub: "Both are live, but that is not the point. These are the two where both halves were mine — the screen you look at and the thing holding it up — and I can defend every decision in either.",
   },
   experience: {
     say: "Before that, other people's deadlines.",
@@ -45,7 +45,7 @@ export const sections = {
   },
   cases: {
     say: "And the ones that never shipped.",
-    sub: "Built to work something out rather than to launch. There is no live link on any of these — open one and read the problem and the decision, which is the part that was worth the time.",
+    sub: "Same two halves, built to work something out rather than to launch. There is no live link on any of these — the problem and the decision are what was worth the time.",
   },
   stack: {
     say: "All of it, and where it runs.",
@@ -63,7 +63,7 @@ export const education = {
 /* ---------- about ---------- */
 export const about = {
   lead:
-    "I am a final-year computer science student in Ahmedabad who spends most of his time on the part of software that has to be correct rather than the part that has to be impressive.",
+    "I am a final-year computer science student in Ahmedabad who builds both halves of a product — the screen someone actually uses, and the system underneath it that has to be right.",
   body: [
     "The work I care about is retrieval. Most AI features answer confidently and leave you no way to check them, which is fine in a demo and useless in a product. PrepToDo was built the other way round: a hybrid pipeline where pgvector finds candidates and a knowledge graph decides which of them are actually about the same thing, so the explanation that comes back is grounded in something a person can go and read.",
     "I work the same way I build. I direct AI coding agents — Claude Code, Cursor — inside structured, verification-driven workflows, with harnesses and loops around them, because an agent that is not checked is just a faster way to ship a bug. Explanation and verification are the same discipline, applied once to the product and once to the process of making it.",

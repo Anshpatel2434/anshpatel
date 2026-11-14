@@ -9,11 +9,18 @@ export default function Contact() {
         <span className="spine-node sn-c" data-spine="contact" aria-hidden="true" />
           <p className="label">Next</p>
           <div className="contact-grid">
-            <h2 className="h-lg d-tight contact-ask">
-              Bring me something
-              <br />
-              that has to be right.
-            </h2>
+            <div className="contact-say">
+              {/* closes the loop the hero opens: pretty is the easy half */}
+              <h2 className="h-lg d-tight contact-ask">
+                Bring me
+                <br />
+                both halves.
+              </h2>
+              <p className="contact-gloss">
+                The one that has to look right, and the one that has to be
+                right.
+              </p>
+            </div>
 
             <div className="contact-side">
               <a className="contact-mail" href={`mailto:${identity.email}`}>

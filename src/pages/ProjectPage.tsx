@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { bySlug } from "../data/projects";
 import PageHead from "../components/PageHead";
+import Plate from "../components/Plate";
 
 /* ============================================================
    ONE PROJECT.
@@ -64,14 +65,8 @@ export default function ProjectPage() {
       </header>
 
       {(p.shotWide || p.shot) && (
-        <div className="wrap">
-          <div className="plate proj-plate">
-            <img src={p.shotWide || p.shot} alt={p.name} />
-            <span className="plate-veil" aria-hidden="true" />
-            <span className="plate-note mono" aria-hidden="true">
-              {p.shotNote}
-            </span>
-          </div>
+        <div className="wrap proj-plate">
+          <Plate project={p} wide silent />
         </div>
       )}
 

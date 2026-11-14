@@ -34,6 +34,9 @@ export type Project = {
   /* the occasion, where there was one — a hackathon, a client */
   context?: string;
   year: string;
+  /* sortable, so the catalogue can run newest first and give every
+     project the same footing regardless of whether it launched */
+  when: number;
   shipped: boolean;
   featured?: boolean;
   live?: string;
@@ -46,6 +49,10 @@ export type Project = {
   decision: string;
   build: string[];
   stack: { k: string; items: string[] }[];
+  /* the project's own colour: the seam on its plate, and the ink
+     its name is set in over that plate */
+  key: string;
+  ink: string;
   /* the plate on the work band, and a second one for its own page */
   shot?: string;
   shotNote?: string;
@@ -56,6 +63,9 @@ export const projects: Project[] = [
   /* ---------------------------------------------------------- */
   {
     slug: "preptodo",
+    when: 202602,
+    key: "#1fa87e",
+    ink: "#103e30",
     name: "PrepToDo",
     year: "February 2026",
     shipped: true,
@@ -91,6 +101,9 @@ export const projects: Project[] = [
   /* ---------------------------------------------------------- */
   {
     slug: "uniask",
+    when: 202411,
+    key: "#6c5ce7",
+    ink: "#262056",
     name: "UniAsk",
     year: "November 2024",
     shipped: true,
@@ -124,6 +137,9 @@ export const projects: Project[] = [
   /* ---------------------------------------------------------- */
   {
     slug: "agroquality",
+    when: 202408,
+    key: "#2e8b4f",
+    ink: "#173a24",
     name: "AgroQuality",
     context: "Hackout '24, DAIICT",
     year: "August 2024",
@@ -157,6 +173,9 @@ export const projects: Project[] = [
   /* ================= never shipped ================= */
   {
     slug: "kavach",
+    when: 202606,
+    key: "#c0502f",
+    ink: "#481d13",
     name: "Kavach",
     context: "GST reconciliation for CA practices",
     year: "2026",
@@ -190,6 +209,9 @@ export const projects: Project[] = [
   /* ---------------------------------------------------------- */
   {
     slug: "ouroboros",
+    when: 202604,
+    key: "#9a622b",
+    ink: "#3a2512",
     name: "Ouroboros",
     context: "An agent harness generator",
     year: "2026",
@@ -223,6 +245,9 @@ export const projects: Project[] = [
   /* ---------------------------------------------------------- */
   {
     slug: "studyshare",
+    when: 202409,
+    key: "#2f6fd0",
+    ink: "#162e58",
     name: "StudyShare",
     context: "Tic-Tech-Toe '24 — top 14 of 100+ teams",
     year: "September 2024",
@@ -256,3 +281,5 @@ export const bySlug = (slug: string) => projects.find((p) => p.slug === slug);
 export const featured = projects.filter((p) => p.featured);
 export const alsoShipped = projects.filter((p) => p.shipped && !p.featured);
 export const unshipped = projects.filter((p) => !p.shipped);
+/* the catalogue page: newest first, nothing promoted over anything else */
+export const catalogue = [...projects].sort((a, b) => b.when - a.when);

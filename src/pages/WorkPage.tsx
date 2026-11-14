@@ -1,5 +1,4 @@
-import Work from "../sections/Work";
-import Unshipped from "../sections/Unshipped";
+import Catalogue from "../sections/Catalogue";
 import PageHead from "../components/PageHead";
 
 export default function WorkPage() {
@@ -8,10 +7,9 @@ export default function WorkPage() {
       <PageHead
         eyebrow="Work"
         title="Everything I have built."
-        lead="The two I would defend line by line first, then the rest of what is deployed, then the ones that never shipped. Every name opens the project itself."
+        lead="Newest first, and nothing promoted over anything else — a thing that launched and a thing that did not took the same work to decide. Every name opens the project itself."
       />
-      <Work />
-      <Unshipped />
+      <Catalogue />
     </>
   );
 }

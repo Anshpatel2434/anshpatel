@@ -1,44 +1,17 @@
 import { Link } from "react-router-dom";
 import { sections } from "../data/profile";
-import { featured, alsoShipped } from "../data/projects";
+import { featured } from "../data/projects";
+import Plate from "../components/Plate";
 
 /* ============================================================
-   WORK — everything that is deployed.
+   WORK, ON THE HOME PAGE — the two, and a door.
 
-   LAYOUT LANGUAGE: the two I would put my name on take a full-width
-   band each, alternating which side the plate falls on, with an
-   oversized numeral in the margin. Everything else that is live
-   sits underneath as a record — a line, not a card, because it is
-   evidence rather than an argument.
-
-   The plate holds back: blurred and drained until the pointer is on
-   the band, then it resolves. The point is that a screenshot should
-   have to be asked for, the same way the work does.
+   LAYOUT LANGUAGE: a full-width band each, alternating which side
+   the plate falls on, with an oversized numeral in the margin.
+   Only these two. Everything else I have deployed is behind one
+   link, because a home page that lists everything has argued
+   nothing.
    ============================================================ */
-
-function Plate({
-  shot,
-  note,
-  name,
-}: {
-  shot?: string;
-  note?: string;
-  name: string;
-}) {
-  return (
-    <div className="plate">
-      {shot ? (
-        <img src={shot} alt={`${name}`} loading="lazy" />
-      ) : (
-        <div className="plate-ph" aria-hidden="true" />
-      )}
-      <span className="plate-veil" aria-hidden="true" />
-      <span className="plate-note mono" aria-hidden="true">
-        {shot ? note : `${note} — waiting on you`}
-      </span>
-    </div>
-  );
-}
 
 export default function Work() {
   return (
@@ -54,7 +27,7 @@ export default function Work() {
           <article className={"band" + (i % 2 ? " flip" : "")} key={p.slug}>
             <div className="wrap band-in">
               <div className="band-plate">
-                <Plate shot={p.shot} note={p.shotNote} name={p.name} />
+                <Plate project={p} silent />
               </div>
 
               <div className="band-copy">
@@ -68,7 +41,7 @@ export default function Work() {
                   {p.stack
                     .flatMap((g) => g.items)
                     .slice(0, 6)
-                    .join(" · ")}
+                    .join(" \u00b7 ")}
                 </div>
                 <p className="band-what">{p.blurb}</p>
                 <ul className="band-detail">
@@ -96,27 +69,11 @@ export default function Work() {
         ))}
       </div>
 
-      {alsoShipped.length > 0 && (
-        <div className="wrap">
-          <p className="label also-label">Also deployed</p>
-          <ul className="also">
-            {alsoShipped.map((p) => (
-              <li className="also-row" key={p.slug}>
-                <Link className="also-name" to={`/project/${p.slug}`}>
-                  {p.name}
-                </Link>
-                <span className="also-what">
-                  {p.blurb}
-                  {p.context && (
-                    <span className="also-ctx mono">{p.context}</span>
-                  )}
-                </span>
-                <span className="also-when mono">{p.year}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div className="wrap">
+        <Link className="btn work-all" to="/work">
+          View all work
+        </Link>
+      </div>
     </section>
   );
 }

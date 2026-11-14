@@ -165,3 +165,11 @@ h1, h2, h3, h4 { margin: 0; color: var(--ink-strong); line-height: 0.92; }
     scroll-behavior: auto !important;
   }
 }
+
+/* a heading that exists for a screen reader and an outline, where the
+   page itself is already naming the thing visually */
+.vh {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
