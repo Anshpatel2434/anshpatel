@@ -1,0 +1,57 @@
+/* ============================================================
+   PALETTE B — FLAT-LIGHTNESS DUOTONE
+   See design/palettes.md.
+
+   The theoretical move: maximise hue distance, minimise LIGHTNESS
+   distance. Every UI palette does the opposite — a dark ground with
+   a bright accent. Here the two accent hues sit ~170 deg apart at
+   nearly identical lightness, so neither reads as "background" and
+   neither reads as "accent". They hold each other in tension.
+
+   A flat pair at mid lightness cannot carry readable text, so the
+   duotone is the GRAPHIC signature (plates, fills, strokes, art)
+   while the page ground and type are a high-contrast pair drawn
+   from the same two hues at extreme lightness.
+
+   One theme. No light/dark switching.
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* ground + type */
+  --field:       oklch(96% 0.012 75);   /* faintest ochre-tinted paper   */
+  --field-up:    oklch(92% 0.016 75);   /* raised surface                */
+  --field-dn:    oklch(88% 0.020 75);   /* sunk surface                  */
+  --rule:        oklch(80% 0.020 75);   /* hairline                      */
+  --rule-faint:  oklch(87% 0.016 75);
+
+  --ink:         oklch(20% 0.040 265);  /* body copy   ~15:1             */
+  --ink-strong:  oklch(14% 0.045 265);  /* display type                  */
+  --muted:       oklch(44% 0.030 265);  /* secondary   ~5.4:1            */
+  --dim:         oklch(58% 0.025 265);  /* labels, captions              */
+
+  /* the flat pair — within 1% lightness of each other, by design.
+     MARKS ONLY. never put small text on these. */
+  --plate-a:     oklch(55% 0.085 265);  /* dusty ultramarine             */
+  --plate-b:     oklch(56% 0.090 75);   /* warm ochre                    */
+
+  /* text-safe darkenings of the pair, when a label must be read */
+  --plate-a-txt: oklch(34% 0.090 265);
+  --plate-b-txt: oklch(36% 0.095 75);
+
+  --sans: "Archivo", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* rhythm */
+  --gutter: 24px;
+  --maxw: 1280px;
+  --sec-gap: clamp(76px, 10vw, 136px);
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 640px) {
+  :root { --gutter: 18px; }
+}

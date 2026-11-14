@@ -1,0 +1,111 @@
+import { useEffect } from "react";
+import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+const prefersReduced = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ------------------------------------------------------------
+   Lenis drives the scroll; ScrollTrigger is told about it so the
+   two never disagree about where the page is. Anchor links are
+   routed through lenis.scrollTo so they ease instead of jumping.
+   ------------------------------------------------------------ */
+export function useSmoothScroll() {
+  useEffect(() => {
+    if (prefersReduced()) return;
+
+    const lenis = new Lenis({
+      duration: 1.05,
+      smoothWheel: true,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.6,
+    });
+
+    let raf = 0;
+    const loop = (time: number) => {
+      lenis.raf(time);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+
+    lenis.on("scroll", ScrollTrigger.update);
+
+    const onAnchor = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>(
+        'a[href^="#"]'
+      );
+      if (!a) return;
+      const id = a.getAttribute("href");
+      if (!id || id === "#") return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target as HTMLElement, { offset: -24 });
+    };
+
+    document.addEventListener("click", onAnchor);
+
+    return () => {
+      document.removeEventListener("click", onAnchor);
+      cancelAnimationFrame(raf);
+      lenis.destroy();
+    };
+  }, []);
+}
+
+/* ------------------------------------------------------------
+   Entrances. Everything starts visible and animates FROM a
+   displaced state, so a crawler, a screenshot, or a reader with
+   JS disabled still sees a complete page.
+   ------------------------------------------------------------ */
+export function useReveals() {
+  useEffect(() => {
+    if (prefersReduced()) return;
+
+    const ctx = gsap.context(() => {
+      /* hero: the two headline halves, then everything under them */
+      gsap.from(".hero-thesis span", {
+        yPercent: 104,
+        opacity: 0,
+        duration: 1.05,
+        ease: "expo.out",
+        stagger: 0.09,
+      });
+      gsap.from(".hero-intro, .hero-cta, .hero-avail", {
+        y: 18,
+        opacity: 0,
+        duration: 0.85,
+        ease: "expo.out",
+        delay: 0.34,
+        stagger: 0.07,
+      });
+      gsap.from(".hero-art", {
+        opacity: 0,
+        scale: 0.965,
+        duration: 1.15,
+        ease: "expo.out",
+        delay: 0.18,
+      });
+
+      /* every section head and record rises once as it arrives */
+      const risers = gsap.utils.toArray<HTMLElement>(
+        ".sec-head, .o-row, .prod, .case, .role, .award, .edu, .panel, .contact-grid"
+      );
+      risers.forEach((el) => {
+        gsap.from(el, {
+          y: 26,
+          opacity: 0,
+          duration: 0.8,
+          ease: "expo.out",
+          scrollTrigger: { trigger: el, start: "top 88%" },
+        });
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+}
