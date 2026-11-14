@@ -106,12 +106,6 @@ main, .top { position: relative; z-index: 1; }
 /* ============================================================
    WORK — bands with hard-edged plates
    ============================================================ */
-.work-head {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
-  gap: 18px 56px; align-items: end;
-}
-@media (max-width: 900px) { .work-head { grid-template-columns: 1fr; } }
-
 .bands { margin-top: clamp(40px, 5vw, 76px); }
 .band { padding-block: clamp(40px, 5.4vw, 86px); border-top: 1px solid var(--rule); }
 .band-in {
@@ -123,12 +117,65 @@ main, .top { position: relative; z-index: 1; }
   .band-in { grid-template-columns: 1fr; gap: 22px; }
   .band.flip .band-plate { order: 0; }
 }
-.band-plate {
-  aspect-ratio: 16 / 10; overflow: hidden;
-  border: 1px solid var(--rule); background: var(--field-dn); display: flex;
+.band-plate { position: relative; }
+
+/* A plate holds back until the pointer is on it. Blurred, drained
+   and sunk into the ground so it reads as part of the page rather
+   than a screenshot pasted on top of it; on hover it resolves. */
+.plate {
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden;
+  border: 1px solid var(--rule); background: var(--field-dn);
+  isolation: isolate;
 }
-.band-plate img { width: 100%; height: 100%; object-fit: cover; }
-.band-ph { flex: 1; border: 0; }
+.plate img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: blur(11px) saturate(0.2) contrast(0.95);
+  transform: scale(1.05);
+  opacity: 0.8;
+  transition: filter 620ms var(--ease), opacity 620ms var(--ease),
+    transform 900ms var(--ease);
+}
+.plate-ph {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    -45deg, transparent 0 9px,
+    color-mix(in oklab, var(--ink) 5%, transparent) 9px 10px
+  );
+}
+/* the ground, laid over the image, so the plate sits in the page */
+.plate-veil {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--field-dn) 42%, transparent),
+    color-mix(in oklab, var(--field-dn) 72%, transparent)
+  );
+  transition: opacity 620ms var(--ease);
+}
+.plate-note {
+  position: absolute; left: 12px; bottom: 11px; z-index: 2;
+  font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--key-t);
+  transition: opacity 420ms var(--ease);
+}
+.band:hover .plate img,
+.band:focus-within .plate img,
+.plate:hover img {
+  filter: none; opacity: 1; transform: scale(1);
+}
+.band:hover .plate-veil,
+.band:focus-within .plate-veil,
+.plate:hover .plate-veil { opacity: 0; }
+.band:hover .plate-note,
+.band:focus-within .plate-note,
+.plate:hover .plate-note { opacity: 0; }
+
+/* No pointer to hover with, or no appetite for motion: show it. */
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .plate img { filter: none; opacity: 1; transform: none; transition: none; }
+  .plate-veil { opacity: 0; }
+  .plate-note { opacity: 0; }
+}
 .band-copy { position: relative; }
 .band-n {
   position: absolute; top: -0.5em; right: 0;
@@ -138,9 +185,18 @@ main, .top { position: relative; z-index: 1; }
   pointer-events: none; user-select: none;
 }
 .band-title {
+  margin: 0;
   font-size: clamp(30px, 4.6vw, 68px); font-weight: 900;
   font-variation-settings: "wdth" 64; letter-spacing: -0.022em; color: var(--ink-strong);
 }
+.band-title a {
+  color: inherit; text-decoration: none;
+  background-image: linear-gradient(var(--key), var(--key));
+  background-size: 0% 2px; background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 420ms var(--ease);
+}
+.band-title a:hover, .band-title a:focus-visible { background-size: 100% 2px; }
 .band-stack { margin-top: 10px; }
 .band-what { margin: 16px 0 0; font-size: 15.5px; color: var(--muted); max-width: 52ch; line-height: 1.6; }
 .band-detail { margin: 14px 0 0; padding-left: 16px; font-size: 14px; color: var(--muted); max-width: 52ch; }
@@ -149,40 +205,72 @@ main, .top { position: relative; z-index: 1; }
 .band-foot { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px 26px; margin-top: 24px; }
 
 /* ============================================================
-   CASE STUDIES — inverted ground, dense table
+   ALSO DEPLOYED + THE ONES THAT NEVER SHIPPED
    ============================================================ */
+.also-label { margin-top: clamp(44px, 5vw, 76px); }
+.also { list-style: none; margin: 14px 0 0; padding: 0; }
+.also-row {
+  display: grid; grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr) auto;
+  gap: 6px 28px; align-items: baseline; padding: 18px 0;
+  border-top: 1px solid var(--rule-faint);
+}
+.also-row:last-child { border-bottom: 1px solid var(--rule-faint); }
+@media (max-width: 760px) { .also-row { grid-template-columns: 1fr; } }
+.also-name {
+  font-size: clamp(17px, 2vw, 22px); font-weight: 900;
+  font-variation-settings: "wdth" 70; letter-spacing: -0.015em;
+  color: var(--ink-strong); text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 260ms var(--ease), color 260ms var(--ease);
+}
+.also-name:hover { color: var(--key-t); border-bottom-color: var(--key); }
+.also-what { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 56ch; }
+.also-ctx {
+  display: block; margin-top: 6px; font-size: 9.5px;
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--key-t);
+}
+.idx2-ctx {
+  grid-column: 2; margin-top: 7px; font-size: 9.5px;
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--key-t);
+}
+.also-when { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
 
-.idx { width: 100%; border-collapse: collapse; margin-top: clamp(30px, 4vw, 52px); font-size: 14px; }
-.idx thead th {
-  text-align: left; font-weight: 400;
-  font-family: var(--mono); font-size: 10px;
-  letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--dim); padding: 0 18px 12px 0; border-bottom: 1px solid var(--rule);
+.idx2 { list-style: none; margin: clamp(30px, 4vw, 52px) 0 0; padding: 0; }
+.idx2-row { border-top: 1px solid var(--rule); }
+.idx2-row:last-child { border-bottom: 1px solid var(--rule); }
+.idx2-hit {
+  display: grid; align-items: baseline; text-decoration: none; color: inherit;
+  grid-template-columns: 44px minmax(0, 0.46fr) minmax(0, 1fr) auto;
+  gap: 8px clamp(18px, 2.4vw, 40px);
+  padding: clamp(20px, 2.4vw, 32px) 0;
+  transition: background 420ms var(--ease), padding-left 420ms var(--ease);
 }
-.idx tbody td { padding: 22px 18px 22px 0; border-bottom: 1px solid var(--rule-faint); vertical-align: top; }
-.idx-n { width: 48px; font-family: var(--mono); font-size: 10.5px; color: var(--key-t); padding-top: 25px !important; }
-.idx-name {
-  width: 24%; font-size: clamp(17px, 1.9vw, 24px);
-  font-weight: 900; font-variation-settings: "wdth" 70;
-  letter-spacing: -0.015em; color: var(--ink-strong);
+.idx2-hit:hover, .idx2-hit:focus-visible {
+  background: color-mix(in oklab, var(--key) 6%, transparent);
+  padding-left: 14px;
 }
-.idx-name a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--key); }
-.idx-name a:hover { color: var(--key-t); }
-.idx-what { color: var(--muted); max-width: 50ch; line-height: 1.6; }
-.idx-stack { width: 24%; }
-.idx-dash { color: var(--dim); font-family: var(--mono); }
-.idx-flag {
-  display: block; margin-top: 7px; font-family: var(--mono); font-size: 9.5px;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--key-t);
+.idx2-n { font-size: 10.5px; color: var(--key-t); }
+.idx2-name {
+  font-size: clamp(18px, 2.2vw, 28px); font-weight: 900;
+  font-variation-settings: "wdth" 70; letter-spacing: -0.015em;
+  color: var(--ink-strong);
 }
-.idx-awaiting .idx-name { color: var(--dim); }
+.idx2-hit:hover .idx2-name { color: var(--key-t); }
+.idx2-what { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 54ch; }
+.idx2-stack {
+  grid-column: 3; font-size: 9.5px; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--dim); margin-top: 2px;
+}
+.idx2-go {
+  font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--key-t); opacity: 0;
+  transition: opacity 320ms var(--ease);
+}
+.idx2-hit:hover .idx2-go, .idx2-hit:focus-visible .idx2-go { opacity: 1; }
 @media (max-width: 860px) {
-  .idx, .idx thead, .idx tbody, .idx tr, .idx td { display: block; width: auto; }
-  .idx thead { display: none; }
-  .idx tbody tr { border-bottom: 1px solid var(--rule-faint); padding: 20px 0; }
-  .idx tbody td { border: 0; padding: 0 0 9px 0; }
-  .idx-n { padding-top: 0 !important; }
-  .idx-name, .idx-what, .idx-stack { width: auto; max-width: none; }
+  .idx2-hit { grid-template-columns: 44px minmax(0, 1fr); padding-left: 0 !important; }
+  .idx2-what, .idx2-stack { grid-column: 2; }
+  .idx2-go { grid-column: 2; opacity: 1; }
 }
 
 /* ============================================================
@@ -310,21 +398,51 @@ main, .top { position: relative; z-index: 1; }
 .page-lead { margin: 18px 0 0; max-width: 58ch; }
 .see-all { margin-top: clamp(34px, 4vw, 54px); }
 
-.more-slots {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1px; margin-top: clamp(40px, 5vw, 70px);
-  background: var(--rule); border: 1px solid var(--rule);
+/* ---------- one project, on its own page ---------- */
+.proj-head { padding-bottom: clamp(26px, 3vw, 44px); }
+.proj-acts { display: flex; flex-wrap: wrap; gap: 12px 16px; margin-top: clamp(24px, 3vw, 38px); }
+.proj-plate {
+  margin-top: clamp(10px, 2vw, 26px);
+  aspect-ratio: 21 / 9;
 }
-.slot { padding: 26px 22px; background: var(--field); }
-.slot-kind {
-  display: block; font-family: var(--mono); font-size: 9.5px;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--key-t); margin-bottom: 11px;
+@media (max-width: 700px) { .proj-plate { aspect-ratio: 16 / 10; } }
+.proj-body {
+  display: grid; gap: clamp(30px, 4vw, 54px);
+  padding-block: clamp(44px, 6vw, 84px) 0;
 }
-.slot-name {
-  font-size: 20px; font-weight: 900; font-variation-settings: "wdth" 70;
-  letter-spacing: -0.015em; color: var(--dim);
+/* The label sits in its own rail, the way a spec sheet reads, so the
+   page uses its width instead of running one narrow column down the
+   left with nothing beside it. */
+.proj-part {
+  position: relative;
+  display: grid; gap: 12px clamp(24px, 4vw, 64px);
+  grid-template-columns: minmax(0, 190px) minmax(0, 1fr);
+  align-items: start;
+  padding-top: clamp(20px, 2.4vw, 34px);
+  border-top: 1px solid var(--rule-faint);
 }
-.slot p { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+.proj-part > .label { padding-top: 4px; }
+@media (max-width: 820px) {
+  .proj-part { grid-template-columns: 1fr; }
+  .proj-prose, .proj-list, .proj-stack { grid-column: 1; }
+}
+.proj-prose { margin: 0; grid-column: 2; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.68; color: var(--ink); max-width: 62ch; }
+.proj-list { margin: 0; grid-column: 2; padding-left: 17px; max-width: 62ch; }
+.proj-list li { margin-bottom: 11px; font-size: 15px; line-height: 1.62; color: var(--muted); }
+.proj-list li::marker { color: var(--key); }
+.proj-stack { margin: 0; grid-column: 2; display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.proj-layer {
+  display: grid; grid-template-columns: 130px minmax(0, 1fr);
+  gap: 10px 22px; padding: 16px 18px; background: var(--field);
+}
+@media (max-width: 680px) { .proj-layer { grid-template-columns: 1fr; } }
+.proj-layer dt { font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--key-t); padding-top: 3px; }
+.proj-layer dd { margin: 0; display: flex; flex-wrap: wrap; gap: 7px 9px; }
+.proj-layer dd span {
+  font-family: var(--mono); font-size: 11.5px; color: var(--ink);
+  border: 1px solid var(--rule); padding: 3px 8px;
+}
+.proj-flag { font-size: 10.5px; letter-spacing: 0.1em; color: var(--dim); font-style: italic; }
 
 /* ============================================================
    CONTACT + FOOTER
@@ -518,7 +636,7 @@ main, .top { position: relative; z-index: 1; }
    owned by `.sec-sub + *`, which is declared after this reset so it
    wins. Order matters here — both selectors have the same weight. */
 .stickers,
-.roles, .bands, .idx, .pipe-grid, .about-in { margin-top: 0; }
+.roles, .bands, .idx2, .pipe-grid, .about-in { margin-top: 0; }
 
 .sec-sub + * { margin-top: clamp(38px, 4.6vw, 68px) !important; }
 
@@ -648,7 +766,7 @@ main, .top { position: relative; z-index: 1; }
    owned by `.sec-sub + *`, which is declared after this reset so it
    wins. Order matters here — both selectors have the same weight. */
 .stickers,
-.roles, .bands, .idx, .pipe-grid, .about-in { margin-top: 0; }
+.roles, .bands, .idx2, .pipe-grid, .about-in { margin-top: 0; }
 
 .sec-sub + * { margin-top: clamp(38px, 4.6vw, 68px) !important; }
 

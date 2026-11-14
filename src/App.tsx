@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import { useEffect } from "react";
 import CrawlerField from "./components/CrawlerField";
 import PaletteSwitch from "./components/PaletteSwitch";
@@ -7,7 +13,7 @@ import Contact from "./sections/Contact";
 import Home from "./pages/Home";
 import AboutPage from "./pages/AboutPage";
 import WorkPage from "./pages/WorkPage";
-import CaseStudiesPage from "./pages/CaseStudiesPage";
+import ProjectPage from "./pages/ProjectPage";
 import { useSmoothScroll, useReveals } from "./lib/motion";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -42,7 +48,8 @@ function Shell() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/work" element={<WorkPage />} />
-          <Route path="/case-studies" element={<CaseStudiesPage />} />
+          <Route path="/project/:slug" element={<ProjectPage />} />
+          <Route path="/case-studies" element={<Navigate to="/work" replace />} />
           <Route path="*" element={<Home />} />
         </Routes>
         <Contact />

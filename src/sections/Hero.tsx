@@ -15,7 +15,7 @@ const NODES = [
   { href: "#offer", label: "what I can do", x: 16, y: 18 },
   { href: "#work", label: "work", x: 68, y: 8 },
   { href: "#experience", label: "experience", x: 86, y: 44 },
-  { href: "#cases", label: "case studies", x: 58, y: 74 },
+  { href: "#unshipped", label: "the unshipped", x: 58, y: 74 },
   { href: "#stack", label: "the stack", x: 10, y: 62 },
 ];
 

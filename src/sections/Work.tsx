@@ -1,77 +1,94 @@
 import { Link } from "react-router-dom";
-import { products, moreWork, sections } from "../data/profile";
+import { sections } from "../data/profile";
+import { featured, alsoShipped } from "../data/projects";
 
 /* ============================================================
-   WORK — alternating full-width bands.
+   WORK — everything that is deployed.
 
-   LAYOUT LANGUAGE: each product takes the whole width and
-   alternates which side the plate falls on, with an oversized
-   numeral set in the margin. Nothing is in a grid of equal cards,
-   because these are not equal to anything else on the page — they
-   are the two things you can actually go and open.
+   LAYOUT LANGUAGE: the two I would put my name on take a full-width
+   band each, alternating which side the plate falls on, with an
+   oversized numeral in the margin. Everything else that is live
+   sits underneath as a record — a line, not a card, because it is
+   evidence rather than an argument.
+
+   The plate holds back: blurred and drained until the pointer is on
+   the band, then it resolves. The point is that a screenshot should
+   have to be asked for, the same way the work does.
    ============================================================ */
 
-export default function Work({ full = false }: { full?: boolean }) {
+function Plate({
+  shot,
+  note,
+  name,
+}: {
+  shot?: string;
+  note?: string;
+  name: string;
+}) {
+  return (
+    <div className="plate">
+      {shot ? (
+        <img src={shot} alt={`${name}`} loading="lazy" />
+      ) : (
+        <div className="plate-ph" aria-hidden="true" />
+      )}
+      <span className="plate-veil" aria-hidden="true" />
+      <span className="plate-note mono" aria-hidden="true">
+        {shot ? note : `${note} — waiting on you`}
+      </span>
+    </div>
+  );
+}
+
+export default function Work() {
   return (
     <section className="section work" id="work">
       <div className="wrap">
         <span className="spine-node sn-r" data-spine="work" aria-hidden="true" />
         <h2 className="h-lg d-tight sec-say">{sections.work.say}</h2>
         <p className="sec-sub">{sections.work.sub}</p>
-        </div>
+      </div>
 
       <div className="bands">
-        {products.map((p, i) => (
-          <article className={"band" + (i % 2 ? " flip" : "")} key={p.name}>
+        {featured.map((p, i) => (
+          <article className={"band" + (i % 2 ? " flip" : "")} key={p.slug}>
             <div className="wrap band-in">
               <div className="band-plate">
-                {p.shot ? (
-                  <img src={p.shot} alt={`${p.name} screenshot`} />
-                ) : (
-                  <div className="placeholder band-ph">
-                    <span>
-                      waiting on you — screenshot
-                      <br />
-                      {p.shotNote}
-                    </span>
-                  </div>
-                )}
+                <Plate shot={p.shot} note={p.shotNote} name={p.name} />
               </div>
 
               <div className="band-copy">
                 <span className="band-n d-tight" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <div className="band-title">{p.name}</div>
-                <div className="band-stack note">{p.stack}</div>
-                <p className="band-what">{p.what}</p>
+                <h3 className="band-title">
+                  <Link to={`/project/${p.slug}`}>{p.name}</Link>
+                </h3>
+                <div className="band-stack note">
+                  {p.stack
+                    .flatMap((g) => g.items)
+                    .slice(0, 6)
+                    .join(" · ")}
+                </div>
+                <p className="band-what">{p.blurb}</p>
                 <ul className="band-detail">
-                  {p.detail.map((d) => (
+                  {p.build.slice(0, 3).map((d) => (
                     <li key={d}>{d}</li>
                   ))}
                 </ul>
                 <div className="band-foot">
+                  <Link className="act" to={`/project/${p.slug}`}>
+                    Read how it was built
+                  </Link>
                   <a
-                    className="act"
-                    href={p.href}
+                    className="act-quiet"
+                    href={p.live}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Open {p.label}
+                    Open {p.liveLabel}
                   </a>
-                  {p.repo ? (
-                    <a
-                      className="act-quiet"
-                      href={p.repo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Source on GitHub
-                    </a>
-                  ) : (
-                    <span className="act-quiet waiting">{p.repoNote}</span>
-                  )}
-                  <span className="note band-when">{p.when}</span>
+                  <span className="note band-when">{p.year}</span>
                 </div>
               </div>
             </div>
@@ -79,23 +96,27 @@ export default function Work({ full = false }: { full?: boolean }) {
         ))}
       </div>
 
-      <div className="wrap">
-        {full ? (
-          <div className="more-slots">
-            {moreWork.map((m) => (
-              <article className="slot" key={m.name}>
-                <span className="slot-kind">{m.kind}</span>
-                <div className="slot-name">{m.name}</div>
-                <p>{m.what}</p>
-              </article>
+      {alsoShipped.length > 0 && (
+        <div className="wrap">
+          <p className="label also-label">Also deployed</p>
+          <ul className="also">
+            {alsoShipped.map((p) => (
+              <li className="also-row" key={p.slug}>
+                <Link className="also-name" to={`/project/${p.slug}`}>
+                  {p.name}
+                </Link>
+                <span className="also-what">
+                  {p.blurb}
+                  {p.context && (
+                    <span className="also-ctx mono">{p.context}</span>
+                  )}
+                </span>
+                <span className="also-when mono">{p.year}</span>
+              </li>
             ))}
-          </div>
-        ) : (
-          <Link className="act see-all" to="/work">
-            <span>See all the work</span>
-          </Link>
-        )}
-      </div>
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

@@ -18,7 +18,6 @@ const ITEMS: Item[] = [
   { to: "/about", label: "About" },
   { to: "/work", label: "Work" },
   { to: "/", label: "Experience", hash: "#experience" },
-  { to: "/case-studies", label: "Cases" },
   { to: "/", label: "Stack", hash: "#stack" },
 ];
 

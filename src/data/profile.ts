@@ -1,5 +1,3 @@
-import PrepToDoShot from "../assets/shots/preptodo-analytics.jpg";
-
 /* ============================================================
    Everything the site knows about Ansh Patel.
    Source of truth: Resume.pdf (latest). Nothing here is invented.
@@ -39,7 +37,7 @@ export const sections = {
   },
   work: {
     say: "Two I would put my name on.",
-    sub: "Both happen to be live, but that is not the point. These are the two where every decision was mine, end to end, and I can defend all of them.",
+    sub: "Both happen to be live, but that is not the point. These are the two where every decision was mine, end to end, and I can defend all of them. Everything else I have deployed is underneath.",
   },
   experience: {
     say: "Before that, other people's deadlines.",
@@ -47,7 +45,7 @@ export const sections = {
   },
   cases: {
     say: "And the ones that never shipped.",
-    sub: "Case studies. Projects built to work something out rather than to launch — there is no live link, but the problem and the decision behind it are the part worth reading.",
+    sub: "Built to work something out rather than to launch. There is no live link on any of these — open one and read the problem and the decision, which is the part that was worth the time.",
   },
   stack: {
     say: "All of it, and where it runs.",
@@ -223,133 +221,8 @@ export const stages: Stage[] = [
   },
 ];
 
-/* ---------- live products ---------- */
-export type Product = {
-  name: string;
-  when: string;
-  href: string;
-  label: string;
-  repo: string | null;
-  repoNote?: string;
-  stack: string;
-  what: string;
-  detail: string[];
-  shot: string | null;
-  shotNote: string;
-};
-
-export const products: Product[] = [
-  {
-    name: "PrepToDo",
-    when: "February 2026",
-    href: "https://preptodo.in",
-    label: "preptodo.in",
-    repo: null,
-    repoNote: "repo link — send me the URL",
-    stack: "React.js · TypeScript · TailwindCSS · Supabase · pgvector · Drizzle ORM",
-    what: "An AI-powered CAT VARC platform built on a hybrid Retrieval-Augmented Generation pipeline — pgvector similarity search combined with a knowledge graph — that explains its reasoning instead of handing back an answer key.",
-    detail: [
-      "Cognitive analysis rather than a score: skill proficiency across argument structure, tone and intent, trap avoidance, inference accuracy and evidence evaluation \u2014 so a weak area is named, not guessed at.",
-      "Genre performance, speed against accuracy, daily RC drills, spaced vocabulary revision, streaks and leaderboards.",
-      "Supabase and pgvector underneath, with the RAG workflow doing the explaining.",
-    ],
-    shot: PrepToDoShot,
-    shotNote: "PrepToDo — analytics dashboard, 16:10",
-  },
-  {
-    name: "UniAsk",
-    when: "November 2024",
-    href: "https://uni-ask.app",
-    label: "uni-ask.app",
-    repo: "https://github.com/Anshpatel2434/UniAsk",
-    stack: "React.js · TailwindCSS · Django · Django Channels · WebSockets",
-    what: "A real-time academic Q&A platform enabling live messaging and instant notifications over WebSockets.",
-    detail: [
-      "JWT authentication with email-OTP verification, real-time chatrooms, and doubts answered by peers rather than a help desk.",
-      "Asynchronous backend on Django Channels; the frontend reconciles live updates optimistically.",
-      "Built for LJ University students, who sign in with their enrolment number.",
-    ],
-    shot: null,
-    shotNote: "UniAsk — live thread, 16:10",
-  },
-];
-
-/* slots on the /work page for projects beyond the two live ones.
-   replace these with real entries whenever you have them. */
-export const moreWork: { name: string; kind: string; what: string }[] = [
-  {
-    name: "Work slot 01",
-    kind: "Waiting on you",
-    what: "Another shipped project — client work, a freelance build, anything with a link or a repo. Give me the name, the stack and what it had to do.",
-  },
-  {
-    name: "Work slot 02",
-    kind: "Waiting on you",
-    what: "Design work goes here too. A site you designed, an identity, an interface — screenshots and a sentence on the brief is enough to start.",
-  },
-];
-
-/* ---------- case studies : built, never hosted ----------
-   Placeholders. Replace `needsInput` entries with the real ones —
-   add as many as you like, the grid takes any number. */
-export type CaseStudy = {
-  name: string;
-  kind: string;
-  what: string;
-  stack: string[];
-  repo: string | null;
-  needsInput?: boolean;
-};
-
-export const caseStudies: CaseStudy[] = [
-  {
-    name: "Kavach \u2014 GST Reconciler",
-    kind: "Tool \u00b7 2026",
-    what: "Can a CA firm reconcile GSTR-2B against a purchase register without the data ever leaving the machine? A browser-based matching engine that takes the 2B JSON and the register CSV and returns a categorised mismatch report \u2014 with a 25-test edge-case suite behind the matching, encrypted multi-device sync for anyone who wants it, and a free tier that stays entirely in IndexedDB.",
-    stack: [
-      "Next.js",
-      "TypeScript",
-      "Neon Postgres",
-      "Drizzle",
-      "better-auth",
-      "Passkeys",
-      "AES-256-GCM",
-      "IndexedDB",
-    ],
-    repo: "https://github.com/Anshpatel2434/gst",
-  },
-  {
-    name: "Ouroboros",
-    kind: "Agent harness \u00b7 2026",
-    what: "What stops a coding agent drifting? Ouroboros interviews you until the project is unambiguous, then generates the harness the agent works inside \u2014 constitution, one-commit backlog, verification suite, scope fences, runner. The decision it is built around: an ambiguity lint blocks generation on open questions and unverifiable acceptance criteria, and there is deliberately no \u201cgenerate anyway\u201d button, because that button is the entire failure mode.",
-    stack: [
-      "Python",
-      "FastAPI",
-      "LangChain",
-      "Next.js",
-      "Structured output",
-      "Groq",
-      "Claude",
-    ],
-    repo: "https://github.com/Anshpatel2434/Ouroboros",
-  },
-  {
-    name: "StudyShare",
-    kind: "Hackathon \u00b7 Top 14 of 100+ \u00b7 2024",
-    what: "An e-library built in 48 hours at Tic-Tech-Toe \u201924. WebSocket chat, a contribution heatmap, a leaderboard, and a recommendation engine using Random Forest Regression with NLP over the catalogue \u2014 the piece that took it from a file-sharing site to something that learns what a reader wants next.",
-    stack: ["React", "Django", "WebSockets", "scikit-learn", "Python"],
-    repo: "https://github.com/Anshpatel2434/Tic-Tech-Toe-24",
-  },
-  {
-    name: "Hackout \u201924",
-    kind: "Hackathon \u00b7 deployed \u00b7 2024",
-    what: "Built and deployed inside the deadline at Hackout \u201924, DAIICT. Waiting on a line from you about what it solved \u2014 the repo has the build and the deployment but no write-up.",
-    stack: ["TypeScript"],
-    repo: "https://github.com/Anshpatel2434/Hackout24",
-    needsInput: true,
-  },
-];
-
+/* Projects live in ./projects.ts — work and the unshipped are one
+   list there, separated only by whether the thing is deployed. */
 /* ---------- corporate exposure ---------- */
 export type Role = {
   company: string;
