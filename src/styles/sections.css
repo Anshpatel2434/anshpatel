@@ -393,58 +393,6 @@ main, .top { position: relative; z-index: 1; }
 .pal-btn.on { background: var(--key); color: var(--field); }
 
 /* ============================================================
-   HERO — catchphrase, one line, and the constellation
-
-   The constellation is the navigation AND the first move of the
-   crawler's walk: the canvas draws an edge from the crawler's
-   origin to each node. Present without being crowded — about
-   fifteen elements on the screen.
-   ============================================================ */
-.hero { padding-block: clamp(100px, 15vh, 180px) clamp(50px, 8vh, 96px); }
-.hero-in {
-  max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter);
-  display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
-  gap: clamp(32px, 5vw, 72px); align-items: center;
-  min-height: 62vh;
-}
-@media (max-width: 960px) { .hero-in { grid-template-columns: 1fr; gap: 44px; } }
-
-.hero-type { display: flex; flex-direction: column; }
-.hero-type .ht {
-  display: block; overflow: hidden;
-  font-size: clamp(46px, 9.4vw, 142px);
-  line-height: 0.86; font-weight: 300;
-  font-variation-settings: "wdth" 116; letter-spacing: -0.038em;
-  color: var(--ink-strong);
-}
-.hero-type .ht-b { font-weight: 900; font-variation-settings: "wdth" 62; letter-spacing: -0.024em; }
-.hero-note {
-  margin: clamp(22px, 3vw, 34px) 0 0; max-width: 46ch;
-  font-size: clamp(14px, 1.4vw, 16.5px); line-height: 1.66; color: var(--muted);
-}
-
-/* the constellation */
-.cons { position: relative; aspect-ratio: 1 / 0.82; min-height: 300px; }
-@media (max-width: 960px) { .cons { min-height: 320px; } }
-.cons-origin {
-  position: absolute; left: 46%; top: 42%;
-  width: 2px; height: 2px;
-}
-.cons-node {
-  position: absolute;
-  display: inline-flex; align-items: center; gap: 9px;
-  transform: translate(-50%, -50%);
-  font-family: var(--mono); font-size: 11px;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--muted); text-decoration: none;
-  white-space: nowrap; padding: 6px 2px;
-  transition: color 0.3s var(--ease);
-}
-.cons-node span { width: 7px; height: 7px; border: 1px solid var(--key); border-radius: 50%; flex: none; }
-.cons-node:hover { color: var(--ink-strong); }
-.cons-node:hover span { background: var(--key); }
-
-/* ============================================================
    WHAT I CAN DO — tilted labels, no rows, no numbers, no arrows
    ============================================================ */
 .stickers {
@@ -475,45 +423,6 @@ main, .top { position: relative; z-index: 1; }
   max-width: 62ch;
 }
 .sticker-say { margin: 0 0 14px; font-size: clamp(16px, 1.8vw, 21px); color: var(--ink); line-height: 1.5; }
-
-/* ============================================================
-   EXPERIENCE — full-width records, no rail, no dots
-   ============================================================ */
-.roles { margin-top: clamp(34px, 4.5vw, 62px); }
-.role { padding-block: clamp(30px, 4vw, 54px); border-top: 1px solid var(--rule); }
-.role-name {
-  font-size: clamp(25px, 3.1vw, 44px); line-height: 1;
-  font-weight: 900; font-variation-settings: "wdth" 70;
-  letter-spacing: -0.022em; color: var(--ink-strong);
-}
-.role-cols {
-  display: grid; grid-template-columns: minmax(130px, 0.6fr) minmax(0, 1.5fr) minmax(130px, 0.7fr);
-  gap: clamp(18px, 3vw, 46px); margin-top: clamp(20px, 2.6vw, 34px);
-}
-@media (max-width: 900px) { .role-cols { grid-template-columns: 1fr; gap: 22px; } }
-.role-k {
-  display: block; font-family: var(--mono); font-size: 9.5px;
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
-  margin-bottom: 7px;
-}
-.role-col p { margin: 0 0 16px; font-size: 14px; color: var(--ink); }
-.role-col p:last-child { margin-bottom: 0; }
-.role-col.wide ul { margin: 0; padding-left: 16px; }
-.role-col.wide li { font-size: 14.5px; color: var(--muted); line-height: 1.6; margin-bottom: 9px; }
-.role-col.wide li::marker { color: var(--key); }
-
-.aside-row {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: clamp(20px, 3vw, 42px); margin-top: clamp(34px, 4.5vw, 62px);
-  padding-top: clamp(24px, 3vw, 38px); border-top: 1px solid var(--rule);
-}
-.aside-name {
-  margin: 8px 0 0; font-size: 19px; font-weight: 900;
-  font-variation-settings: "wdth" 72; letter-spacing: -0.018em; color: var(--ink-strong);
-}
-.aside-res { margin: 6px 0 0 !important; font-family: var(--mono); font-size: 10.5px; color: var(--key-t); }
-.aside p { margin: 10px 0 0; font-size: 13.5px; color: var(--muted); line-height: 1.6; }
-.aside .act-quiet { margin-top: 10px; }
 
 /* ============================================================
    SECTION HEADINGS — one continuous argument, lit on arrival
@@ -584,22 +493,10 @@ main, .top { position: relative; z-index: 1; }
 .btn.ghost:hover { border-color: var(--ink-strong); background: var(--field-dn); color: var(--ink-strong); }
 
 /* ---------- hero: CTAs and a way to reach him ---------- */
-.hero-cta {
-  display: flex; flex-wrap: wrap; gap: 12px;
-  margin-top: clamp(26px, 3.2vw, 40px);
-}
-.hero-reach {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 26px;
-  margin-top: clamp(22px, 2.6vw, 32px);
-  padding-top: clamp(16px, 2vw, 24px);
-  border-top: 1px solid var(--rule);
-  font-family: var(--mono); font-size: 12px;
-}
-.hero-reach a {
-  color: var(--ink-strong); text-decoration: none;
-  border-bottom: 1px solid var(--key); padding-bottom: 2px;
-}
-.hero-reach a:hover { color: var(--key-t); }
+
+
+
+
 .hero-open {
   display: inline-flex; align-items: center; gap: 8px;
   color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; font-size: 10.5px;
@@ -624,3 +521,112 @@ main, .top { position: relative; z-index: 1; }
 .roles, .bands, .idx, .pipe-grid, .about-in { margin-top: 0; }
 
 .sec-sub + * { margin-top: clamp(38px, 4.6vw, 68px) !important; }
+
+/* ============================================================
+   HERO — headline left, copy right, the crawler standing below
+
+   No CTA buttons. The creature's five feet are planted on the
+   navigation, so the way in is the thing you are looking at.
+   ============================================================ */
+.hero {
+  max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter);
+  padding-block: clamp(104px, 15vh, 180px) clamp(40px, 6vh, 72px);
+  display: flex; flex-direction: column;
+}
+
+.hero-top {
+  display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(220px, 0.82fr);
+  gap: clamp(26px, 4vw, 70px); align-items: start;
+}
+@media (max-width: 900px) { .hero-top { grid-template-columns: 1fr; gap: 28px; } }
+
+.hero-type { display: flex; flex-direction: column; }
+.hero-type .ht {
+  display: block; overflow: hidden;
+  font-size: clamp(46px, 9.6vw, 148px); line-height: 0.85;
+  font-weight: 300; font-variation-settings: "wdth" 116;
+  letter-spacing: -0.04em; color: var(--ink-strong);
+}
+.hero-type .ht-b { font-weight: 900; font-variation-settings: "wdth" 60; letter-spacing: -0.026em; }
+
+/* the reading copy: opposite weight to the headline, pushed right */
+.hero-side { padding-top: clamp(6px, 1.4vw, 18px); }
+.hero-note {
+  margin: 0; max-width: 40ch;
+  font-family: var(--mono); font-size: 11.5px; line-height: 1.86; color: var(--muted);
+}
+.hero-mail {
+  display: inline-block; margin-top: 18px;
+  font-family: var(--mono); font-size: 12.5px;
+  color: var(--ink-strong); text-decoration: none;
+  border-bottom: 1px solid var(--key); padding-bottom: 3px;
+}
+.hero-mail:hover { color: var(--key-t); }
+.hero-open {
+  display: flex; align-items: center; gap: 8px; margin: 16px 0 0;
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
+}
+.hero-open i { width: 6px; height: 6px; border-radius: 50%; background: var(--key); flex: none; }
+
+/* ---- where it stands ---- */
+.feet {
+  position: relative; flex: 1 1 auto;
+  min-height: clamp(260px, 42vh, 420px);
+  margin-top: clamp(30px, 5vh, 62px);
+}
+.feet-origin { position: absolute; left: 46%; top: 46%; width: 2px; height: 2px; }
+.foot {
+  position: absolute; transform: translate(-50%, -50%);
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 11.5px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; white-space: nowrap;
+  padding: 7px 3px; transition: color 0.3s var(--ease);
+}
+.foot span { width: 8px; height: 8px; border: 1px solid var(--key); border-radius: 50%; flex: none; }
+.foot:hover { color: var(--ink-strong); }
+.foot:hover span { background: var(--key); }
+.feet-hint {
+  position: absolute; right: 0; bottom: 0;
+  font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
+}
+
+/* ============================================================
+   EXPERIENCE — two compact columns, the quietest block here
+   ============================================================ */
+.jobs {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(26px, 3.4vw, 54px);
+  padding-top: clamp(22px, 2.6vw, 34px); border-top: 1px solid var(--rule);
+}
+.job-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; }
+.job-co {
+  font-size: clamp(20px, 1.9vw, 27px); line-height: 1.1;
+  font-weight: 900; font-variation-settings: "wdth" 74;
+  letter-spacing: -0.018em; color: var(--ink-strong);
+}
+.job-when { font-family: var(--mono); font-size: 10.5px; color: var(--dim); white-space: nowrap; }
+.job-role { margin: 7px 0 0; font-size: 13.5px; color: var(--key-t); }
+.job-points { margin: 15px 0 0; padding-left: 15px; }
+.job-points li { font-size: 13.5px; line-height: 1.62; color: var(--muted); margin-bottom: 8px; }
+.job-points li::marker { color: var(--key); }
+.job-run { margin-top: 14px; font-size: 10.5px; }
+
+.extras {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: clamp(18px, 2.6vw, 40px);
+  margin-top: clamp(30px, 3.6vw, 52px);
+  padding-top: clamp(20px, 2.4vw, 30px); border-top: 1px solid var(--rule);
+}
+.extra-k {
+  display: block; font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
+}
+.extra-name {
+  margin: 8px 0 0; font-size: 16px; font-weight: 900;
+  font-variation-settings: "wdth" 76; letter-spacing: -0.014em; color: var(--ink-strong);
+}
+.extra-res { margin: 6px 0 0; font-family: var(--mono); font-size: 10.5px; color: var(--key-t); }
+.extra .act-quiet { margin-top: 10px; }

@@ -3,11 +3,11 @@ import { roles, awards, education, sections } from "../data/profile";
 /* ============================================================
    EXPERIENCE
 
-   No timeline rail, no dots, no vertical line — that shape is on
-   every portfolio. Each role is a full-width record with the
-   company name set at display scale, and everything else in
-   columns beneath it, so the row actually uses the width instead
-   of leaving half the screen empty.
+   Deliberately the quietest block on the page. Two roles sit side
+   by side in two columns, compact, so the section reads as
+   supporting evidence rather than the main event — it is not
+   worth the full width, and giving it the full width was telling
+   the reader it mattered more than the work above it.
    ============================================================ */
 
 export default function Experience() {
@@ -18,51 +18,40 @@ export default function Experience() {
         <h2 className="h-lg d-tight sec-say">{sections.experience.say}</h2>
         <p className="sec-sub">{sections.experience.sub}</p>
 
-        <div className="roles">
+        <div className="jobs">
           {roles.map((r) => (
-            <article className="role" key={r.company}>
-              <div className="role-name">{r.company}</div>
-              <div className="role-cols">
-                <div className="role-col">
-                  <span className="role-k">Role</span>
-                  <p>{r.title}</p>
-                  <span className="role-k">When</span>
-                  <p>
-                    {r.from} &ndash; {r.to}
-                  </p>
-                  <span className="role-k">Where</span>
-                  <p>{r.place}</p>
-                </div>
-                <div className="role-col wide">
-                  <span className="role-k">What it involved</span>
-                  <ul>
-                    {r.bullets.map((b) => (
-                      <li key={b}>{b}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="role-col">
-                  <span className="role-k">Built with</span>
-                  <div className="run">
-                    {r.stack.map((s) => (
-                      <span key={s}>{s}</span>
-                    ))}
-                  </div>
-                </div>
+            <article className="job" key={r.company}>
+              <header className="job-top">
+                <h3 className="job-co">{r.company}</h3>
+                <span className="job-when">
+                  {r.from} &ndash; {r.to}
+                </span>
+              </header>
+              <p className="job-role">
+                {r.title} &middot; {r.place}
+              </p>
+              <ul className="job-points">
+                {r.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+              <div className="run job-run">
+                {r.stack.map((s) => (
+                  <span key={s}>{s}</span>
+                ))}
               </div>
             </article>
           ))}
         </div>
 
-        <div className="aside-row">
+        <div className="extras">
           {awards.map((a) => (
-            <div className="aside" key={a.name}>
-              <span className="role-k">
+            <div className="extra" key={a.name}>
+              <span className="extra-k">
                 {a.host} &middot; {a.year}
               </span>
-              <h3 className="aside-name">{a.name}</h3>
-              <p className="aside-res">{a.result}</p>
-              <p>{a.detail}</p>
+              <h4 className="extra-name">{a.name}</h4>
+              <p className="extra-res">{a.result}</p>
               {a.repo && (
                 <a className="act-quiet" href={a.repo} target="_blank" rel="noopener noreferrer">
                   Repository
@@ -70,11 +59,12 @@ export default function Experience() {
               )}
             </div>
           ))}
-          <div className="aside">
-            <span className="role-k">{education.place}</span>
-            <h3 className="aside-name">{education.school}</h3>
-            <p className="aside-res">Graduating {education.graduating}</p>
-            <p>{education.degree}</p>
+          <div className="extra">
+            <span className="extra-k">{education.place}</span>
+            <h4 className="extra-name">{education.school}</h4>
+            <p className="extra-res">
+              {education.degree} &middot; {education.graduating}
+            </p>
           </div>
         </div>
       </div>
