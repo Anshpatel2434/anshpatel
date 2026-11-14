@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { caseStudies } from "../data/profile";
 
 /* ============================================================
@@ -9,9 +10,10 @@ import { caseStudies } from "../data/profile";
    the problem and the choice. A record, not a card.
    ============================================================ */
 
-export default function CaseStudies() {
+export default function CaseStudies({ full = false }: { full?: boolean }) {
+  const shown = full ? caseStudies : caseStudies.slice(0, 2);
   return (
-    <section className="section cases k-clay" id="cases">
+    <section className="section cases " id="cases">
       <div className="wrap">
         <p className="eyebrow">Case studies</p>
         <div className="sec-head">
@@ -40,7 +42,7 @@ export default function CaseStudies() {
             </tr>
           </thead>
           <tbody>
-            {caseStudies.map((c, i) => (
+            {shown.map((c, i) => (
               <tr
                 key={c.name}
                 className={c.needsInput ? "idx-awaiting" : undefined}
@@ -76,6 +78,13 @@ export default function CaseStudies() {
             ))}
           </tbody>
         </table>
+
+        {!full && (
+          <Link className="see-all" to="/case-studies">
+            <span>See all case studies</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+        )}
       </div>
     </section>
   );

@@ -13,7 +13,7 @@ import { roles, awards, education } from "../data/profile";
 
 export default function Experience() {
   return (
-    <section className="section exp k-moss" id="experience">
+    <section className="section exp " id="experience">
       <div className="wrap">
         <p className="eyebrow">Corporate exposure</p>
         <div className="sec-head">

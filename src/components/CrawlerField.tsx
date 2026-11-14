@@ -4,32 +4,20 @@ import { useEffect, useRef } from "react";
    CRAWLER FIELD
 
    A fixed canvas behind the whole site. Points sit in a 2-D
-   projection of vector space, and a crawler WALKS it — hopping
-   node to node along the nearest edges, pausing, choosing again.
-   It never follows the cursor and it never stops; because the
-   canvas is fixed, it stays inside the viewport no matter how far
-   the page is scrolled.
+   projection of vector space and a crawler travels across it.
 
-   What it is actually doing is a graph traversal: at each node it
-   scans its nearest neighbours, then takes one of those edges.
-   That is retrieval, walking.
+   Why the previous version danced in one place: it only ever
+   hopped to its NEAREST neighbours, and the nearest neighbours of
+   a dense cloud are all within a few pixels. It had nowhere to go.
 
-   Contrast of extension (Itten) governs how it is drawn. The
-   crawler and its live edges are the only chromatic things on the
-   screen, and they are tiny; everything else is near-neutral at
-   low alpha. The eye goes to the crawler precisely because there
-   is so little of it.
+   This one picks its next target from a RING — far enough to be a
+   journey, near enough to still look like a graph edge — refuses
+   to revisit anything in its recent memory, and moves on a smooth
+   constant-speed curve rather than a fixed per-frame step, so it
+   reads the same on any refresh rate.
    ============================================================ */
 
-/* the four equals from tokens.css, as rgb triplets so canvas never
-   has to parse oklch() in a 2-D context */
-const HUES = [
-  "166, 106, 86", /* clay  */
-  "106, 142, 86", /* moss  */
-  "86, 132, 166", /* slate */
-  "150, 100, 160", /* mauve */
-];
-const NEUTRAL = "40, 48, 46";
+const NEUTRAL = "40, 46, 56";
 
 type Pt = {
   bx: number;
@@ -46,11 +34,11 @@ export default function CrawlerField() {
   const ref = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const context = el.getContext("2d");
+    const node = ref.current;
+    if (!node) return;
+    const context = node.getContext("2d");
     if (!context) return;
-    const cv: HTMLCanvasElement = el;
+    const cv: HTMLCanvasElement = node;
     const ctx: CanvasRenderingContext2D = context;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -60,46 +48,59 @@ export default function CrawlerField() {
     let pts: Pt[] = [];
     let raf = 0;
     let scrollShift = 0;
+    let last = 0;
+
+    /* the accent, read from the live palette so the crawler always
+       matches whichever palette is active */
+    let accent = "199, 108, 58";
+    function readAccent() {
+      const probe = document.createElement("span");
+      probe.style.cssText = "position:absolute;visibility:hidden;color:var(--key)";
+      document.body.appendChild(probe);
+      const rgb = getComputedStyle(probe).color.match(/\d+(\.\d+)?/g);
+      probe.remove();
+      if (rgb && rgb.length >= 3) {
+        accent = `${Math.round(+rgb[0])}, ${Math.round(+rgb[1])}, ${Math.round(+rgb[2])}`;
+      }
+    }
 
     const small = () => window.innerWidth < 760;
 
-    /* the walker */
     const walk = {
-      from: 0,
-      to: 1,
-      prev: -1,
+      ax: 0, ay: 0, /* from */
+      bx: 0, by: 0, /* to   */
       t: 1,
-      cross: 1700, /* ms to cross one edge */
-      rest: 520, /* ms paused at a node   */
-      restUntil: 0,
-      x: 0,
-      y: 0,
-      hue: 2,
+      dur: 2600, /* ms for one journey, scaled by distance */
+      x: 0, y: 0,
+      target: 0,
+      memory: [] as number[],
       trail: [] as { x: number; y: number }[],
     };
 
     function seed() {
-      const density = small() ? 15000 : 9500;
-      const n = Math.max(34, Math.min(140, Math.round((W * H) / density)));
+      /* denser than before — the field looked sparse and the walker
+         had too few places to go */
+      const density = small() ? 9000 : 5200;
+      const n = Math.max(70, Math.min(260, Math.round((W * H) / density)));
       pts = [];
       for (let i = 0; i < n; i++) {
         const x = Math.random() * W;
         const y = Math.random() * H;
         pts.push({
-          bx: x,
-          by: y,
-          x,
-          y,
+          bx: x, by: y, x, y,
           ph: Math.random() * Math.PI * 2,
-          sp: 0.00014 + Math.random() * 0.0003,
-          am: 5 + Math.random() * 13,
-          r: 0.9 + Math.random() * 1.3,
+          sp: 0.00012 + Math.random() * 0.00024,
+          am: 4 + Math.random() * 11,
+          r: 0.8 + Math.random() * 1.2,
         });
       }
-      walk.from = 0;
-      walk.to = Math.min(1, pts.length - 1);
-      walk.prev = -1;
+      walk.target = Math.floor(Math.random() * pts.length);
+      walk.ax = walk.x = pts[walk.target].x;
+      walk.ay = walk.y = pts[walk.target].y;
+      walk.bx = walk.ax;
+      walk.by = walk.ay;
       walk.t = 1;
+      walk.memory = [walk.target];
       walk.trail = [];
     }
 
@@ -115,88 +116,92 @@ export default function CrawlerField() {
       seed();
     }
 
-    /* the k nearest points to an index */
-    function neighbours(i: number, k: number) {
-      const a = pts[i];
-      if (!a) return [];
-      const scored: { i: number; d: number }[] = [];
-      for (let j = 0; j < pts.length; j++) {
-        if (j === i) continue;
-        const dx = pts[j].x - a.x;
-        const dy = pts[j].y - a.y;
-        scored.push({ i: j, d: dx * dx + dy * dy });
+    /* pick the next stop from a ring around the crawler: far enough
+       that getting there is a journey, close enough that it still
+       reads as following an edge */
+    function chooseTarget() {
+      const minD = Math.min(W, H) * 0.16;
+      const maxD = Math.min(W, H) * 0.52;
+      const candidates: number[] = [];
+      for (let i = 0; i < pts.length; i++) {
+        if (walk.memory.includes(i)) continue;
+        const dx = pts[i].x - walk.x;
+        const dy = pts[i].y - walk.y;
+        const d = Math.hypot(dx, dy);
+        if (d > minD && d < maxD) candidates.push(i);
       }
-      scored.sort((p, q) => p.d - q.d);
-      return scored.slice(0, k);
-    }
+      const pool = candidates.length
+        ? candidates
+        : pts.map((_, i) => i).filter((i) => i !== walk.target);
+      if (!pool.length) return;
 
-    function chooseNext(now: number) {
-      const near = neighbours(walk.to, small() ? 4 : 6);
-      if (!near.length) return;
-      /* prefer not to walk straight back where it came from */
-      const options = near.filter((n) => n.i !== walk.prev);
-      const pool = options.length ? options : near;
-      const pick = pool[Math.floor(Math.random() * pool.length)];
-      walk.prev = walk.from;
-      walk.from = walk.to;
-      walk.to = pick.i;
+      walk.target = pool[Math.floor(Math.random() * pool.length)];
+      walk.memory.push(walk.target);
+      if (walk.memory.length > 9) walk.memory.shift();
+
+      walk.ax = walk.x;
+      walk.ay = walk.y;
+      walk.bx = pts[walk.target].x;
+      walk.by = pts[walk.target].y;
       walk.t = 0;
-      walk.restUntil = now + walk.rest;
-      walk.hue = (walk.hue + 1) % HUES.length;
+      /* constant speed: a longer edge simply takes longer */
+      const dist = Math.hypot(walk.bx - walk.ax, walk.by - walk.ay);
+      walk.dur = Math.max(1500, Math.min(4800, dist * 9));
     }
 
     function frame(now: number) {
       raf = requestAnimationFrame(frame);
-      if (!W || document.hidden || !pts.length) return;
+      if (!W || !pts.length || document.hidden) return;
+
+      const dt = last ? Math.min(now - last, 48) : 16.7;
+      last = now;
+
       ctx.clearRect(0, 0, W, H);
 
-      /* the cloud breathes, and drifts a little with the page so the
-         field reads as one space rather than a sticker on the screen */
-      const sy = scrollShift * 0.03;
-      const span = H + 140;
+      const sy = scrollShift * 0.028;
+      const span = H + 160;
       for (const p of pts) {
         p.x = p.bx + Math.cos(now * p.sp + p.ph) * p.am;
         p.y =
-          (((p.by + Math.sin(now * p.sp * 1.3 + p.ph) * p.am * 0.7 - sy) % span) +
+          (((p.by + Math.sin(now * p.sp * 1.25 + p.ph) * p.am * 0.65 - sy) % span) +
             span) %
           span;
       }
 
-      /* advance the walk */
-      if (walk.t >= 1) {
-        if (now >= walk.restUntil) chooseNext(now);
-      } else {
-        walk.t = Math.min(1, walk.t + 16.6 / walk.cross);
-      }
+      /* advance along the current edge, in real time */
+      if (walk.t >= 1) chooseTarget();
+      else walk.t = Math.min(1, walk.t + dt / walk.dur);
 
-      const a = pts[walk.from] ?? pts[0];
-      const b = pts[walk.to] ?? pts[0];
-      /* ease in and out of each hop, so it steps rather than glides */
-      const e =
-        walk.t < 0.5 ? 4 * walk.t ** 3 : 1 - Math.pow(-2 * walk.t + 2, 3) / 2;
-      walk.x = a.x + (b.x - a.x) * e;
-      walk.y = a.y + (b.y - a.y) * e;
+      /* gentle ease, no hard stop at either end — this is what makes
+         it glide rather than twitch */
+      const e = walk.t * walk.t * (3 - 2 * walk.t);
+      walk.x = walk.ax + (walk.bx - walk.ax) * e;
+      walk.y = walk.ay + (walk.by - walk.ay) * e;
 
       walk.trail.push({ x: walk.x, y: walk.y });
-      if (walk.trail.length > 26) walk.trail.shift();
+      if (walk.trail.length > 54) walk.trail.shift();
 
-      const hue = HUES[walk.hue];
-
-      /* the path already walked, fading behind it */
+      /* the path already travelled */
+      ctx.lineWidth = 1;
       for (let i = 1; i < walk.trail.length; i++) {
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(${hue}, ${(i / walk.trail.length) * 0.3})`;
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = `rgba(${accent}, ${(i / walk.trail.length) * 0.26})`;
         ctx.moveTo(walk.trail[i - 1].x, walk.trail[i - 1].y);
         ctx.lineTo(walk.trail[i].x, walk.trail[i].y);
         ctx.stroke();
       }
 
-      /* the scan: edges to whatever it can currently see */
-      const seen = neighbours(walk.to, small() ? 4 : 6);
+      /* what it can see from where it is */
+      const K = small() ? 4 : 7;
+      const scored = pts.map((p, i) => ({
+        i,
+        d: (p.x - walk.x) ** 2 + (p.y - walk.y) ** 2,
+      }));
+      scored.sort((a, b) => a.d - b.d);
+      const seen = scored.slice(0, K);
       const lit = new Set(seen.map((s) => s.i));
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = `rgba(${hue}, 0.22)`;
+
+      ctx.strokeStyle = `rgba(${accent}, 0.18)`;
       ctx.beginPath();
       for (const s of seen) {
         ctx.moveTo(walk.x, walk.y);
@@ -204,29 +209,29 @@ export default function CrawlerField() {
       }
       ctx.stroke();
 
-      /* the cloud — near-neutral, deliberately quiet */
+      /* the cloud, deliberately quiet */
       for (let i = 0; i < pts.length; i++) {
         const p = pts[i];
         ctx.beginPath();
         if (lit.has(i)) {
-          ctx.fillStyle = `rgba(${hue}, 0.7)`;
-          ctx.arc(p.x, p.y, p.r + 1, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${accent}, 0.62)`;
+          ctx.arc(p.x, p.y, p.r + 0.9, 0, Math.PI * 2);
         } else {
-          ctx.fillStyle = `rgba(${NEUTRAL}, 0.17)`;
+          ctx.fillStyle = `rgba(${NEUTRAL}, 0.15)`;
           ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         }
         ctx.fill();
       }
 
-      /* the crawler itself: the smallest thing on screen, and the
-         only fully saturated one — contrast of extension, exactly */
+      /* the crawler — the smallest thing on screen and the only
+         fully saturated one. Contrast of extension, in one dot. */
       ctx.beginPath();
-      ctx.fillStyle = `rgba(${hue}, 0.12)`;
-      ctx.arc(walk.x, walk.y, 15, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${accent}, 0.11)`;
+      ctx.arc(walk.x, walk.y, 14, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.fillStyle = `rgba(${hue}, 1)`;
-      ctx.arc(walk.x, walk.y, 3.2, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${accent}, 0.95)`;
+      ctx.arc(walk.x, walk.y, 3, 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -234,7 +239,9 @@ export default function CrawlerField() {
       scrollShift = window.scrollY;
     };
 
+    readAccent();
     resize();
+
     if (reduced) {
       frame(0);
       cancelAnimationFrame(raf);
@@ -244,9 +251,16 @@ export default function CrawlerField() {
     raf = requestAnimationFrame(frame);
     window.addEventListener("resize", resize, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
+    /* the dev palette switcher stamps data-palette on <html> */
+    const mo = new MutationObserver(readAccent);
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-palette"],
+    });
 
     return () => {
       cancelAnimationFrame(raf);
+      mo.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScroll);
     };

@@ -1,99 +1,140 @@
 /* ============================================================
-   PALETTE C — "RECREATING LIGHT"
-   See design/palettes.md.
+   COLOUR SYSTEM — three palettes, switchable for trial and error
 
-   The move: no accent at all. Four low-chroma hues at IDENTICAL
-   lightness and chroma, spaced evenly around the wheel so they sum
-   to neutral — the principle colourist Donald Kaufman calls
-   "recreating light". Because all four match in L and C, none of
-   them dominates. They read as one family of equals.
-
-   Each kind of content takes one hue, so the four sections of this
-   site are told apart by colour rather than by another heading.
-
-   One theme. No light/dark switching.
+   Set data-palette on <html> to "ember" | "indigo" | "signal".
+   In dev a small switcher in the corner flips between them.
 
    ------------------------------------------------------------
-   CONTRAST DISCIPLINE  (Itten + APCA)
+   THE RULES THESE FOLLOW
 
-   1. CONTRAST OF EXTENSION (Itten). Area is inversely proportional
-      to visual weight: the more chromatic a colour, the LESS of it
-      there should be. So the four hues appear as hairlines, dots,
-      numerals and single words — never as fills. The eye goes to
-      them precisely because there is so little of them.
+   1. NAMED HARMONY. Each palette is built on one recognised
+      scheme rather than hand-picked colours:
+        ember   split-complementary  (teal base, warm accents either
+                                      side of its complement)
+        indigo  analogous            (indigo -> blue-violet -> violet)
+        signal  monochromatic + one  (graphite ramp, single accent)
 
-   2. LIGHT-DARK CONTRAST is the hierarchy. A deliberate three-step
-      ladder, never more:
-         --ink-strong  headings        read first
-         --muted       body            read second
-         --dim         labels, meta    read last
+   2. 60-30-10. Dominant / secondary / accent by AREA:
+        60%  --field          the ground, near-neutral
+        30%  --ink / --muted  type and structure, the base hue
+        10%  --key            the accent — CTAs and nothing else
+      The accent is reserved for what must be noticed first. If it
+      is used for decoration it stops working as a signal.
 
-   3. APCA Lc targets, which supersede flat WCAG ratios because they
-      account for size and weight:
-         body copy          Lc 75 min, Lc 90 preferred  -> --muted
-         non-body content   Lc 60 min                   -> --ink
-         large/bold heads   Lc 45 min                   -> any hue at L58
-         absolute floor     Lc 30
-      The four hues at L 58% land around Lc 55: fine for marks and
-      for 36px+ bold, never for body. Their L 38% variants clear
-      Lc 75 and are the only versions allowed to carry sentences.
+   3. THREE COLOURS, NOT MORE. Limiting the palette is what makes
+      hierarchy legible; every extra hue competes for attention.
 
-   4. SIMULTANEOUS CONTRAST. The ground is tinted (not pure white)
-      so the hues sit in it rather than on it, and no neutral is
-      ever truly neutral — which is the point Duru makes about
-      colour being relational.
+   4. LIGHT-DARK LADDER for hierarchy, exactly three steps:
+        --ink-strong  headings      read first
+        --muted       body          read second
+        --dim         labels, meta  read last
+
+   5. APCA Lc targets (WCAG 3 model — accounts for size and weight,
+      which flat ratios do not):
+        body copy        Lc 75 min, Lc 90 preferred
+        non-body text    Lc 60 min
+        large/bold head  Lc 45 min
+      --key is a mid-lightness accent and never carries body text;
+      --key-t is its darkened twin for when it must be read.
+
+   6. THE GROUND IS NEVER PURE WHITE. A tinted paper lets the
+      accent sit in the page rather than on it, and avoids the
+      glare of #fff behind long text.
    ============================================================ */
 
 :root {
   color-scheme: light;
-
-  /* ---- ground: the perceptual average of the four hues ---- */
-  --field:      oklch(95% 0.006 165);
-  --field-up:   oklch(97.5% 0.005 165);
-  --field-dn:   oklch(91.5% 0.008 165);
-  --rule:       oklch(84% 0.008 165);
-  --rule-faint: oklch(89.5% 0.007 165);
-
-  /* ---- the light-dark ladder ---- */
-  --ink-strong: oklch(16% 0.014 165);  /* headings        ~Lc 105 */
-  --ink:        oklch(21% 0.012 165);  /* strong body     ~Lc 100 */
-  --muted:      oklch(45% 0.010 165);  /* body            ~Lc  78 */
-  --dim:        oklch(58% 0.009 165);  /* labels, meta    ~Lc  55 */
-
-  /* ---- the four equals: identical L, identical C, 90deg apart ----
-     MARKS ONLY. Hairlines, dots, numerals, single words. */
-  --clay:  oklch(58% 0.05 30);
-  --moss:  oklch(58% 0.05 120);
-  --slate: oklch(58% 0.05 210);
-  --mauve: oklch(58% 0.05 300);
-
-  /* ---- the same four, darkened until they can carry text ---- */
-  --clay-t:  oklch(38% 0.07 30);
-  --moss-t:  oklch(38% 0.07 120);
-  --slate-t: oklch(38% 0.07 210);
-  --mauve-t: oklch(38% 0.07 300);
-
-  /* ---- per-section assignment. each section sets --key/--key-t
-     on itself and everything inside inherits. ---- */
-  --key: var(--slate);
-  --key-t: var(--slate-t);
 
   --sans: "Archivo", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --gutter: 24px;
   --maxw: 1280px;
-  --sec-gap: clamp(84px, 11vw, 150px);
+  --sec-gap: clamp(78px, 10vw, 132px);
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* each section claims one of the four */
-.k-clay  { --key: var(--clay);  --key-t: var(--clay-t); }
-.k-moss  { --key: var(--moss);  --key-t: var(--moss-t); }
-.k-slate { --key: var(--slate); --key-t: var(--slate-t); }
-.k-mauve { --key: var(--mauve); --key-t: var(--mauve-t); }
+/* ============================================================
+   A — EMBER
+   Split-complementary. A deep teal base with its complement's
+   two neighbours (ember and amber) as the accent pair.
+   Teal reads as calm and dependable; the ember is the only warm
+   thing on the page, so the eye goes straight to it.
+   Mood: warm, confident, human.
+   ============================================================ */
+:root,
+[data-palette="ember"] {
+  --field:      oklch(97% 0.008 75);
+  --field-up:   oklch(99% 0.005 75);
+  --field-dn:   oklch(93.5% 0.012 75);
+  --rule:       oklch(85% 0.014 75);
+  --rule-faint: oklch(91% 0.010 75);
+
+  --ink-strong: oklch(19% 0.045 205);   /* deep teal-black  Lc ~101 */
+  --ink:        oklch(25% 0.042 205);   /*                  Lc ~ 94 */
+  --muted:      oklch(46% 0.032 205);   /* body             Lc ~ 76 */
+  --dim:        oklch(60% 0.024 205);   /* labels           Lc ~ 55 */
+
+  --key:        oklch(60% 0.170 48);    /* ember — marks, fills, CTA */
+  --key-t:      oklch(42% 0.140 44);    /* readable ember   Lc ~ 76 */
+  --key-soft:   oklch(88% 0.055 60);    /* washes only              */
+
+  --sec:        oklch(42% 0.070 200);   /* teal, the structural hue */
+}
+
+/* ============================================================
+   B — INDIGO
+   Analogous. Indigo, blue-violet and violet sit next to each
+   other on the wheel, so the whole page agrees with itself; the
+   contrast comes from lightness rather than hue.
+   Blue reads as trust, violet as craft. Mood: calm, premium.
+   ============================================================ */
+[data-palette="indigo"] {
+  --field:      oklch(97% 0.006 275);
+  --field-up:   oklch(99% 0.004 275);
+  --field-dn:   oklch(93.5% 0.012 275);
+  --rule:       oklch(85% 0.016 275);
+  --rule-faint: oklch(91% 0.011 275);
+
+  --ink-strong: oklch(18% 0.060 275);
+  --ink:        oklch(24% 0.058 275);
+  --muted:      oklch(45% 0.045 275);
+  --dim:        oklch(59% 0.034 275);
+
+  --key:        oklch(55% 0.175 305);   /* violet */
+  --key-t:      oklch(40% 0.150 300);
+  --key-soft:   oklch(89% 0.045 300);
+
+  --sec:        oklch(40% 0.095 282);
+}
+
+/* ============================================================
+   C — SIGNAL
+   Monochromatic plus a single accent. A graphite ramp carries
+   everything; one saturated red-orange is the only colour on the
+   page, so it cannot be misread as anything but "act here".
+   Mood: editorial, sharp, serious.
+   ============================================================ */
+[data-palette="signal"] {
+  --field:      oklch(96.5% 0.003 100);
+  --field-up:   oklch(99% 0.002 100);
+  --field-dn:   oklch(92.5% 0.004 100);
+  --rule:       oklch(84% 0.005 100);
+  --rule-faint: oklch(90.5% 0.004 100);
+
+  --ink-strong: oklch(16% 0.008 265);
+  --ink:        oklch(22% 0.008 265);
+  --muted:      oklch(44% 0.007 265);
+  --dim:        oklch(58% 0.006 265);
+
+  --key:        oklch(56% 0.195 32);    /* signal red-orange */
+  --key-t:      oklch(42% 0.165 30);
+  --key-soft:   oklch(90% 0.045 40);
+
+  --sec:        oklch(38% 0.010 265);
+}
 
 @media (max-width: 640px) {
   :root { --gutter: 18px; }

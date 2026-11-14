@@ -1,4 +1,5 @@
-import { products } from "../data/profile";
+import { Link } from "react-router-dom";
+import { products, moreWork } from "../data/profile";
 
 /* ============================================================
    WORK — alternating full-width bands.
@@ -10,9 +11,9 @@ import { products } from "../data/profile";
    are the two things you can actually go and open.
    ============================================================ */
 
-export default function Work() {
+export default function Work({ full = false }: { full?: boolean }) {
   return (
-    <section className="section work k-slate" id="work">
+    <section className="section work " id="work">
       <div className="wrap">
         <p className="eyebrow">Live products</p>
         <div className="sec-head">
@@ -69,6 +70,25 @@ export default function Work() {
             </div>
           </article>
         ))}
+      </div>
+
+      <div className="wrap">
+        {full ? (
+          <div className="more-slots">
+            {moreWork.map((m) => (
+              <article className="slot" key={m.name}>
+                <span className="slot-kind mono">{m.kind}</span>
+                <h3 className="h-sm d-tight">{m.name}</h3>
+                <p>{m.what}</p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <Link className="see-all" to="/work">
+            <span>See all the work</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+        )}
       </div>
     </section>
   );

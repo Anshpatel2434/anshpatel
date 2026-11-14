@@ -15,7 +15,7 @@ import MyPic from "../assets/images/mypic.jpg";
 
 export default function About() {
   return (
-    <section className="about k-mauve" id="about">
+    <section className="about " id="about">
       <div className="about-band">
         <div className="wrap about-in">
           <figure className="about-pic">

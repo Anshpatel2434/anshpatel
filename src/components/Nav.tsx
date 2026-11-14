@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { identity, links } from "../data/profile";
 
+/* every one of these is its own page, not an anchor on the home page */
 const ITEMS = [
-  { href: "#about", label: "About" },
-  { href: "#offer", label: "Offer" },
-  { href: "#work", label: "Work" },
-  { href: "#experience", label: "Experience" },
-  { href: "#cases", label: "Case studies" },
-  { href: "#stack", label: "Stack" },
+  { to: "/about", label: "About" },
+  { to: "/work", label: "Work" },
+  { to: "/experience", label: "Experience" },
+  { to: "/case-studies", label: "Case studies" },
+  { to: "/stack", label: "Stack" },
 ];
 
 function useLocalTime(timezone: string) {
@@ -34,15 +35,19 @@ export default function Nav() {
   return (
     <header className="nav">
       <div className="wrap nav-in">
-        <a href="#top" className="nav-mark d-tight">
+        <Link to="/" className="nav-mark d-tight">
           ANSH PATEL
-        </a>
+        </Link>
 
         <nav className="nav-items" aria-label="Sections">
           {ITEMS.map((i) => (
-            <a key={i.href} href={i.href}>
+            <NavLink
+              key={i.to}
+              to={i.to}
+              className={({ isActive }) => (isActive ? "on" : undefined)}
+            >
               {i.label}
-            </a>
+            </NavLink>
           ))}
           <a href={links.resume} target="_blank" rel="noopener noreferrer">
             Résumé
@@ -72,9 +77,9 @@ export default function Nav() {
           so it becomes a full-width drawer instead of shrinking */}
       <div className={"nav-sheet" + (open ? " open" : "")}>
         {ITEMS.map((i) => (
-          <a key={i.href} href={i.href} onClick={() => setOpen(false)}>
+          <Link key={i.to} to={i.to} onClick={() => setOpen(false)}>
             {i.label}
-          </a>
+          </Link>
         ))}
         <a href={links.resume} target="_blank" rel="noopener noreferrer">
           Résumé

@@ -62,7 +62,7 @@ export function useSmoothScroll() {
    displaced state, so a crawler, a screenshot, or a reader with
    JS disabled still sees a complete page.
    ------------------------------------------------------------ */
-export function useReveals() {
+export function useReveals(key?: string) {
   useEffect(() => {
     if (prefersReduced()) return;
 
@@ -99,6 +99,11 @@ export function useReveals() {
       });
     });
 
-    return () => ctx.revert();
-  }, []);
+    /* let layout settle after a route swap before measuring */
+    const id = window.setTimeout(() => ScrollTrigger.refresh(), 120);
+    return () => {
+      window.clearTimeout(id);
+      ctx.revert();
+    };
+  }, [key]);
 }

@@ -240,6 +240,21 @@ export const products: Product[] = [
   },
 ];
 
+/* slots on the /work page for projects beyond the two live ones.
+   replace these with real entries whenever you have them. */
+export const moreWork: { name: string; kind: string; what: string }[] = [
+  {
+    name: "Work slot 01",
+    kind: "Waiting on you",
+    what: "Another shipped project — client work, a freelance build, anything with a link or a repo. Give me the name, the stack and what it had to do.",
+  },
+  {
+    name: "Work slot 02",
+    kind: "Waiting on you",
+    what: "Design work goes here too. A site you designed, an identity, an interface — screenshots and a sentence on the brief is enough to start.",
+  },
+];
+
 /* ---------- case studies : built, never hosted ----------
    Placeholders. Replace `needsInput` entries with the real ones —
    add as many as you like, the grid takes any number. */
