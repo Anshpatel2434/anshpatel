@@ -6,6 +6,7 @@ export default function Contact() {
     <>
       <section className="section contact" id="contact">
         <div className="wrap">
+        <span className="spine-node sn-c" data-spine="contact" aria-hidden="true" />
           <p className="label">Next</p>
           <div className="contact-grid">
             <h2 className="h-lg d-tight contact-ask">

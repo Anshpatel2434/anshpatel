@@ -13,10 +13,13 @@ import { caseStudies } from "../data/profile";
 export default function CaseStudies({ full = false }: { full?: boolean }) {
   const shown = full ? caseStudies : caseStudies.slice(0, 2);
   return (
-    <section className="cases invert bleed" id="cases">
+    <section className="section cases" id="cases">
       <div className="wrap">
-        <div className="o-head">
-          <h2 className="h-lg d-tight">Built,<br />never hosted.</h2>
+        <span className="spine-node sn-r" data-spine="cases" aria-hidden="true" />
+        <h2 className="h-lg d-tight sec-say">
+          And the ones that never shipped.
+        </h2>
+        <div className="work-head">
           <p className="note">
             Things made to answer a question rather than to ship. No live link
             — the problem and the decision are the whole point.
@@ -50,7 +53,7 @@ export default function CaseStudies({ full = false }: { full?: boolean }) {
                 <td className="idx-name">
                   {c.repo ? (
                     <a href={c.repo} target="_blank" rel="noopener noreferrer">
-                      {c.name} ↗
+                      {c.name}
                     </a>
                   ) : (
                     c.name
@@ -79,7 +82,6 @@ export default function CaseStudies({ full = false }: { full?: boolean }) {
         {!full && (
           <Link className="act see-all" to="/case-studies">
             <span>See all case studies</span>
-            <span aria-hidden="true">→</span>
           </Link>
         )}
       </div>

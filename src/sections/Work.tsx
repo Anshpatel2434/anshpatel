@@ -15,8 +15,11 @@ export default function Work({ full = false }: { full?: boolean }) {
   return (
     <section className="section work" id="work">
       <div className="wrap">
+        <span className="spine-node sn-r" data-spine="work" aria-hidden="true" />
+        <h2 className="h-lg d-tight sec-say">
+          Two of them are live right now.
+        </h2>
         <div className="work-head">
-          <h2 className="h-lg d-tight">Work you<br />can open.</h2>
           <p className="note">
             Both are deployed and running right now. Click through and use
             them — a working link is worth more than a screenshot of one.
@@ -61,7 +64,7 @@ export default function Work({ full = false }: { full?: boolean }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Open {p.label} <span aria-hidden="true">↗</span>
+                    Open {p.label}
                   </a>
                   <span className="note band-when">{p.when}</span>
                 </div>
@@ -85,7 +88,6 @@ export default function Work({ full = false }: { full?: boolean }) {
         ) : (
           <Link className="act see-all" to="/work">
             <span>See all the work</span>
-            <span aria-hidden="true">→</span>
           </Link>
         )}
       </div>

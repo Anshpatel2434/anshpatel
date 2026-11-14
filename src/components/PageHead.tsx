@@ -16,7 +16,7 @@ export default function PageHead({
     <header className="page-head">
       <div className="wrap">
         <Link className="act-quiet" to="/">
-          <span aria-hidden="true">←</span> Home
+          Home
         </Link>
         <p className="label">{eyebrow}</p>
         <h1 className="h-lg d-tight page-title">{title}</h1>

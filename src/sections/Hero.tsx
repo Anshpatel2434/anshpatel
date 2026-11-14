@@ -1,42 +1,54 @@
 import { identity } from "../data/profile";
 
 /* ============================================================
-   HERO — the type is the layout.
+   HERO
 
-   No right-hand panel, no status card, no product list. Four
-   lines of ultra-condensed black at viewport scale, bleeding past
-   the container on the left, with the crawler running behind
-   them. Everything else is 11px monospace pinned to the bottom
-   corners: the scale contrast is roughly 12:1, which is the ratio
-   Daksh uses and the thing our page was most obviously missing.
+   The catchphrase, one line of intro, and a constellation that is
+   both the navigation and the first move of the crawler's walk.
+   The canvas draws an edge from the crawler's origin to each node,
+   so the page opens by showing you where it is about to take you.
+
+   Nothing from further down the page is repeated here.
    ============================================================ */
+
+const NODES = [
+  { href: "#offer", label: "what I can do", x: 16, y: 18 },
+  { href: "#work", label: "work", x: 68, y: 8 },
+  { href: "#experience", label: "experience", x: 86, y: 44 },
+  { href: "#cases", label: "case studies", x: 58, y: 74 },
+  { href: "#stack", label: "the stack", x: 10, y: 62 },
+];
 
 export default function Hero() {
   return (
     <section className="hero" id="top">
-      <h1 className="hero-type">
-        <span className="ht">I build</span>
-        <span className="ht ht-b">software</span>
-        <span className="ht">that shows</span>
-        <span className="ht ht-b">its work.</span>
-      </h1>
+      <div className="hero-in">
+        <div className="hero-say">
+          <h1 className="hero-type">
+            <span className="ht">Pretty is</span>
+            <span className="ht ht-b">the easy half.</span>
+          </h1>
+          <p className="hero-note">
+            I&rsquo;m {identity.name}. I design the thing, then I architect what
+            holds it up &mdash; interfaces, retrieval systems, real-time
+            backends, mobile. {identity.city}, {identity.availability.toLowerCase()}.
+          </p>
+        </div>
 
-      <div className="hero-foot">
-        <p className="hero-note mono">
-          Full-stack and AI engineer in {identity.city}. Retrieval that
-          explains its answers, real-time backends, cross-platform mobile —
-          and AI coding agents run inside verification-driven workflows, so
-          what ships has been checked rather than assumed.
-        </p>
-
-        <div className="hero-meta mono">
-          <span className="hero-open">
-            <i aria-hidden="true" />
-            {identity.availability}
-          </span>
-          <a href="#offer" className="hero-scroll">
-            Scroll <span aria-hidden="true">↓</span>
-          </a>
+        {/* the crawler's origin, and its first five neighbours */}
+        <div className="cons" aria-label="Sections">
+          <span className="cons-origin" data-spine="hero" aria-hidden="true" />
+          {NODES.map((n) => (
+            <a
+              key={n.href}
+              className="cons-node"
+              href={n.href}
+              style={{ left: `${n.x}%`, top: `${n.y}%` }}
+            >
+              <span data-cons aria-hidden="true" />
+              {n.label}
+            </a>
+          ))}
         </div>
       </div>
     </section>

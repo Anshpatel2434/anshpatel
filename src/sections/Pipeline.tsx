@@ -80,12 +80,11 @@ export default function Pipeline() {
   return (
     <section className="section pipeline" id="stack">
       <div className="wrap">
+        <span className="spine-node sn-l" data-spine="stack" aria-hidden="true" />
+        <h2 className="h-lg d-tight sec-say">
+          All of it, and where it runs.
+        </h2>
         <div className="work-head">
-          <h2 className="h-lg d-tight">
-            Everything I work with,
-            <br />
-            and where it runs.
-          </h2>
           <p className="note">
             One question, followed from the screen it is typed on to the answer
             that comes back. At every stage, the tools I actually reach for —

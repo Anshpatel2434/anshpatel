@@ -1,98 +1,83 @@
 import { roles, awards, education } from "../data/profile";
 
 /* ============================================================
-   EXPERIENCE — a dated rail.
+   EXPERIENCE
 
-   LAYOUT LANGUAGE: a single continuous vertical line down the left
-   with dates pinned to it, and the record set to its right. Time is
-   the organising axis here, which it is nowhere else on the page.
-
-   Deliberately no screenshots and no plates: this is credential,
-   not showcase, and the absence of imagery is the signal.
+   No timeline rail, no dots, no vertical line — that shape is on
+   every portfolio. Each role is a full-width record with the
+   company name set at display scale, and everything else in
+   columns beneath it, so the row actually uses the width instead
+   of leaving half the screen empty.
    ============================================================ */
 
 export default function Experience() {
   return (
     <section className="section exp" id="experience">
       <div className="wrap">
-        <div className="work-head">
-          <h2 className="h-lg d-tight">Hired<br />to ship it.</h2>
-          <p className="note">
-            Work done inside someone else&rsquo;s team, to someone else&rsquo;s
-            deadline — a different skill from building your own thing, and
-            worth listing on its own terms.
-          </p>
+        <span className="spine-node sn-l" data-spine="experience" aria-hidden="true" />
+        <h2 className="h-lg d-tight sec-say">
+          Before that, other people&rsquo;s deadlines.
+        </h2>
+
+        <div className="roles">
+          {roles.map((r) => (
+            <article className="role" key={r.company}>
+              <div className="role-name">{r.company}</div>
+              <div className="role-cols">
+                <div className="role-col">
+                  <span className="role-k">Role</span>
+                  <p>{r.title}</p>
+                  <span className="role-k">When</span>
+                  <p>
+                    {r.from} &ndash; {r.to}
+                  </p>
+                  <span className="role-k">Where</span>
+                  <p>{r.place}</p>
+                </div>
+                <div className="role-col wide">
+                  <span className="role-k">What it involved</span>
+                  <ul>
+                    {r.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="role-col">
+                  <span className="role-k">Built with</span>
+                  <div className="run">
+                    {r.stack.map((s) => (
+                      <span key={s}>{s}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
 
-        <ol className="rail">
-          {roles.map((r) => (
-            <li className="rail-item" key={r.company}>
-              <div className="rail-date">
-                <span className="rail-dot" aria-hidden="true" />
-                <span className="rail-from">{r.from}</span>
-                <span className="rail-to">{r.to}</span>
-              </div>
-              <div className="rail-body">
-                <div className="rail-head">
-                  <div className="rail-co">{r.company}</div>
-                  <span className="rail-place">{r.place}</span>
-                </div>
-                <div className="rail-role">{r.title}</div>
-                <div className="run rail-tools">
-                  {r.stack.map((s) => (
-                    <span key={s}>{s}</span>
-                  ))}
-                </div>
-                <ul className="rail-points">
-                  {r.bullets.map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
-                </ul>
-              </div>
-            </li>
-          ))}
-
+        <div className="aside-row">
           {awards.map((a) => (
-            <li className="rail-item compact" key={a.name}>
-              <div className="rail-date">
-                <span className="rail-dot hollow" aria-hidden="true" />
-                <span className="rail-from">{a.year}</span>
-              </div>
-              <div className="rail-body">
-                <div className="rail-head">
-                  <h3 className="rail-small">{a.name}</h3>
-                  <span className="rail-result">{a.result}</span>
-                </div>
-                <div className="rail-role">{a.host} · Hackathon</div>
-                <p className="rail-note">{a.detail}</p>
-                {a.repo && (
-                  <a
-                    className="act-quiet"
-                    href={a.repo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Repository ↗
-                  </a>
-                )}
-              </div>
-            </li>
+            <div className="aside" key={a.name}>
+              <span className="role-k">
+                {a.host} &middot; {a.year}
+              </span>
+              <h3 className="aside-name">{a.name}</h3>
+              <p className="aside-res">{a.result}</p>
+              <p>{a.detail}</p>
+              {a.repo && (
+                <a className="act-quiet" href={a.repo} target="_blank" rel="noopener noreferrer">
+                  Repository
+                </a>
+              )}
+            </div>
           ))}
-
-          <li className="rail-item compact" key="edu">
-            <div className="rail-date">
-              <span className="rail-dot hollow" aria-hidden="true" />
-              <span className="rail-from">{education.graduating}</span>
-            </div>
-            <div className="rail-body">
-              <div className="rail-head">
-                <h3 className="rail-small">{education.school}</h3>
-                <span className="rail-result mono">{education.place}</span>
-              </div>
-              <div className="rail-role">{education.degree}</div>
-            </div>
-          </li>
-        </ol>
+          <div className="aside">
+            <span className="role-k">{education.place}</span>
+            <h3 className="aside-name">{education.school}</h3>
+            <p className="aside-res">Graduating {education.graduating}</p>
+            <p>{education.degree}</p>
+          </div>
+        </div>
       </div>
     </section>
   );
