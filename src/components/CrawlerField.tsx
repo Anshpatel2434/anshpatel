@@ -77,8 +77,8 @@ export default function CrawlerField() {
         dots.push({
           bx: x, by: y, x, y,
           ph: Math.random() * Math.PI * 2,
-          sp: 0.00011 + Math.random() * 0.00019,
-          am: 4 + Math.random() * 9,
+          sp: 0.00020 + Math.random() * 0.00034,
+          am: 16 + Math.random() * 30,
           r: 0.8 + Math.random() * 1.1,
         });
       }
@@ -106,6 +106,11 @@ export default function CrawlerField() {
     let bodyY = 0;
     let headAng = Math.PI / 2;
     let started = false;
+    let lastScroll = -1;
+    let idleFor = 0;
+    let wanderX = 0;
+    let wanderY = 0;
+    let wanderSet = false;
     const legs: Leg[] = Array.from({ length: LEGS }, () => ({
       fx: 0, fy: 0, ox: 0, oy: 0, tx: 0, ty: 0, t: 1, hold: 0,
     }));
@@ -139,7 +144,7 @@ export default function CrawlerField() {
 
       for (const p of dots) {
         p.x = p.bx + Math.cos(now * p.sp + p.ph) * p.am;
-        p.y = p.by + Math.sin(now * p.sp * 1.25 + p.ph) * p.am * 0.6;
+        p.y = p.by + Math.sin(now * p.sp * 1.25 + p.ph) * p.am * 0.78;
         ctx.beginPath();
         ctx.fillStyle = `rgba(${faint}, 0.26)`;
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -187,16 +192,44 @@ export default function CrawlerField() {
       const tx = baseX + (-uy / ul) * wobble;
       const ty = baseY + (ux / ul) * wobble * 0.22;
 
+      /* A still page should not mean a still creature. When the
+         scroll position has not changed for a moment it stops
+         tracking the section target and wanders on its own, in a
+         slow loop around where it was left. The moment you scroll
+         again it goes straight back to leading you down the page. */
+      const sy = window.scrollY;
+      if (Math.abs(sy - lastScroll) > 0.6) { lastScroll = sy; idleFor = 0; }
+      else idleFor += dt;
+      const idle = idleFor > 900;
+
+      let aimX = tx;
+      let aimY = ty;
+      if (idle) {
+        if (!wanderSet) {
+          wanderX = bodyX;
+          wanderY = bodyY;
+          wanderSet = true;
+        }
+        const k = now * 0.00032;
+        aimX = wanderX + Math.cos(k) * 128 + Math.cos(k * 2.3) * 42;
+        aimY = wanderY + Math.sin(k * 1.37) * 72 + Math.sin(k * 0.61) * 30;
+        /* keep it on screen even if it was left near an edge */
+        aimX = Math.max(70, Math.min(W - 70, aimX));
+        aimY = Math.max(70, Math.min(H - 70, aimY));
+      } else {
+        wanderSet = false;
+      }
+
       const px = bodyX;
       const py = bodyY;
-      if (!started) { bodyX = tx; bodyY = ty; started = true; }
+      if (!started) { bodyX = aimX; bodyY = aimY; started = true; }
       else {
-        const jump = Math.hypot(tx - bodyX, ty - bodyY);
+        const jump = Math.hypot(aimX - bodyX, aimY - bodyY);
         /* ease toward the target, but cap how far it can move per
            frame so the legs always have a chance to keep up */
-        const k = jump > 260 ? 0.14 : 0.055;
-        bodyX += (tx - bodyX) * k;
-        bodyY += (ty - bodyY) * k;
+        const k = idle ? 0.03 : jump > 260 ? 0.14 : 0.055;
+        bodyX += (aimX - bodyX) * k;
+        bodyY += (aimY - bodyY) * k;
       }
       const vx = bodyX - px;
       const vy = bodyY - py;
@@ -209,7 +242,14 @@ export default function CrawlerField() {
          hero gripping the five links, and lets go of them as soon
          as you scroll, which is when the walk begins. */
       const navs = read("[data-cons]");
-      const inHero = seg === 0 && t < 0.8 && navs.length >= 5;
+      /* Grip the navigation only while the hero is genuinely on
+         screen. Deriving this from the segment index let it stay
+         true for a frame after the hero had scrolled away, and the
+         legs would reach hundreds of pixels back up the page for
+         nodes that were no longer there. */
+      const heroBox = document.querySelector(".cons")?.getBoundingClientRect();
+      const heroHere = !!heroBox && heroBox.bottom > H * 0.35 && heroBox.top < H * 0.9;
+      const inHero = heroHere && navs.length >= 5;
 
       if (inHero) {
         for (const n of navs) {
@@ -270,7 +310,7 @@ export default function CrawlerField() {
           const f = foothold(i, headAng);
           leg.fx = f.x; leg.fy = f.y;
           leg.t = 1; leg.hold = 40;
-        } else if (stepping < 3 && leg.hold <= 0 && trail > REACH) {
+        } else if (stepping < 3 && leg.hold <= 0 && trail > (idle ? REACH * 0.55 : REACH)) {
           const f = foothold(i, headAng);
           leg.ox = leg.fx; leg.oy = leg.fy;
           leg.tx = f.x; leg.ty = f.y;
@@ -282,9 +322,18 @@ export default function CrawlerField() {
 
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
+      const CEIL = REACH * 2;
       for (let i = 0; i < LEGS; i++) {
         const leg = legs[i];
-        if (Math.hypot(leg.fx - bodyX, leg.fy - bodyY) < 7) continue;
+        const span = Math.hypot(leg.fx - bodyX, leg.fy - bodyY);
+        if (span < 7) continue;
+        /* a hard ceiling: whatever happened upstream, a limb is
+           never drawn longer than it could physically reach */
+        if (!inHero && span > CEIL) {
+          const f = foothold(i, headAng);
+          leg.fx = f.x; leg.fy = f.y; leg.t = 1;
+          continue;
+        }
         const mx = (bodyX + leg.fx) / 2;
         const my = (bodyY + leg.fy) / 2;
         const nx = -(leg.fy - bodyY);
@@ -311,12 +360,11 @@ export default function CrawlerField() {
       ctx.beginPath();
       ctx.ellipse(0, 0, 13, 15, 0, 0, Math.PI * 2);
       ctx.fill();
+      /* one body, not a head and an abdomen — it is a crawler, not
+         an anatomy diagram */
       ctx.fillStyle = `rgba(${accent}, 1)`;
       ctx.beginPath();
-      ctx.ellipse(0, 2, 4.2, 5.4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(0, -4, 2.7, 2.7, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, 4.6, 6.2, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }

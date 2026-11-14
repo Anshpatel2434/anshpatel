@@ -1,3 +1,5 @@
+import PrepToDoShot from "../assets/shots/preptodo-analytics.jpg";
+
 /* ============================================================
    Everything the site knows about Ansh Patel.
    Source of truth: Resume.pdf (latest). Nothing here is invented.
@@ -244,13 +246,14 @@ export const products: Product[] = [
     label: "preptodo.in",
     repo: null,
     repoNote: "repo link — send me the URL",
-    stack: "React.js · TypeScript · TailwindCSS · Express.js · Drizzle ORM",
-    what: "An AI-powered CAT VARC preparation platform built on a hybrid Retrieval-Augmented Generation pipeline — pgvector similarity search combined with a knowledge graph — using the OpenAI GPT API to generate reasoning-based explanations.",
+    stack: "React.js · TypeScript · TailwindCSS · Supabase · pgvector · Drizzle ORM",
+    what: "An AI-powered CAT VARC platform built on a hybrid Retrieval-Augmented Generation pipeline — pgvector similarity search combined with a knowledge graph — that explains its reasoning instead of handing back an answer key.",
     detail: [
-      "Timed RC practice, adaptive VARC drills and AI-generated weak-area tests, each with a personalised LLM-written rationale rather than a bare answer key.",
-      "Analytics dashboard tracking accuracy, time, genre mastery, percentile signals and streak performance.",
+      "Cognitive analysis rather than a score: skill proficiency across argument structure, tone and intent, trap avoidance, inference accuracy and evidence evaluation \u2014 so a weak area is named, not guessed at.",
+      "Genre performance, speed against accuracy, daily RC drills, spaced vocabulary revision, streaks and leaderboards.",
+      "Supabase and pgvector underneath, with the RAG workflow doing the explaining.",
     ],
-    shot: null,
+    shot: PrepToDoShot,
     shotNote: "PrepToDo — analytics dashboard, 16:10",
   },
   {
@@ -262,8 +265,9 @@ export const products: Product[] = [
     stack: "React.js · TailwindCSS · Django · Django Channels · WebSockets",
     what: "A real-time academic Q&A platform enabling live messaging and instant notifications over WebSockets.",
     detail: [
-      "Asynchronous backend built with Django Channels, with the frontend optimised for seamless live updates.",
-      "Deployed on Vercel.",
+      "JWT authentication with email-OTP verification, real-time chatrooms, and doubts answered by peers rather than a help desk.",
+      "Asynchronous backend on Django Channels; the frontend reconciles live updates optimistically.",
+      "Built for LJ University students, who sign in with their enrolment number.",
     ],
     shot: null,
     shotNote: "UniAsk — live thread, 16:10",
@@ -299,27 +303,49 @@ export type CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [
   {
-    name: "Case study slot 01",
-    kind: "Waiting on you",
-    what: "A project you built but never hosted. Tell me the name, what problem it solved, what you chose and why, and the stack — I'll write it up the way the products above are written.",
-    stack: [],
-    repo: null,
-    needsInput: true,
+    name: "Kavach \u2014 GST Reconciler",
+    kind: "Tool \u00b7 2026",
+    what: "Can a CA firm reconcile GSTR-2B against a purchase register without the data ever leaving the machine? A browser-based matching engine that takes the 2B JSON and the register CSV and returns a categorised mismatch report \u2014 with a 25-test edge-case suite behind the matching, encrypted multi-device sync for anyone who wants it, and a free tier that stays entirely in IndexedDB.",
+    stack: [
+      "Next.js",
+      "TypeScript",
+      "Neon Postgres",
+      "Drizzle",
+      "better-auth",
+      "Passkeys",
+      "AES-256-GCM",
+      "IndexedDB",
+    ],
+    repo: "https://github.com/Anshpatel2434/gst",
   },
   {
-    name: "Case study slot 02",
-    kind: "Waiting on you",
-    what: "Same again. These are worth real estate even unhosted — a decision you made and can defend reads stronger than another live link.",
-    stack: [],
-    repo: null,
-    needsInput: true,
+    name: "Ouroboros",
+    kind: "Agent harness \u00b7 2026",
+    what: "What stops a coding agent drifting? Ouroboros interviews you until the project is unambiguous, then generates the harness the agent works inside \u2014 constitution, one-commit backlog, verification suite, scope fences, runner. The decision it is built around: an ambiguity lint blocks generation on open questions and unverifiable acceptance criteria, and there is deliberately no \u201cgenerate anyway\u201d button, because that button is the entire failure mode.",
+    stack: [
+      "Python",
+      "FastAPI",
+      "LangChain",
+      "Next.js",
+      "Structured output",
+      "Groq",
+      "Claude",
+    ],
+    repo: "https://github.com/Anshpatel2434/Ouroboros",
   },
   {
-    name: "Case study slot 03",
-    kind: "Waiting on you",
-    what: "If any of these has a repo, give me the URL and it becomes a link. If it has a screenshot, even better.",
-    stack: [],
-    repo: null,
+    name: "StudyShare",
+    kind: "Hackathon \u00b7 Top 14 of 100+ \u00b7 2024",
+    what: "An e-library built in 48 hours at Tic-Tech-Toe \u201924. WebSocket chat, a contribution heatmap, a leaderboard, and a recommendation engine using Random Forest Regression with NLP over the catalogue \u2014 the piece that took it from a file-sharing site to something that learns what a reader wants next.",
+    stack: ["React", "Django", "WebSockets", "scikit-learn", "Python"],
+    repo: "https://github.com/Anshpatel2434/Tic-Tech-Toe-24",
+  },
+  {
+    name: "Hackout \u201924",
+    kind: "Hackathon \u00b7 deployed \u00b7 2024",
+    what: "Built and deployed inside the deadline at Hackout \u201924, DAIICT. Waiting on a line from you about what it solved \u2014 the repo has the build and the deployment but no write-up.",
+    stack: ["TypeScript"],
+    repo: "https://github.com/Anshpatel2434/Hackout24",
     needsInput: true,
   },
 ];
