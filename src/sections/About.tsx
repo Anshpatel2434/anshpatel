@@ -15,18 +15,18 @@ import MyPic from "../assets/images/mypic.jpg";
 
 export default function About() {
   return (
-    <section className="about " id="about">
-      <div className="about-band">
-        <div className="wrap about-in">
+    <section className="section about" id="about">
+      <div className="wrap">
+        <h2 className="h-lg d-tight">Who you would<br />be hiring.</h2>
+        <div className="about-in">
           <figure className="about-pic">
             <img src={MyPic} alt={identity.name} />
-            <figcaption className="mono">
+            <figcaption>
               {identity.name} · {identity.city}
             </figcaption>
           </figure>
 
           <div className="about-text">
-            <p className="eyebrow">About</p>
             <p className="about-lead">{about.lead}</p>
             {about.body.map((para) => (
               <p className="about-para" key={para.slice(0, 32)}>
@@ -38,7 +38,7 @@ export default function About() {
           <dl className="about-facts">
             {about.facts.map((f) => (
               <div className="fact" key={f.k}>
-                <dt className="mono">{f.k}</dt>
+                <dt>{f.k}</dt>
                 <dd>{f.v}</dd>
               </div>
             ))}

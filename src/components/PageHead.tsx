@@ -15,12 +15,12 @@ export default function PageHead({
   return (
     <header className="page-head">
       <div className="wrap">
-        <Link className="back arrow-link" to="/">
+        <Link className="act-quiet" to="/">
           <span aria-hidden="true">←</span> Home
         </Link>
-        <p className="eyebrow">{eyebrow}</p>
+        <p className="label">{eyebrow}</p>
         <h1 className="h-lg d-tight page-title">{title}</h1>
-        <p className="page-lead">{lead}</p>
+        <p className="page-lead say">{lead}</p>
       </div>
     </header>
   );

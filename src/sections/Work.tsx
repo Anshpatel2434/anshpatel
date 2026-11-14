@@ -13,12 +13,11 @@ import { products, moreWork } from "../data/profile";
 
 export default function Work({ full = false }: { full?: boolean }) {
   return (
-    <section className="section work " id="work">
+    <section className="section work" id="work">
       <div className="wrap">
-        <p className="eyebrow">Live products</p>
-        <div className="sec-head">
-          <h2 className="h-lg d-tight">Work you can open.</h2>
-          <p>
+        <div className="work-head">
+          <h2 className="h-lg d-tight">Work you<br />can open.</h2>
+          <p className="note">
             Both are deployed and running right now. Click through and use
             them — a working link is worth more than a screenshot of one.
           </p>
@@ -47,8 +46,8 @@ export default function Work({ full = false }: { full?: boolean }) {
                 <span className="band-n d-tight" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="h-md d-tight">{p.name}</h3>
-                <div className="band-stack mono">{p.stack}</div>
+                <div className="band-title">{p.name}</div>
+                <div className="band-stack note">{p.stack}</div>
                 <p className="band-what">{p.what}</p>
                 <ul className="band-detail">
                   {p.detail.map((d) => (
@@ -57,14 +56,14 @@ export default function Work({ full = false }: { full?: boolean }) {
                 </ul>
                 <div className="band-foot">
                   <a
-                    className="pill"
+                    className="act"
                     href={p.href}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Open {p.label} <span aria-hidden="true">↗</span>
                   </a>
-                  <span className="mono band-when">{p.when}</span>
+                  <span className="note band-when">{p.when}</span>
                 </div>
               </div>
             </div>
@@ -77,14 +76,14 @@ export default function Work({ full = false }: { full?: boolean }) {
           <div className="more-slots">
             {moreWork.map((m) => (
               <article className="slot" key={m.name}>
-                <span className="slot-kind mono">{m.kind}</span>
-                <h3 className="h-sm d-tight">{m.name}</h3>
+                <span className="slot-kind">{m.kind}</span>
+                <div className="slot-name">{m.name}</div>
                 <p>{m.what}</p>
               </article>
             ))}
           </div>
         ) : (
-          <Link className="see-all" to="/work">
+          <Link className="act see-all" to="/work">
             <span>See all the work</span>
             <span aria-hidden="true">→</span>
           </Link>

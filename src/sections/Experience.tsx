@@ -13,12 +13,11 @@ import { roles, awards, education } from "../data/profile";
 
 export default function Experience() {
   return (
-    <section className="section exp " id="experience">
+    <section className="section exp" id="experience">
       <div className="wrap">
-        <p className="eyebrow">Corporate exposure</p>
-        <div className="sec-head">
-          <h2 className="h-lg d-tight">Hired to ship it.</h2>
-          <p>
+        <div className="work-head">
+          <h2 className="h-lg d-tight">Hired<br />to ship it.</h2>
+          <p className="note">
             Work done inside someone else&rsquo;s team, to someone else&rsquo;s
             deadline — a different skill from building your own thing, and
             worth listing on its own terms.
@@ -28,22 +27,20 @@ export default function Experience() {
         <ol className="rail">
           {roles.map((r) => (
             <li className="rail-item" key={r.company}>
-              <div className="rail-date mono">
+              <div className="rail-date">
                 <span className="rail-dot" aria-hidden="true" />
                 <span className="rail-from">{r.from}</span>
                 <span className="rail-to">{r.to}</span>
               </div>
               <div className="rail-body">
                 <div className="rail-head">
-                  <h3 className="h-sm d-tight">{r.company}</h3>
-                  <span className="rail-place mono">{r.place}</span>
+                  <div className="rail-co">{r.company}</div>
+                  <span className="rail-place">{r.place}</span>
                 </div>
                 <div className="rail-role">{r.title}</div>
-                <div className="chips rail-chips">
+                <div className="run rail-tools">
                   {r.stack.map((s) => (
-                    <span className="chip" key={s}>
-                      {s}
-                    </span>
+                    <span key={s}>{s}</span>
                   ))}
                 </div>
                 <ul className="rail-points">
@@ -57,20 +54,20 @@ export default function Experience() {
 
           {awards.map((a) => (
             <li className="rail-item compact" key={a.name}>
-              <div className="rail-date mono">
+              <div className="rail-date">
                 <span className="rail-dot hollow" aria-hidden="true" />
                 <span className="rail-from">{a.year}</span>
               </div>
               <div className="rail-body">
                 <div className="rail-head">
                   <h3 className="rail-small">{a.name}</h3>
-                  <span className="rail-result mono">{a.result}</span>
+                  <span className="rail-result">{a.result}</span>
                 </div>
                 <div className="rail-role">{a.host} · Hackathon</div>
                 <p className="rail-note">{a.detail}</p>
                 {a.repo && (
                   <a
-                    className="arrow-link"
+                    className="act-quiet"
                     href={a.repo}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -83,7 +80,7 @@ export default function Experience() {
           ))}
 
           <li className="rail-item compact" key="edu">
-            <div className="rail-date mono">
+            <div className="rail-date">
               <span className="rail-dot hollow" aria-hidden="true" />
               <span className="rail-from">{education.graduating}</span>
             </div>

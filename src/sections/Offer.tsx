@@ -10,9 +10,12 @@ export default function Offer() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="section offer " id="offer">
+    <section className="offer invert bleed" id="offer">
       <div className="wrap">
-        <p className="eyebrow">What you can hire me for</p>
+        <div className="o-head">
+          <h2 className="h-lg d-tight">What you can<br />hire me for.</h2>
+          <span className="o-count">04 / things</span>
+        </div>
 
         <div className="o-list">
           {offers.map((o, i) => {
@@ -32,18 +35,16 @@ export default function Offer() {
                   }
                 }}
               >
-                <span className="o-n mono">{o.n}</span>
-                <h3 className="o-title d-tight">{o.title}</h3>
+                <span className="o-n">{o.n}</span>
+                <h3 className="o-title">{o.title}</h3>
                 <span className="o-arrow" aria-hidden="true">
                   →
                 </span>
                 <div className="o-detail">
                   <p>{o.line}</p>
-                  <div className="chips">
+                  <div className="run">
                     {o.stack.map((s) => (
-                      <span className="chip" key={s}>
-                        {s}
-                      </span>
+                      <span key={s}>{s}</span>
                     ))}
                   </div>
                 </div>

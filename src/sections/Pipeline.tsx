@@ -78,16 +78,15 @@ export default function Pipeline() {
   const live = stages[at];
 
   return (
-    <section className="section pipeline " id="stack">
+    <section className="section pipeline" id="stack">
       <div className="wrap">
-        <p className="eyebrow">The stack</p>
-        <div className="sec-head">
+        <div className="work-head">
           <h2 className="h-lg d-tight">
             Everything I work with,
             <br />
             and where it runs.
           </h2>
-          <p>
+          <p className="note">
             One question, followed from the screen it is typed on to the answer
             that comes back. At every stage, the tools I actually reach for —
             scroll, or tap a stage to jump to it.
@@ -96,7 +95,7 @@ export default function Pipeline() {
 
         <div className="pipe-grid">
           <aside className="panel">
-            <div className="p-cap mono">
+            <div className="p-cap">
               Stage {live.n} of 05 · {live.title}
             </div>
             <p
@@ -176,12 +175,12 @@ export default function Pipeline() {
                   tabIndex={-1}
                 >
                   <span />
-                  <em className="mono">{s.n}</em>
+                  <em>{s.n}</em>
                 </button>
               ))}
             </div>
 
-            <div className="p-foot mono">
+            <div className="p-foot">
               <span>Scroll, or tap a stage</span>
               <span>
                 Stage {live.n} · <b>{live.status}</b>
@@ -198,13 +197,13 @@ export default function Pipeline() {
                   stageRefs.current[i] = el;
                 }}
               >
-                <div className="s-n mono">{s.n} / 05</div>
-                <h3 className="h-md d-tight">{s.title}</h3>
+                <div className="s-n">{s.n} / 05</div>
+                <div className="s-title">{s.title}</div>
                 <p className="s-blurb">{s.blurb}</p>
                 <div className="s-rows">
                   {s.groups.map((g) => (
                     <div className="s-row" key={g.k}>
-                      <span className="s-k mono">{g.k}</span>
+                      <span className="s-k">{g.k}</span>
                       <span className="chips">
                         {g.items.map((it) => (
                           <span className="chip" key={it}>

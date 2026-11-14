@@ -1,152 +1,84 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { identity, links } from "../data/profile";
+import { links } from "../data/profile";
 
 /* ============================================================
-   NAV — a vertical rail down the left edge.
+   NAV — corner text, not an object.
 
-   Not a centred pill at the top with a name on one side and a
-   button on the other; that is the shape every portfolio uses.
-   This runs down the edge like the spine of a book: monogram at
-   the top, labels set vertically in the middle reading bottom to
-   top, the contact mark at the foot. A hairline fills as you
-   scroll, so the rail doubles as a progress indicator.
-
-   It also frees the entire top of the page, which is what lets
-   the hero start at the very top of the viewport.
-
-   Under 980px the rail becomes a floating dock at the bottom —
-   thumb height, horizontal labels, no rotated text to squint at.
+   Denny and Daksh both do this: a small mark top-left, tiny
+   uppercase letter-spaced links top-right, and nothing else. No
+   pill, no box, no background, no spine. The nav should be
+   findable and otherwise invisible, because on those sites the
+   page itself is the thing you are meant to look at.
    ============================================================ */
 
 type Item = { to: string; label: string; hash?: string };
 
-/* About, Work and Case studies are pages. Experience and Stack
-   live on the home page, so they navigate home and then scroll. */
 const ITEMS: Item[] = [
   { to: "/about", label: "About" },
   { to: "/work", label: "Work" },
   { to: "/", label: "Experience", hash: "#experience" },
-  { to: "/case-studies", label: "Case studies" },
+  { to: "/case-studies", label: "Cases" },
   { to: "/", label: "Stack", hash: "#stack" },
 ];
 
-function useLocalTime(timezone: string) {
-  const [time, setTime] = useState("");
-  useEffect(() => {
-    const fmt = new Intl.DateTimeFormat("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-      timeZone: timezone,
-    });
-    const tick = () => setTime(fmt.format(new Date()));
-    tick();
-    const id = window.setInterval(tick, 30_000);
-    return () => window.clearInterval(id);
-  }, [timezone]);
-  return time;
-}
-
-function useScrollProgress() {
-  const [pct, setPct] = useState(0);
-  useEffect(() => {
-    let queued = 0;
-    const read = () => {
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      setPct(h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0);
-    };
-    const onScroll = () => {
-      if (queued) return;
-      queued = requestAnimationFrame(() => {
-        queued = 0;
-        read();
-      });
-    };
-    read();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", read, { passive: true });
-    return () => {
-      cancelAnimationFrame(queued);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", read);
-    };
-  }, []);
-  return pct;
-}
-
 export default function Nav() {
-  const time = useLocalTime(identity.timezone);
-  const progress = useScrollProgress();
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  /* a hash item is "active" only when we are on the home page */
-  const isOn = (item: Item) =>
-    item.hash ? pathname === "/" : pathname === item.to;
-
   const goHash = (e: React.MouseEvent, item: Item) => {
-    if (!item.hash) return;
     e.preventDefault();
+    setOpen(false);
+    const scroll = () =>
+      document.querySelector(item.hash!)?.scrollIntoView({ behavior: "smooth" });
     if (pathname !== "/") {
-      navigate("/" + item.hash);
-      /* let the home page mount before looking for the section */
-      window.setTimeout(() => {
-        document.querySelector(item.hash!)?.scrollIntoView({ behavior: "smooth" });
-      }, 90);
-    } else {
-      document.querySelector(item.hash)?.scrollIntoView({ behavior: "smooth" });
-    }
+      navigate("/");
+      window.setTimeout(scroll, 110);
+    } else scroll();
   };
 
   return (
-    <nav className="spine" aria-label="Main">
-      <Link to="/" className="spine-mark" aria-label="Home">
-        <span className="rm-a">A</span>
-        <span className="rm-b">P</span>
+    <header className="top">
+      <Link to="/" className="top-mark">
+        Ansh&nbsp;Patel
       </Link>
 
-      <span className="spine-line" aria-hidden="true">
-        <span className="spine-fill" style={{ transform: `scaleY(${progress})` }} />
-      </span>
-
-      <ul className="spine-items">
-        {ITEMS.map((i) => (
-          <li key={i.label}>
-            {i.hash ? (
-              <a
-                href={i.hash}
-                onClick={(e) => goHash(e, i)}
-                className={isOn(i) ? "soft" : undefined}
-              >
-                {i.label}
-              </a>
-            ) : (
-              <NavLink
-                to={i.to}
-                className={({ isActive }) => (isActive ? "on" : undefined)}
-              >
-                {i.label}
-              </NavLink>
-            )}
-          </li>
-        ))}
-      </ul>
-
-      <div className="spine-foot">
-        <span className="spine-time mono">{time}</span>
-        <a className="spine-talk" href={`mailto:${identity.email}`}>
-          <span>Let&rsquo;s talk</span>
-        </a>
+      <nav className={"top-nav" + (open ? " open" : "")} aria-label="Main">
+        {ITEMS.map((i) =>
+          i.hash ? (
+            <a key={i.label} href={i.hash} onClick={(e) => goHash(e, i)}>
+              {i.label}
+            </a>
+          ) : (
+            <NavLink
+              key={i.label}
+              to={i.to}
+              onClick={() => setOpen(false)}
+              className={({ isActive }) => (isActive ? "on" : undefined)}
+            >
+              {i.label}
+            </NavLink>
+          )
+        )}
         <a
-          className="spine-cv mono"
           href={links.resume}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => setOpen(false)}
         >
           CV
         </a>
-      </div>
-    </nav>
+      </nav>
+
+      <button
+        className="top-toggle"
+        aria-expanded={open}
+        aria-label={open ? "Close menu" : "Open menu"}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {open ? "Close" : "Menu"}
+      </button>
+    </header>
   );
 }

@@ -13,12 +13,11 @@ import { caseStudies } from "../data/profile";
 export default function CaseStudies({ full = false }: { full?: boolean }) {
   const shown = full ? caseStudies : caseStudies.slice(0, 2);
   return (
-    <section className="section cases " id="cases">
+    <section className="cases invert bleed" id="cases">
       <div className="wrap">
-        <p className="eyebrow">Case studies</p>
-        <div className="sec-head">
-          <h2 className="h-lg d-tight">Built, never hosted.</h2>
-          <p>
+        <div className="o-head">
+          <h2 className="h-lg d-tight">Built,<br />never hosted.</h2>
+          <p className="note">
             Things made to answer a question rather than to ship. No live link
             — the problem and the decision are the whole point.
           </p>
@@ -47,7 +46,7 @@ export default function CaseStudies({ full = false }: { full?: boolean }) {
                 key={c.name}
                 className={c.needsInput ? "idx-awaiting" : undefined}
               >
-                <td className="mono idx-n">{String(i + 1).padStart(2, "0")}</td>
+                <td className="idx-n">{String(i + 1).padStart(2, "0")}</td>
                 <td className="idx-name">
                   {c.repo ? (
                     <a href={c.repo} target="_blank" rel="noopener noreferrer">
@@ -57,21 +56,19 @@ export default function CaseStudies({ full = false }: { full?: boolean }) {
                     c.name
                   )}
                   {c.needsInput && (
-                    <span className="idx-flag mono">waiting on you</span>
+                    <span className="idx-flag">waiting on you</span>
                   )}
                 </td>
                 <td className="idx-what">{c.what}</td>
                 <td className="idx-stack">
                   {c.stack.length ? (
-                    <span className="chips">
+                    <span className="run">
                       {c.stack.map((s) => (
-                        <span className="chip" key={s}>
-                          {s}
-                        </span>
+                        <span key={s}>{s}</span>
                       ))}
                     </span>
                   ) : (
-                    <span className="mono idx-dash">—</span>
+                    <span className="idx-dash">—</span>
                   )}
                 </td>
               </tr>
@@ -80,7 +77,7 @@ export default function CaseStudies({ full = false }: { full?: boolean }) {
         </table>
 
         {!full && (
-          <Link className="see-all" to="/case-studies">
+          <Link className="act see-all" to="/case-studies">
             <span>See all case studies</span>
             <span aria-hidden="true">→</span>
           </Link>

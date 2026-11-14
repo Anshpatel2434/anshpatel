@@ -1,5 +1,15 @@
 /* ============================================================
-   BASE — resets, type scale, layout primitives, shared parts
+   BASE — resets, type scale, layout primitives
+
+   Two rules from the reference study govern everything here:
+
+   SCALE CONTRAST. Display type runs at viewport scale; support
+   copy sits at 10–11px monospace. The ratio is roughly 12:1.
+   A 4:1 ratio — which is what we had — reads as a template.
+
+   NO CARDS. Border, radius and shadow are spent almost nowhere.
+   When every block is a rounded box with a hairline, nothing has
+   weight relative to anything else.
    ============================================================ */
 
 *,
@@ -8,7 +18,6 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
-/* Lenis owns the scroll; these are its required hooks */
 html.lenis,
 html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
@@ -28,14 +37,8 @@ body {
 }
 
 img { max-width: 100%; display: block; }
-
-::selection { background: var(--plate-b); color: var(--field); }
-
-:focus-visible {
-  outline: 2px solid var(--plate-a-txt);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
+::selection { background: var(--key); color: var(--field); }
+:focus-visible { outline: 2px solid var(--key); outline-offset: 3px; }
 
 /* ---------- layout ---------- */
 .wrap {
@@ -43,159 +46,119 @@ img { max-width: 100%; display: block; }
   margin-inline: auto;
   padding-inline: var(--gutter);
   position: relative;
-  z-index: 1;
 }
 
-.section { padding-block: var(--sec-gap) 0; }
+/* a block that runs the full width of the viewport, used for the
+   hard ground switches between sections */
+.bleed { width: 100%; position: relative; }
 
-/* ---------- type scale ----------
-   Archivo is loaded as a variable font. The width axis does the work
-   a second typeface normally would: wide + light for the quiet half,
-   condensed + black for the loud half. */
-.d-wide {
-  font-weight: 300;
-  font-variation-settings: "wdth" 118;
-  letter-spacing: -0.028em;
-  line-height: 0.98;
-}
-.d-tight {
-  font-weight: 900;
-  font-variation-settings: "wdth" 66;
-  letter-spacing: -0.012em;
-  line-height: 0.96;
-}
+.section { padding-block: clamp(80px, 11vw, 168px) 0; }
+.section-tight { padding-block: clamp(56px, 7vw, 104px) 0; }
 
-h1, h2, h3, h4 { margin: 0; color: var(--ink-strong); }
+/* ---------- display type ----------
+   Archivo variable: the width axis does the work a second
+   typeface normally would. */
+.d-wide { font-weight: 300; font-variation-settings: "wdth" 120; letter-spacing: -0.03em; }
+.d-tight { font-weight: 900; font-variation-settings: "wdth" 64; letter-spacing: -0.015em; }
 
-.h-xl { font-size: clamp(40px, 8.4vw, 118px); }
-.h-lg { font-size: clamp(32px, 6.2vw, 80px); }
-.h-md { font-size: clamp(27px, 4.2vw, 50px); }
-.h-sm { font-size: clamp(22px, 2.9vw, 33px); }
+h1, h2, h3, h4 { margin: 0; color: var(--ink-strong); line-height: 0.92; }
+
+.h-xxl { font-size: clamp(54px, 12.4vw, 206px); }
+.h-xl  { font-size: clamp(42px, 8.4vw, 132px); }
+.h-lg  { font-size: clamp(34px, 5.6vw, 88px); }
+.h-md  { font-size: clamp(26px, 3.4vw, 52px); }
+.h-sm  { font-size: clamp(20px, 2.2vw, 30px); line-height: 1.02; }
 
 .mono { font-family: var(--mono); }
 
-/* ---------- section heading ---------- */
-.eyebrow {
+/* ---------- the support register ----------
+   Everything that is not display type lives down here. */
+.label {
   font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
+  font-size: 10px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--dim);
   margin: 0;
 }
-
-.sec-head {
-  display: grid;
-  grid-template-columns: 1fr minmax(260px, 420px);
-  gap: 20px 60px;
-  align-items: end;
-  margin-top: 16px;
-}
-.sec-head p {
-  margin: 0;
+.note {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.72;
   color: var(--muted);
-  font-size: 16px;
-  max-width: 44ch;
+  margin: 0;
 }
-@media (max-width: 900px) {
-  .sec-head { grid-template-columns: 1fr; }
-}
+.say { font-size: 15.5px; line-height: 1.6; color: var(--muted); margin: 0; }
 
 .rule { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+.rule-key { border: 0; border-top: 1px solid var(--key); margin: 0; }
 
-/* ---------- chips : a technology, named ---------- */
-.chips { display: flex; flex-wrap: wrap; gap: 7px; }
-
-.chip {
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--ink);
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 5px 12px;
-  background: var(--field-up);
-  white-space: nowrap;
-  transition: border-color 0.25s var(--ease), color 0.25s var(--ease),
-    background 0.25s var(--ease);
-}
-.chip:hover {
-  border-color: var(--plate-b);
-  color: var(--plate-b-txt);
-  background: var(--field-dn);
-}
-
-/* ---------- buttons ---------- */
-.pill {
+/* ---------- links and actions ----------
+   One solid action per screen at most; everything else is text
+   with a rule under it. No pills. */
+.act {
   display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-family: var(--sans);
-  font-size: 13.5px;
+  align-items: baseline;
+  gap: 12px;
+  font-size: clamp(15px, 1.5vw, 18px);
   font-weight: 600;
-  background: var(--ink-strong);
-  color: var(--field);
-  padding: 11px 20px;
-  border: 1px solid var(--ink-strong);
-  border-radius: 999px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 0.3s var(--ease), gap 0.3s var(--ease),
-    border-color 0.3s var(--ease);
-}
-.pill:hover { background: var(--plate-a-txt); border-color: var(--plate-a-txt); gap: 14px; }
-
-.pill.ghost {
-  background: transparent;
-  color: var(--ink-strong);
-  border-color: var(--rule);
-}
-.pill.ghost:hover { background: var(--field-up); border-color: var(--ink-strong); }
-
-.link-u {
-  font-size: 14.5px;
-  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--ink-strong);
   text-decoration: none;
-  border-bottom: 2px solid var(--plate-b);
-  padding-bottom: 3px;
-  transition: color 0.25s var(--ease);
-}
-.link-u:hover { color: var(--plate-b-txt); }
-
-.arrow-link {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink-strong);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--key);
   transition: gap 0.3s var(--ease), color 0.3s var(--ease);
 }
-.arrow-link:hover { gap: 15px; color: var(--plate-b-txt); }
+.act:hover { gap: 18px; color: var(--key-t); }
 
-/* ---------- a placeholder waiting on a real asset ---------- */
+.act-quiet {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 9px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: gap 0.3s var(--ease), color 0.3s var(--ease);
+}
+.act-quiet:hover { gap: 14px; color: var(--key-t); }
+
+/* ---------- chips ----------
+   Kept only in the stack section, where naming forty-five tools
+   needs them. Square, not pills — pills everywhere was the tell. */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  padding: 5px 9px;
+  white-space: nowrap;
+  transition: border-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+.chip:hover { border-color: var(--key); color: var(--key-t); }
+
+/* a run of items separated by rules instead of boxed */
+.run { display: flex; flex-wrap: wrap; gap: 0 10px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.run span + span::before { content: "/"; color: var(--dim); margin-right: 10px; }
+
+/* ---------- a slot still waiting on real content ---------- */
 .placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background: var(--field-dn);
   border: 1px dashed var(--rule);
-  border-radius: 10px;
   color: var(--dim);
   font-family: var(--mono);
   font-size: 10.5px;
   text-align: center;
-  padding: 14px;
-  line-height: 1.5;
+  padding: 16px;
+  line-height: 1.6;
 }
 
-/* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;

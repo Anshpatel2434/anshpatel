@@ -6,7 +6,7 @@ export default function Contact() {
     <>
       <section className="section contact" id="contact">
         <div className="wrap">
-          <p className="eyebrow">Next</p>
+          <p className="label">Next</p>
           <div className="contact-grid">
             <h2 className="h-lg d-tight contact-ask">
               Bring me something
@@ -46,13 +46,13 @@ export default function Contact() {
               <span>{identity.role}</span>
             </div>
           </div>
-          <span className="foot-note mono">
+          <span className="foot-note">
             Designed and built by Ansh Patel · {new Date().getFullYear()}
           </span>
         </div>
 
         {/* the ending. pressed into the stock rather than printed on it. */}
-        <div className="watermark d-tight" aria-hidden="true">
+        <div className="watermark" aria-hidden="true">
           ansh patel
         </div>
       </footer>

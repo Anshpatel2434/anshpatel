@@ -1,41 +1,25 @@
 /* ============================================================
-   COLOUR SYSTEM
+   COLOUR — two palettes
 
-   data-palette on <html> picks one: "vellum" | "marigold" | "ink"
-   | "ember". The dev switcher flips between them; ember is kept
-   as the approved checkpoint (git tag: checkpoint-ember).
+   data-palette on <html> picks "vellum" or "ember".
+   ember is the approved checkpoint (git tag: checkpoint-ember).
 
-   ------------------------------------------------------------
-   THE RULES ALL FOUR FOLLOW
+   Each palette carries an INVERTED set as well, because sections
+   are separated by a hard full-bleed ground switch rather than by
+   padding — the device Daksh uses to cut black against cream.
+   `.invert` swaps the ground and type without touching anything
+   else, so every component works on either surface.
 
-   1. NAMED HARMONY, not hand-picked colour:
-        vellum    warm analogous  (parchment, umber, oxblood, gold)
-        marigold  complementary   (ultramarine vs marigold)
-        ink       dark warm-cool  (indigo ground, bone type, coral)
-        ember     split-complement (teal base, ember accent)
-
-   2. 60-30-10 BY AREA. 60 --field, 30 --ink/--muted, 10 --key.
-      The accent is reserved for what must be noticed first; spend
-      it on decoration and it stops reading as a signal.
-
-   3. THREE COLOURS. Limiting the palette is what makes hierarchy
-      legible — every extra hue competes for the same attention.
-
-   4. LIGHT-DARK LADDER, exactly three steps:
-        --ink-strong  headings      read first
-        --muted       body          read second
-        --dim         labels, meta  read last
-
-   5. APCA Lc targets (WCAG 3 model, which accounts for size and
-      weight where flat ratios do not):
-        body  Lc 75 min / 90 preferred   non-body  Lc 60 min
-        large bold heads  Lc 45 min
-      --key is a mid-lightness accent and never carries body text.
-      --key-t is its readable twin — darker on a light ground,
-      LIGHTER on a dark one.
-
-   6. THE GROUND IS NEVER PURE WHITE OR PURE BLACK, so the accent
-      sits in the page rather than on it.
+   THE RULES
+   1. 60-30-10 by area: --field, --ink/--muted, --key.
+   2. Three colours. Hierarchy stays legible because nothing extra
+      competes for attention.
+   3. Light-dark ladder, three steps only:
+        --ink-strong headings / --muted body / --dim labels
+   4. APCA Lc: body 75 min (90 preferred), non-body 60, large bold
+      45. --key never carries body text; --key-t is its readable
+      twin, which goes LIGHTER on an inverted ground.
+   5. Never pure white, never pure black.
    ============================================================ */
 
 :root {
@@ -44,123 +28,91 @@
   --sans: "Archivo", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
-  --gutter: 24px;
-  --maxw: 1240px;
-  --rail: 76px;
-  --sec-gap: clamp(78px, 10vw, 132px);
+  --gutter: clamp(18px, 3.2vw, 44px);
+  --maxw: 1440px;
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ============================================================
-   VELLUM — warm analogous  ·  default
-   Parchment ground, umber-black type, oxblood as the signal and
-   antique gold as the quiet second. Everything sits on the warm
-   side of the wheel, so the page agrees with itself and the
-   oxblood still reads as the one urgent thing.
-   Nobody puts oxblood on an engineering portfolio. That is rather
-   the point.
-   ============================================================ */
+/* ---------------- VELLUM — warm analogous (default) ----------------
+   Parchment, umber-black, oxblood. Everything on the warm side of
+   the wheel, so the oxblood still reads as the one urgent thing. */
 :root,
 [data-palette="vellum"] {
-  color-scheme: light;
   --field:      oklch(95.5% 0.018 85);
   --field-up:   oklch(98% 0.012 85);
   --field-dn:   oklch(92% 0.024 82);
-  --rule:       oklch(84% 0.028 80);
-  --rule-faint: oklch(90% 0.020 82);
+  --rule:       oklch(82% 0.030 80);
+  --rule-faint: oklch(89% 0.022 82);
 
-  --ink-strong: oklch(19% 0.030 50);   /* umber-black   Lc ~100 */
-  --ink:        oklch(25% 0.028 50);
-  --muted:      oklch(45% 0.026 50);   /* body          Lc ~ 78 */
-  --dim:        oklch(59% 0.022 55);   /* labels        Lc ~ 56 */
+  --ink-strong: oklch(17% 0.030 50);
+  --ink:        oklch(24% 0.028 50);
+  --muted:      oklch(44% 0.026 50);
+  --dim:        oklch(58% 0.022 55);
 
-  --key:        oklch(44% 0.145 25);   /* oxblood — CTA, marks   */
-  --key-t:      oklch(40% 0.140 25);
-  --key-soft:   oklch(89% 0.045 35);
-  --sec:        oklch(60% 0.095 80);   /* antique gold           */
+  --key:        oklch(45% 0.155 25);   /* oxblood */
+  --key-t:      oklch(42% 0.150 25);
+
+  /* the inverted surface */
+  --inv-field:      oklch(17.5% 0.030 48);
+  --inv-field-up:   oklch(22% 0.032 48);
+  --inv-rule:       oklch(32% 0.030 48);
+  --inv-rule-faint: oklch(26% 0.030 48);
+  --inv-ink-strong: oklch(95% 0.020 85);
+  --inv-ink:        oklch(90% 0.020 85);
+  --inv-muted:      oklch(72% 0.022 85);
+  --inv-dim:        oklch(55% 0.024 60);
+  --inv-key:        oklch(64% 0.160 32);
+  --inv-key-t:      oklch(72% 0.150 34);
 }
 
-/* ============================================================
-   MARIGOLD — direct complementary
-   Ultramarine against marigold, the sharpest pairing on the
-   wheel. Cool near-white ground keeps it from shouting; the
-   yellow is used in millimetres so it stays a signal rather than
-   a mood. Graphic, Bauhaus-adjacent, confident.
-   ============================================================ */
-[data-palette="marigold"] {
-  color-scheme: light;
-  --field:      oklch(97.5% 0.004 250);
-  --field-up:   oklch(99.2% 0.003 250);
-  --field-dn:   oklch(93.5% 0.010 255);
-  --rule:       oklch(85% 0.014 260);
-  --rule-faint: oklch(91% 0.009 260);
-
-  --ink-strong: oklch(19% 0.080 266);  /* ultramarine-black */
-  --ink:        oklch(25% 0.078 266);
-  --muted:      oklch(45% 0.060 266);
-  --dim:        oklch(60% 0.042 266);
-
-  --key:        oklch(76% 0.155 78);   /* marigold — fills only  */
-  --key-t:      oklch(47% 0.125 62);   /* readable  Lc ~ 76      */
-  --key-soft:   oklch(93% 0.055 85);
-  --sec:        oklch(45% 0.150 266);  /* ultramarine            */
-}
-
-/* ============================================================
-   INK — dark, warm-cool
-   A deep indigo ground with bone type and a coral signal. Dark
-   without being a terminal: the ground is blue and the type is
-   warm, so it reads like printed paper under low light rather
-   than a code editor. No neon anywhere.
-   ============================================================ */
-[data-palette="ink"] {
-  color-scheme: dark;
-  --field:      oklch(21% 0.032 272);
-  --field-up:   oklch(25% 0.034 272);
-  --field-dn:   oklch(17.5% 0.030 272);
-  --rule:       oklch(34% 0.030 272);
-  --rule-faint: oklch(28% 0.030 272);
-
-  --ink-strong: oklch(96% 0.014 85);   /* bone          Lc ~ 98 */
-  --ink:        oklch(91% 0.014 85);
-  --muted:      oklch(74% 0.015 85);   /* body          Lc ~ 76 */
-  --dim:        oklch(58% 0.018 272);  /* labels        Lc ~ 50 */
-
-  --key:        oklch(72% 0.150 36);   /* coral                 */
-  --key-t:      oklch(79% 0.135 40);   /* lighter, for a dark ground */
-  --key-soft:   oklch(32% 0.070 36);
-  --sec:        oklch(66% 0.090 272);
-}
-
-/* ============================================================
-   EMBER — split-complementary  ·  approved checkpoint
-   Deep teal base, ember accent. Kept so we can return to it;
-   git tag checkpoint-ember.
-   ============================================================ */
+/* ---------------- EMBER — split-complementary (checkpoint) ----------------
+   Deep teal base, ember accent. */
 [data-palette="ember"] {
-  color-scheme: light;
   --field:      oklch(97% 0.008 75);
   --field-up:   oklch(99% 0.005 75);
   --field-dn:   oklch(93.5% 0.012 75);
-  --rule:       oklch(85% 0.014 75);
-  --rule-faint: oklch(91% 0.010 75);
+  --rule:       oklch(84% 0.016 75);
+  --rule-faint: oklch(90% 0.012 75);
 
-  --ink-strong: oklch(19% 0.045 205);
-  --ink:        oklch(25% 0.042 205);
-  --muted:      oklch(46% 0.032 205);
-  --dim:        oklch(60% 0.024 205);
+  --ink-strong: oklch(18% 0.045 205);
+  --ink:        oklch(24% 0.042 205);
+  --muted:      oklch(45% 0.032 205);
+  --dim:        oklch(59% 0.024 205);
 
-  --key:        oklch(60% 0.170 48);
-  --key-t:      oklch(42% 0.140 44);
-  --key-soft:   oklch(88% 0.055 60);
-  --sec:        oklch(42% 0.070 200);
+  --key:        oklch(57% 0.175 45);   /* ember */
+  --key-t:      oklch(42% 0.145 42);
+
+  --inv-field:      oklch(18% 0.045 205);
+  --inv-field-up:   oklch(23% 0.045 205);
+  --inv-rule:       oklch(33% 0.040 205);
+  --inv-rule-faint: oklch(26% 0.040 205);
+  --inv-ink-strong: oklch(96% 0.012 80);
+  --inv-ink:        oklch(91% 0.012 80);
+  --inv-muted:      oklch(73% 0.016 80);
+  --inv-dim:        oklch(55% 0.022 205);
+  --inv-key:        oklch(68% 0.165 50);
+  --inv-key-t:      oklch(76% 0.150 52);
 }
 
-@media (max-width: 980px) {
-  :root { --rail: 0px; }
-}
-@media (max-width: 640px) {
-  :root { --gutter: 18px; }
+/* ---------------- the hard cut ----------------
+   A section marked .invert paints the inverted ground full-bleed
+   and reassigns the same token names, so no component needs to
+   know which surface it is sitting on. */
+.invert {
+  --field:      var(--inv-field);
+  --field-up:   var(--inv-field-up);
+  --field-dn:   var(--inv-field);
+  --rule:       var(--inv-rule);
+  --rule-faint: var(--inv-rule-faint);
+  --ink-strong: var(--inv-ink-strong);
+  --ink:        var(--inv-ink);
+  --muted:      var(--inv-muted);
+  --dim:        var(--inv-dim);
+  --key:        var(--inv-key);
+  --key-t:      var(--inv-key-t);
+
+  background: var(--inv-field);
+  color: var(--inv-ink);
 }

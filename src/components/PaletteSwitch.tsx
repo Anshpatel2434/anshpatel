@@ -5,10 +5,8 @@ import { useEffect, useState } from "react";
    is remembered so a reload does not reset it. */
 
 const PALETTES = [
-  { id: "vellum", label: "Vellum", note: "warm analogous — parchment, umber, oxblood" },
-  { id: "marigold", label: "Marigold", note: "complementary — ultramarine vs marigold" },
-  { id: "ink", label: "Ink", note: "dark — indigo ground, bone type, coral signal" },
-  { id: "ember", label: "Ember", note: "approved checkpoint — teal + ember" },
+  { id: "vellum", label: "Vellum", note: "warm analogous - parchment, umber, oxblood" },
+  { id: "ember", label: "Ember", note: "split-complementary - teal + ember (checkpoint)" },
 ];
 
 export default function PaletteSwitch() {
