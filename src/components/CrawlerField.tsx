@@ -45,6 +45,10 @@ const CARRIES = [
   { to: "/", hash: "#stack", label: "the stack" },
 ];
 
+/* how close the pointer has to be before it offers — the same
+   radius as the button you are aiming at */
+const HUB_R = 52;
+
 /* how far the legs reach when it is holding them out */
 const OPEN_R = 208;
 const FAN = [-1.02, -0.52, 0, 0.52, 1.02];
@@ -144,6 +148,11 @@ export default function CrawlerField() {
     let openT = 0;
     let wasOpen = false;
     let wasLive = false;
+    /* It may only open when the pointer has moved since the last
+       scroll. Scrolling is how you tell it to get back to work, and
+       without this it would re-open the moment it walked back under
+       a cursor that had been sitting still the whole time. */
+    let armed = true;
     let mx = -1e4;
     let my = -1e4;
     const held = Array.from({ length: 5 }, () => ({ x: 0, y: 0 }));
@@ -234,6 +243,7 @@ export default function CrawlerField() {
          slow loop around where it was left. The moment you scroll
          again it goes straight back to leading you down the page. */
       const sy = window.scrollY;
+      const scrolled = lastScroll >= 0 && Math.abs(sy - lastScroll) > 0.6;
       if (Math.abs(sy - lastScroll) > 0.6) { lastScroll = sy; idleFor = 0; }
       else idleFor += dt;
       const idle = idleFor > 900;
@@ -294,12 +304,21 @@ export default function CrawlerField() {
           held[i].y = Math.max(74, Math.min(H - 74, bodyY + Math.sin(a) * OPEN_R));
         }
       }
-      /* Tested here rather than in the pointer handler, so that it
-         also closes when the pointer has stopped moving or the body
-         has walked out from under it. */
-      if (open && Math.hypot(mx - bodyX, my - bodyY) > OPEN_R + 70) {
+      /* Scrolling always hands it back its own business: the menu
+         closes, the freeze lifts, and it goes back to leading you
+         down the page. It will not offer again until you move the
+         pointer, so it cannot re-open under a resting cursor. */
+      if (scrolled) {
         open = false;
+        armed = false;
       }
+
+      /* Opening and closing are the same distance test every frame,
+         rather than an event that can be missed while the body is
+         moving underneath a still pointer. */
+      const reach = Math.hypot(mx - bodyX, my - bodyY);
+      if (armed && reach < HUB_R) open = true;
+      if (open && reach > OPEN_R + 70) open = false;
       openT += ((open ? 1 : 0) - openT) * 0.2;
       if (!open && openT < 0.003) openT = 0;
 
@@ -527,13 +546,17 @@ export default function CrawlerField() {
        so crossing the gap between the body and a label does not
        close it mid-reach. */
     const onMove = (e: PointerEvent) => {
+      /* A scroll can fire a synthetic move at the same coordinates;
+         only a real change of position counts as you reaching for
+         it again. */
+      if (e.clientX !== mx || e.clientY !== my) armed = true;
       mx = e.clientX;
       my = e.clientY;
     };
-    const onEnter = () => { open = true; };
+    const onEnter = () => { armed = true; open = true; };
     const onLeaveAll = () => { open = false; };
     /* once it has handed you one, it lets go of the rest */
-    const onPick = () => { open = false; };
+    const onPick = () => { open = false; armed = false; };
 
     document.addEventListener("pointermove", onMove, { passive: true });
     hubRef.current?.addEventListener("pointerenter", onEnter);
