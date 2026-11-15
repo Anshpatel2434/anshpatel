@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 /* ============================================================
    THE CRAWLER
@@ -32,10 +32,31 @@ const SPAN = 46;         /* resting distance from body to foot      */
 const STEP_MS = 230;
 const READ = 0.45;
 
+/* The five the hero hands it. In the hero these are the labels its
+   front legs are gripping; once it lets go and starts walking, they
+   are still what it is carrying — so putting the pointer on it hands
+   them back. The crawler stops, spreads, and each of the five front
+   legs holds one up. */
+const CARRIES = [
+  { to: "/", hash: "#offer", label: "what I can do" },
+  { to: "/work", hash: "", label: "the work" },
+  { to: "/", hash: "#experience", label: "experience" },
+  { to: "/", hash: "#unshipped", label: "never shipped" },
+  { to: "/", hash: "#stack", label: "the stack" },
+];
+
+/* how far the legs reach when it is holding them out */
+const OPEN_R = 208;
+const FAN = [-1.02, -0.52, 0, 0.52, 1.02];
+
 export default function CrawlerField() {
   const { pathname } = useLocation();
   const replantRef = useRef<() => void>(() => {});
   const ref = useRef<HTMLCanvasElement | null>(null);
+  const hubRef = useRef<HTMLButtonElement | null>(null);
+  const legsRef = useRef<HTMLElement | null>(null);
+  const tagRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const lineRefs = useRef<(SVGLineElement | null)[]>([]);
 
   useEffect(() => {
     const node = ref.current;
@@ -115,6 +136,14 @@ export default function CrawlerField() {
     let wanderY = 0;
     let wanderSet = false;
     let replant = false;
+
+    /* the menu: open while the pointer is on it, and the five points
+       its front legs are holding while it is */
+    let open = false;
+    let openT = 0;
+    let mx = -1e4;
+    let my = -1e4;
+    const held = Array.from({ length: 5 }, () => ({ x: 0, y: 0 }));
     const legs: Leg[] = Array.from({ length: LEGS }, () => ({
       fx: 0, fy: 0, ox: 0, oy: 0, tx: 0, ty: 0, t: 1, hold: 0,
     }));
@@ -228,6 +257,7 @@ export default function CrawlerField() {
       const py = bodyY;
       if (!started) { bodyX = aimX; bodyY = aimY; started = true; }
       else {
+        if (open) { aimX = bodyX; aimY = bodyY; }
         const jump = Math.hypot(aimX - bodyX, aimY - bodyY);
         /* ease toward the target, but cap how far it can move per
            frame so the legs always have a chance to keep up */
@@ -249,6 +279,19 @@ export default function CrawlerField() {
         }
         replant = false;
       }
+
+      /* While it is holding the menu out, the five points are fanned
+         to whichever side has room, and clamped so a label never
+         leaves the screen. */
+      if (open || openT > 0) {
+        const base = bodyX > W * 0.55 ? Math.PI : 0;
+        for (let i = 0; i < 5; i++) {
+          const a = base + FAN[i] * (base ? -1 : 1);
+          held[i].x = Math.max(120, Math.min(W - 120, bodyX + Math.cos(a) * OPEN_R));
+          held[i].y = Math.max(74, Math.min(H - 74, bodyY + Math.sin(a) * OPEN_R));
+        }
+      }
+      openT += ((open ? 1 : 0) - openT) * 0.18;
 
       const vx = bodyX - px;
       const vy = bodyY - py;
@@ -297,6 +340,17 @@ export default function CrawlerField() {
         if (!leg.fx && !leg.fy) {
           const f = foothold(i, headAng);
           leg.fx = f.x; leg.fy = f.y;
+          continue;
+        }
+
+        /* holding the menu out: the same grip as the hero, on five
+           points of its own making rather than the hero's */
+        if (open) {
+          const target = i < 5 ? held[i] : { x: bodyX, y: bodyY };
+          leg.fx += (target.x - leg.fx) * 0.16;
+          leg.fy += (target.y - leg.fy) * 0.16;
+          leg.t = 1;
+          leg.hold = 0;
           continue;
         }
 
@@ -371,6 +425,37 @@ export default function CrawlerField() {
       }
 
       /* ---- the body ---- */
+      /* The overlay is positioned from here rather than from React,
+         so following the body costs nothing per frame. */
+      const hub = hubRef.current;
+      if (hub) hub.style.transform = `translate3d(${bodyX}px, ${bodyY}px, 0)`;
+      const legsEl = legsRef.current;
+      if (legsEl) {
+        legsEl.classList.toggle("on", open);
+        for (let i = 0; i < 5; i++) {
+          const tag = tagRefs.current[i];
+          if (!tag) continue;
+          const t = Math.max(0, Math.min(1, openT * 1.5 - i * 0.08));
+          const x = bodyX + (held[i].x - bodyX) * t;
+          const y = bodyY + (held[i].y - bodyY) * t;
+          tag.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+          tag.style.opacity = String(t);
+
+          /* The canvas sits behind the page, so a leg drawn there
+             would disappear under the content it is crossing. These
+             five are drawn over it instead, and they are what makes
+             the labels read as something the crawler is holding. */
+          const ln = lineRefs.current[i];
+          if (ln) {
+            ln.setAttribute("x1", String(bodyX));
+            ln.setAttribute("y1", String(bodyY));
+            ln.setAttribute("x2", String(x));
+            ln.setAttribute("y2", String(y));
+            ln.style.opacity = String(t * 0.9);
+          }
+        }
+      }
+
       const bob = Math.sin(now * 0.0024) * 0.8;
       ctx.save();
       ctx.translate(bodyX, bodyY + bob);
@@ -400,6 +485,26 @@ export default function CrawlerField() {
     resize();
     if (reduced) { frame(0); cancelAnimationFrame(raf); return; }
 
+    /* It stays open while the pointer is anywhere inside the spread,
+       so crossing the gap between the body and a label does not
+       close it mid-reach. */
+    const onMove = (e: PointerEvent) => {
+      mx = e.clientX;
+      my = e.clientY;
+      if (open && Math.hypot(mx - bodyX, my - bodyY) > OPEN_R + 86) open = false;
+    };
+    const onEnter = () => { open = true; };
+    const onLeaveAll = () => { open = false; };
+    /* once it has handed you one, it lets go of the rest */
+    const onPick = () => { open = false; };
+
+    document.addEventListener("pointermove", onMove, { passive: true });
+    hubRef.current?.addEventListener("pointerenter", onEnter);
+    hubRef.current?.addEventListener("focus", onEnter);
+    legsRef.current?.addEventListener("focusout", onLeaveAll);
+    legsRef.current?.addEventListener("click", onPick);
+    window.addEventListener("blur", onLeaveAll);
+
     raf = requestAnimationFrame(frame);
     window.addEventListener("resize", resize, { passive: true });
     const mo = new MutationObserver(readPalette);
@@ -409,6 +514,8 @@ export default function CrawlerField() {
       cancelAnimationFrame(raf);
       mo.disconnect();
       window.removeEventListener("resize", resize);
+      document.removeEventListener("pointermove", onMove);
+      window.removeEventListener("blur", onLeaveAll);
     };
   }, []);
 
@@ -418,5 +525,44 @@ export default function CrawlerField() {
     return () => window.clearTimeout(id);
   }, [pathname]);
 
-  return <canvas ref={ref} className="crawler" aria-hidden="true" />;
+  return (
+    <>
+      <canvas ref={ref} className="crawler" aria-hidden="true" />
+
+      {/* The crawler's purpose, made available: put the pointer on it
+          and it hands you the five things it has been carrying. */}
+      <div className="crawl-hud">
+        <button
+          ref={hubRef}
+          className="crawl-hub"
+          type="button"
+          aria-label="Show the crawler's shortcuts"
+        />
+        <svg className="crawl-web" aria-hidden="true">
+          {CARRIES.map((c, i) => (
+            <line
+              key={c.label}
+              ref={(el) => {
+                lineRefs.current[i] = el;
+              }}
+            />
+          ))}
+        </svg>
+        <nav ref={legsRef} className="crawl-legs" aria-label="Crawler shortcuts">
+          {CARRIES.map((c, i) => (
+            <Link
+              key={c.label}
+              ref={(el) => {
+                tagRefs.current[i] = el;
+              }}
+              to={{ pathname: c.to, hash: c.hash }}
+              className="crawl-tag mono"
+            >
+              {c.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </>
+  );
 }

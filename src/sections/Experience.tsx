@@ -10,6 +10,26 @@ import { roles, awards, education, sections } from "../data/profile";
    the reader it mattered more than the work above it.
    ============================================================ */
 
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+/* How long it ran, from the two dates already in the data, so the
+   two can never disagree. */
+function span(from: string, to: string) {
+  const read = (v: string) => {
+    const [m, y] = v.split(" ");
+    const i = MONTHS.indexOf(m);
+    return i < 0 ? null : Number(y) * 12 + i;
+  };
+  const a = read(from);
+  const b = read(to);
+  if (a === null || b === null) return "";
+  const n = b - a + 1;
+  return n < 12 ? `${n} months` : `${Math.round((n / 12) * 10) / 10} years`;
+}
+
 export default function Experience() {
   return (
     <section className="section exp" id="experience">
@@ -21,12 +41,15 @@ export default function Experience() {
         <div className="jobs">
           {roles.map((r) => (
             <article className="job" key={r.company}>
-              <header className="job-top">
-                <h3 className="job-co">{r.company}</h3>
-                <span className="job-when">
-                  {r.from} &ndash; {r.to}
-                </span>
-              </header>
+              {/* the dates lead, because when something happened is
+                  the first thing anyone reads a job entry for */}
+              <p className="job-when mono">
+                <time>{r.from}</time>
+                <i aria-hidden="true" />
+                <time>{r.to}</time>
+                <span className="job-span">{span(r.from, r.to)}</span>
+              </p>
+              <h3 className="job-co">{r.company}</h3>
               <p className="job-role">
                 {r.title} &middot; {r.place}
               </p>
@@ -35,10 +58,13 @@ export default function Experience() {
                   <li key={b}>{b}</li>
                 ))}
               </ul>
-              <div className="run job-run">
-                {r.stack.map((s) => (
-                  <span key={s}>{s}</span>
-                ))}
+              <div className="job-stack">
+                <span className="label">Built with</span>
+                <div className="chips">
+                  {r.stack.map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
+                </div>
               </div>
             </article>
           ))}
@@ -52,6 +78,13 @@ export default function Experience() {
               </span>
               <h4 className="extra-name">{a.name}</h4>
               <p className="extra-res">{a.result}</p>
+              {a.stack && a.stack.length > 0 && (
+                <div className="chips chips-sm">
+                  {a.stack.map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
+                </div>
+              )}
               {a.repo && (
                 <a className="act-quiet" href={a.repo} target="_blank" rel="noopener noreferrer">
                   Repository

@@ -912,18 +912,45 @@ main, .top { position: relative; z-index: 1; }
   gap: clamp(26px, 3.4vw, 54px);
   padding-top: clamp(22px, 2.6vw, 34px); border-top: 1px solid var(--rule);
 }
-.job-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; }
+/* The dates lead the card and are set to be read, not to be found.
+   They were 10px in the faintest grey on the page, which is the one
+   thing in a job entry nobody should have to squint at. */
+.job-when {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0 10px;
+  margin: 0 0 11px;
+  font-size: 12.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-strong);
+}
+.job-when i {
+  width: 18px; height: 1px; background: var(--key);
+  display: inline-block;
+}
+.job-span {
+  font-size: 10px; letter-spacing: 0.12em;
+  color: var(--key-t);
+  border-left: 1px solid var(--rule);
+  padding-left: 10px; margin-left: 2px;
+}
 .job-co {
   font-size: clamp(20px, 1.9vw, 27px); line-height: 1.1;
   font-weight: 900; font-variation-settings: "wdth" 74;
   letter-spacing: -0.018em; color: var(--ink-strong);
 }
-.job-when { font-family: var(--mono); font-size: 10.5px; color: var(--dim); white-space: nowrap; }
 .job-role { margin: 7px 0 0; font-size: 13.5px; color: var(--key-t); }
 .job-points { margin: 15px 0 0; padding-left: 15px; }
 .job-points li { font-size: 13.5px; line-height: 1.62; color: var(--muted); margin-bottom: 8px; }
 .job-points li::marker { color: var(--key); }
-.job-run { margin-top: 14px; font-size: 10.5px; }
+/* what it was built with, named rather than implied */
+.job-stack { margin-top: 18px; display: grid; gap: 9px; }
+.job-stack .label { color: var(--dim); }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chips span {
+  font-family: var(--mono); font-size: 11.5px; line-height: 1;
+  color: var(--ink); padding: 6px 9px;
+  border: 1px solid var(--rule); background: var(--field-up);
+}
+.chips-sm { margin-top: 11px; }
+.chips-sm span { font-size: 10.5px; padding: 5px 8px; }
 
 .extras {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1001,3 +1028,73 @@ main, .top { position: relative; z-index: 1; }
 .cons-node span { width: 7px; height: 7px; border: 1px solid var(--key); border-radius: 50%; flex: none; }
 .cons-node:hover { color: var(--ink-strong); }
 .cons-node:hover span { background: var(--key); }
+
+/* ============================================================
+   THE CRAWLER'S SHORTCUTS
+
+   In the hero its front legs grip the five section links. Once it
+   lets go and starts walking, it is still carrying them — so
+   putting the pointer on it hands them back. It stops, spreads,
+   and each front leg holds one up.
+
+   The overlay is positioned from the canvas loop rather than from
+   React, so following the body costs nothing per frame.
+   ============================================================ */
+.crawl-hud {
+  position: fixed; inset: 0; z-index: 6;
+  pointer-events: none;
+}
+
+/* a target big enough to catch something that is moving */
+.crawl-hub {
+  position: absolute; top: 0; left: 0;
+  width: 104px; height: 104px; margin: -52px 0 0 -52px;
+  padding: 0; border: 0; border-radius: 50%;
+  background: transparent; cursor: pointer;
+  pointer-events: auto;
+  will-change: transform;
+}
+.crawl-hub:focus-visible {
+  outline: 2px solid var(--key);
+  outline-offset: -2px;
+}
+
+.crawl-legs { position: absolute; inset: 0; }
+
+/* the five legs, drawn over the page rather than under it */
+.crawl-web {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  overflow: visible; pointer-events: none;
+}
+.crawl-web line {
+  stroke: var(--ink-strong);
+  stroke-width: 1.1;
+  opacity: 0;
+}
+
+.crawl-tag {
+  position: absolute; top: 0; left: 0;
+  padding: 9px 15px;
+  font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--key-t); text-decoration: none; white-space: nowrap;
+  background: var(--field-up);
+  border: 1px solid var(--rule);
+  box-shadow: 0 8px 26px color-mix(in oklab, var(--ink) 20%, transparent);
+  opacity: 0; pointer-events: none;
+  will-change: transform, opacity;
+  transition: background 220ms var(--ease), color 220ms var(--ease),
+    border-color 220ms var(--ease);
+}
+.crawl-legs.on .crawl-tag { pointer-events: auto; }
+.crawl-tag:hover,
+.crawl-tag:focus-visible {
+  background: var(--key);
+  border-color: var(--key);
+  color: var(--field-up);
+}
+
+/* A roaming target is no use on a touch screen, and a reader who
+   has asked for less motion should not be chased by a menu. */
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .crawl-hud { display: none; }
+}

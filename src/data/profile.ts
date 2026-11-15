@@ -37,7 +37,7 @@ export const sections = {
   },
   work: {
     say: "Two I would put my name on.",
-    sub: "Both are live, but that is not the point. These are the two where both halves were mine — the screen you look at and the thing holding it up — and I can defend every decision in either.",
+    sub: "The bar is narrow — I designed it, I built what sits under it, and it is running where anyone can go and use it. Two things clear it. The rest is one link below.",
   },
   experience: {
     say: "Before that, other people's deadlines.",
@@ -45,7 +45,7 @@ export const sections = {
   },
   cases: {
     say: "And the ones that never shipped.",
-    sub: "Same two halves, built to work something out rather than to launch. There is no live link on any of these — the problem and the decision are what was worth the time.",
+    sub: "Built to work something out rather than to launch. There is no live link on any of these, so the problem and the decision are what is worth reading.",
   },
   stack: {
     say: "All of it, and where it runs.",
@@ -272,6 +272,9 @@ export type Award = {
   year: string;
   result: string;
   detail: string;
+  /* what it was built with, so a hackathon entry says as much as a
+     job entry does */
+  stack?: string[];
   repo: string | null;
 };
 
@@ -283,6 +286,7 @@ export const awards: Award[] = [
     result: "Top 14 of 100+ teams",
     detail:
       "Built a full-stack application within 48 hours, placing as a top-14 finalist on technical implementation and innovation.",
+    stack: ["React", "Django", "WebSockets", "scikit-learn", "PostgreSQL"],
     repo: "https://github.com/Anshpatel2434/Tic-Tech-Toe-24",
   },
   {
@@ -292,6 +296,7 @@ export const awards: Award[] = [
     result: "Built and deployed in 48 hours",
     detail:
       "Built and deployed a full-stack web application during a competitive hackathon, applying rapid prototyping and debugging to ship a working solution before the deadline.",
+    stack: ["React", "Hono", "Prisma", "Google Gemini", "NextUI"],
     repo: "https://github.com/Anshpatel2434/Hackout24",
   },
 ];
