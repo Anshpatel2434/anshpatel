@@ -14,21 +14,42 @@ import Home from "./pages/Home";
 import AboutPage from "./pages/AboutPage";
 import WorkPage from "./pages/WorkPage";
 import ProjectPage from "./pages/ProjectPage";
-import { useSmoothScroll, useReveals } from "./lib/motion";
+import { useSmoothScroll, useReveals, scrollPageTo } from "./lib/motion";
 import { Analytics } from "@vercel/analytics/react";
 
 /* A route change should land at the top of the new page, not
    wherever the previous one happened to be scrolled to. */
+/* Opening a page puts you at the start of it. Arriving halfway down
+   a document you have never seen is disorienting, and the browser's
+   own restoration is for going back, not for following a link.
+
+   The exception is a link that named a section — #stack, #experience
+   — which is a request for that part of the page, not the top of it. */
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
     if (hash) {
-      const id = window.setTimeout(() => {
-        document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" });
-      }, 120);
+      /* The page is still growing when the route changes — webfonts
+         and images are not in yet — so a scroll issued now gets
+         clamped to whatever the height happens to be. Wait until the
+         section is actually reachable, then go. */
+      let id = 0;
+      let tries = 0;
+      const go = () => {
+        const el = document.querySelector<HTMLElement>(hash);
+        if (!el) return;
+        const target = el.getBoundingClientRect().top + window.scrollY;
+        const reach = document.documentElement.scrollHeight - window.innerHeight;
+        if (target > reach + 4 && tries++ < 20) {
+          id = window.setTimeout(go, 70);
+          return;
+        }
+        scrollPageTo(el);
+      };
+      id = window.setTimeout(go, 300);
       return () => window.clearTimeout(id);
     }
-    window.scrollTo({ top: 0, behavior: "auto" });
+    scrollPageTo(0, false);
   }, [pathname, hash]);
   return null;
 }

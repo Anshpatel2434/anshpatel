@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 /* ============================================================
    THE CRAWLER
@@ -32,6 +33,8 @@ const STEP_MS = 230;
 const READ = 0.45;
 
 export default function CrawlerField() {
+  const { pathname } = useLocation();
+  const replantRef = useRef<() => void>(() => {});
   const ref = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -111,6 +114,7 @@ export default function CrawlerField() {
     let wanderX = 0;
     let wanderY = 0;
     let wanderSet = false;
+    let replant = false;
     const legs: Leg[] = Array.from({ length: LEGS }, () => ({
       fx: 0, fy: 0, ox: 0, oy: 0, tx: 0, ty: 0, t: 1, hold: 0,
     }));
@@ -231,6 +235,21 @@ export default function CrawlerField() {
         bodyX += (aimX - bodyX) * k;
         bodyY += (aimY - bodyY) * k;
       }
+      /* A new page has a different layout, so the feet left behind
+         on the old one are nowhere near the body any more. Put them
+         back down around it before anything is drawn. */
+      if (replant) {
+        for (let i = 0; i < LEGS; i++) {
+          const a = headAng + (i / LEGS) * Math.PI * 2;
+          const leg = legs[i];
+          leg.fx = leg.ox = leg.tx = bodyX + Math.cos(a) * SPAN;
+          leg.fy = leg.oy = leg.ty = bodyY + Math.sin(a) * SPAN;
+          leg.t = 1;
+          leg.hold = 0;
+        }
+        replant = false;
+      }
+
       const vx = bodyX - px;
       const vy = bodyY - py;
       const speed = Math.hypot(vx, vy);
@@ -369,6 +388,14 @@ export default function CrawlerField() {
       ctx.restore();
     }
 
+    replantRef.current = () => {
+      started = false;
+      replant = true;
+      idleFor = 0;
+      wanderSet = false;
+      lastScroll = -1;
+    };
+
     readPalette();
     resize();
     if (reduced) { frame(0); cancelAnimationFrame(raf); return; }
@@ -384,6 +411,12 @@ export default function CrawlerField() {
       window.removeEventListener("resize", resize);
     };
   }, []);
+
+  /* after the new route has laid itself out, not during */
+  useEffect(() => {
+    const id = window.setTimeout(() => replantRef.current(), 60);
+    return () => window.clearTimeout(id);
+  }, [pathname]);
 
   return <canvas ref={ref} className="crawler" aria-hidden="true" />;
 }

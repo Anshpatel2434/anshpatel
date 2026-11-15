@@ -17,7 +17,6 @@ export default function About() {
   return (
     <section className="section about" id="about">
       <div className="wrap">
-        <h2 className="h-lg d-tight sec-say">Who you would<br />be hiring.</h2>
         <div className="about-in">
           <figure className="about-pic">
             <img src={MyPic} alt={identity.name} />

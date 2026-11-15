@@ -14,6 +14,31 @@ const prefersReduced = () =>
    two never disagree about where the page is. Anchor links are
    routed through lenis.scrollTo so they ease instead of jumping.
    ------------------------------------------------------------ */
+let current: Lenis | null = null;
+
+/* The page can only be in one place at a time, and while Lenis is
+   running that place is Lenis's to decide. window.scrollTo is undone
+   on the next frame, so every jump goes through here instead. */
+export function scrollPageTo(target: HTMLElement | number, smooth = true) {
+  if (current) {
+    /* lock, because a ScrollTrigger refresh during a route change
+       will otherwise restore the old position mid-flight and leave
+       the page stranded halfway */
+    current.scrollTo(target, {
+      offset: -24,
+      immediate: !smooth,
+      lock: true,
+      force: true,
+    });
+    return;
+  }
+  if (typeof target === "number") {
+    window.scrollTo({ top: target, behavior: smooth ? "smooth" : "auto" });
+  } else {
+    target.scrollIntoView({ behavior: smooth ? "smooth" : "auto" });
+  }
+}
+
 export function useSmoothScroll() {
   useEffect(() => {
     if (prefersReduced()) return;
@@ -32,13 +57,14 @@ export function useSmoothScroll() {
     };
     raf = requestAnimationFrame(loop);
 
+    current = lenis;
     lenis.on("scroll", ScrollTrigger.update);
 
     const onAnchor = (e: MouseEvent) => {
       const a = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>(
         'a[href^="#"]'
       );
-      if (!a) return;
+      if (!a || a.hasAttribute("data-own-scroll")) return;
       const id = a.getAttribute("href");
       if (!id || id === "#") return;
       const target = document.querySelector(id);
@@ -52,6 +78,7 @@ export function useSmoothScroll() {
     return () => {
       document.removeEventListener("click", onAnchor);
       cancelAnimationFrame(raf);
+      current = null;
       lenis.destroy();
     };
   }, []);

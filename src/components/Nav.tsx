@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { links } from "../data/profile";
+import { scrollPageTo } from "../lib/motion";
 
 /* ============================================================
    NAV — corner text, not an object.
@@ -24,17 +25,19 @@ const ITEMS: Item[] = [
 export default function Nav() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
+  /* Put the section in the URL and let ScrollToTop act on it. Two
+     things moving the page at once is how it ends up halfway. */
   const goHash = (e: React.MouseEvent, item: Item) => {
     e.preventDefault();
     setOpen(false);
-    const scroll = () =>
-      document.querySelector(item.hash!)?.scrollIntoView({ behavior: "smooth" });
-    if (pathname !== "/") {
-      navigate("/");
-      window.setTimeout(scroll, 110);
-    } else scroll();
+    if (pathname === "/" && hash === item.hash) {
+      const el = document.querySelector<HTMLElement>(item.hash);
+      if (el) scrollPageTo(el);
+      return;
+    }
+    navigate({ pathname: "/", hash: item.hash });
   };
 
   return (
@@ -46,7 +49,12 @@ export default function Nav() {
       <nav className={"top-nav" + (open ? " open" : "")} aria-label="Main">
         {ITEMS.map((i) =>
           i.hash ? (
-            <a key={i.label} href={i.hash} onClick={(e) => goHash(e, i)}>
+            <a
+              key={i.label}
+              href={i.hash}
+              data-own-scroll
+              onClick={(e) => goHash(e, i)}
+            >
               {i.label}
             </a>
           ) : (
