@@ -69,7 +69,6 @@ export type Project = {
   coverLive: string;
   coverWideRest?: string;
   coverWideLive?: string;
-  shotNote?: string;
 };
 
 export const projects: Project[] = [
@@ -88,7 +87,6 @@ export const projects: Project[] = [
     coverLive: PrepToDoLive,
     coverWideRest: PrepToDoWRest,
     coverWideLive: PrepToDoWLive,
-    shotNote: "PrepToDo — every wrong answer has a pattern",
     blurb:
       "A CAT VARC platform that names the reasoning pattern behind your wrong answers instead of marking them wrong.",
     problem:
@@ -126,7 +124,6 @@ export const projects: Project[] = [
     coverLive: UniAskLive,
     coverWideRest: UniAskWRest,
     coverWideLive: UniAskWLive,
-    shotNote: "UniAsk — a year of answers, by day",
     blurb:
       "A real-time academic Q&A platform for LJ University, where a doubt reaches a person rather than a help desk.",
     problem:
@@ -162,7 +159,6 @@ export const projects: Project[] = [
     coverLive: AgroLive,
     coverWideRest: AgroWRest,
     coverWideLive: AgroWLive,
-    shotNote: "AgroQuality — a farm, read remotely",
     blurb:
       "Built and deployed inside a 48-hour deadline: live soil and weather readings for a farm, turned into advice a farmer can act on.",
     problem:
@@ -196,7 +192,6 @@ export const projects: Project[] = [
     coverLive: KavachLive,
     coverWideRest: KavachWRest,
     coverWideLive: KavachWLive,
-    shotNote: "Kavach — 45 documents, 33 agree, 12 need a decision",
     blurb:
       "GSTR-2B reconciled against a purchase register, in the browser, without the data ever leaving the machine.",
     problem:
@@ -232,7 +227,6 @@ export const projects: Project[] = [
     coverLive: OuroborosLive,
     coverWideRest: OuroborosWRest,
     coverWideLive: OuroborosWLive,
-    shotNote: "Ouroboros — the pipeline, and what it writes",
     blurb:
       "Interviews a project until it is unambiguous, then generates the harness a coding agent has to work inside.",
     problem:
@@ -268,7 +262,6 @@ export const projects: Project[] = [
     coverLive: StudyShareLive,
     coverWideRest: StudyShareWRest,
     coverWideLive: StudyShareWLive,
-    shotNote: "StudyShare — ranked by what people actually read",
     blurb:
       "An e-library built in 48 hours, where the catalogue learns what to put in front of you next.",
     problem:

@@ -175,14 +175,6 @@ main, .top { position: relative; z-index: 1; }
   text-shadow: 0 1px 14px rgba(0, 0, 0, 0.4);
   pointer-events: none;
 }
-.plate-note {
-  position: absolute; left: 24px; bottom: 13px; right: 24px; z-index: 3;
-  font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase;
-  color: oklch(88% 0.03 85);
-  opacity: 0;
-  transition: opacity 420ms var(--ease);
-  pointer-events: none;
-}
 
 /* the reveal */
 .band-in:hover .plate-rest,
@@ -192,22 +184,15 @@ main, .top { position: relative; z-index: 1; }
 .plate:hover .plate-rest {
   opacity: 0; filter: blur(0); transform: scale(1);
 }
-.band-in:hover .plate-note,
-.band-in:focus-within .plate-note,
-.cat-hit:hover .plate-note,
-.cat-hit:focus-visible .plate-note,
-.plate:hover .plate-note { opacity: 1; }
 
 /* On the project's own page there is nothing left to hold back. */
 .plate.lit .plate-rest { opacity: 0; }
-.plate.lit .plate-note { opacity: 1; }
 
 /* No pointer to hover with, or no appetite for motion: the project
    gets its own colours straight away. */
 @media (hover: none), (prefers-reduced-motion: reduce) {
   .plate-rest { opacity: 0; transition: none; }
-  .plate-note { opacity: 1; }
-}
+  }
 
 .band-plate { position: relative; }
 .band-copy { position: relative; }

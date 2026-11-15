@@ -40,7 +40,7 @@ export default function Plate({
         "plate" +
         (wide ? " plate-w" : "") +
         (lit ? " lit" : "") +
-        (silent && !p.shotNote ? " quiet" : "")
+        (silent ? " quiet" : "")
       }
     >
       <img className="plate-live" src={live} alt={p.name} loading="lazy" />
@@ -48,11 +48,6 @@ export default function Plate({
       {!silent && (
         <span className="plate-name d-tight" aria-hidden="true">
           {p.name}
-        </span>
-      )}
-      {p.shotNote && (
-        <span className="plate-note mono" aria-hidden="true">
-          {p.shotNote}
         </span>
       )}
     </div>
