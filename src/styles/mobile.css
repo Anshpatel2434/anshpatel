@@ -140,26 +140,25 @@
   .hero { padding-block: 108px 56px; }
   .hero-in { gap: 36px; min-height: 0; }
 
+/* An aspect-ratio set against a min-height resolves to a WIDTH —
+     330px tall at 1/0.84 is 393px wide — and that width was forced
+     on the grid track inside a 339px column, which is what pushed
+     the whole document sideways. A height does the same job and
+     asks nothing of the width. */
   .cons {
     aspect-ratio: auto;
     min-height: 0;
-    display: grid;
-    gap: 0;
-    border-top: 1px solid var(--rule);
+    height: 310px;
   }
-  /* Kept in the layout, not hidden: this 2px marker is the anchor
-     the crawler reads for the hero, and a display:none element
-     measures as 0,0 — which parked it in the corner. */
-  .cons-origin { left: 50%; top: 38%; }
+  .cons-origin { left: 48%; top: 50%; }
+
+  /* the phone's own arrangement of the same five points */
   .cons-node {
-    position: static;
-    transform: none;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 15px 0;
-    font-size: 11px;
-    border-bottom: 1px solid var(--rule-faint);
+    left: var(--mx);
+    top: var(--my);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    gap: 8px;
     color: var(--ink);
   }
   .cons-node span { width: 6px; height: 6px; }

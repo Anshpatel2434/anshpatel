@@ -158,10 +158,10 @@ export default function CrawlerField() {
        phone and a tap that only worked by proximity would fire
        every time you scrolled past the thing. */
     const touch = window.matchMedia("(hover: none)").matches;
-    /* On a phone the hero's five links are a list down the page
-       rather than a constellation across it. Gripping a vertical
-       column drags five legs over the text as a tangle, so there it
-       simply walks instead. */
+    /* A phone keeps the constellation and the grip — that emergence
+       is the point of the hero. What it cannot keep is the desktop's
+       room to swing, so the meander is damped and the body is held
+       inside the screen below. */
     const narrow = window.matchMedia("(max-width: 760px)").matches;
     let mx = -1e4;
     let my = -1e4;
@@ -241,9 +241,10 @@ export default function CrawlerField() {
       const ux = B.x - A.x;
       const uy = B.y - A.y;
       const ul = Math.hypot(ux, uy) || 1;
+      const swing = narrow ? 0.34 : 1;
       const wobble =
-        Math.sin(t * Math.PI * 2.2 + now * 0.00022) * 52 +
-        Math.sin(now * 0.00041) * 16;
+        (Math.sin(t * Math.PI * 2.2 + now * 0.00022) * 52 +
+          Math.sin(now * 0.00041) * 16) * swing;
       const tx = baseX + (-uy / ul) * wobble;
       const ty = baseY + (ux / ul) * wobble * 0.22;
 
@@ -275,6 +276,14 @@ export default function CrawlerField() {
       } else {
         wanderSet = false;
       }
+
+      /* Spine anchors sit at the edges of the content column, and on
+         a narrow screen those edges are the screen's. Wherever the
+         aim lands, the whole creature has to stay in view — legs
+         included, which is what the margin is for. */
+      const edge = narrow ? 58 : 70;
+      aimX = Math.max(edge, Math.min(W - edge, aimX));
+      aimY = Math.max(edge, Math.min(H - edge, aimY));
 
       const px = bodyX;
       const py = bodyY;
@@ -370,7 +379,7 @@ export default function CrawlerField() {
          nodes that were no longer there. */
       const heroBox = document.querySelector(".cons")?.getBoundingClientRect();
       const heroHere = !!heroBox && heroBox.bottom > H * 0.35 && heroBox.top < H * 0.9;
-      const inHero = heroHere && navs.length >= 5 && !narrow;
+      const inHero = heroHere && navs.length >= 5;
 
       if (inHero) {
         for (const n of navs) {

@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { identity } from "../data/profile";
 
 /* ============================================================
@@ -11,12 +12,18 @@ import { identity } from "../data/profile";
    with the copy for anyone who wants to skip straight to it.
    ============================================================ */
 
+/* Two sets of coordinates for one constellation. The phone needs
+   its own because a label is nowrap and the desktop arrangement
+   hangs two of them off the right edge of a 390px screen — but it
+   is the same five points, and the crawler still comes out of them
+   the same way. mx/my are chosen so that every label, at its own
+   width, stays inside the gutters. */
 const NODES = [
-  { href: "#offer", label: "what I can do", x: 16, y: 18 },
-  { href: "#work", label: "work", x: 68, y: 8 },
-  { href: "#experience", label: "experience", x: 86, y: 44 },
-  { href: "#unshipped", label: "the unshipped", x: 58, y: 74 },
-  { href: "#stack", label: "the stack", x: 10, y: 62 },
+  { href: "#offer", label: "what I can do", x: 16, y: 18, mx: 30, my: 11 },
+  { href: "#work", label: "work", x: 68, y: 8, mx: 78, my: 30 },
+  { href: "#experience", label: "experience", x: 86, y: 44, mx: 72, my: 70 },
+  { href: "#unshipped", label: "the unshipped", x: 58, y: 74, mx: 35, my: 90 },
+  { href: "#stack", label: "the stack", x: 10, y: 62, mx: 20, my: 51 },
 ];
 
 export default function Hero() {
@@ -52,7 +59,14 @@ export default function Hero() {
               key={n.href}
               className="cons-node"
               href={n.href}
-              style={{ left: `${n.x}%`, top: `${n.y}%` }}
+              style={
+                {
+                  "--x": `${n.x}%`,
+                  "--y": `${n.y}%`,
+                  "--mx": `${n.mx}%`,
+                  "--my": `${n.my}%`,
+                } as CSSProperties
+              }
             >
               <span data-cons aria-hidden="true" />
               {n.label}

@@ -1018,7 +1018,8 @@ main, .top { position: relative; z-index: 1; }
 @media (max-width: 960px) { .cons { min-height: 330px; } }
 .cons-origin { position: absolute; left: 46%; top: 42%; width: 2px; height: 2px; }
 .cons-node {
-  position: absolute; transform: translate(-50%, -50%);
+  position: absolute; left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%);
   display: inline-flex; align-items: center; gap: 9px;
   font-family: var(--mono); font-size: 11px;
   letter-spacing: 0.1em; text-transform: uppercase;
