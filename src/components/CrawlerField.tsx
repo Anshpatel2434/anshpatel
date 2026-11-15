@@ -56,7 +56,7 @@ export default function CrawlerField() {
   const hubRef = useRef<HTMLButtonElement | null>(null);
   const legsRef = useRef<HTMLElement | null>(null);
   const tagRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const lineRefs = useRef<(SVGLineElement | null)[]>([]);
+  const lineRefs = useRef<(SVGPathElement | null)[]>([]);
 
   useEffect(() => {
     const node = ref.current;
@@ -343,12 +343,16 @@ export default function CrawlerField() {
           continue;
         }
 
-        /* holding the menu out: the same grip as the hero, on five
-           points of its own making rather than the hero's */
+        /* Holding the menu out. The five that reach the labels are
+           drawn over the page by the overlay, not here — so here the
+           legs gather into a compact stance instead, and the body
+           reads as something standing still and offering. */
         if (open) {
-          const target = i < 5 ? held[i] : { x: bodyX, y: bodyY };
-          leg.fx += (target.x - leg.fx) * 0.16;
-          leg.fy += (target.y - leg.fy) * 0.16;
+          const a = headAng + (i / LEGS) * Math.PI * 2;
+          const tx = bodyX + Math.cos(a) * SPAN * 0.82;
+          const ty = bodyY + Math.sin(a) * SPAN * 0.82;
+          leg.fx += (tx - leg.fx) * 0.14;
+          leg.fy += (ty - leg.fy) * 0.14;
           leg.t = 1;
           leg.hold = 0;
           continue;
@@ -402,7 +406,7 @@ export default function CrawlerField() {
         if (span < 7) continue;
         /* a hard ceiling: whatever happened upstream, a limb is
            never drawn longer than it could physically reach */
-        if (!inHero && span > CEIL) {
+        if (!inHero && !open && span > CEIL) {
           const f = foothold(i, headAng);
           leg.fx = f.x; leg.fy = f.y; leg.t = 1;
           continue;
@@ -447,10 +451,18 @@ export default function CrawlerField() {
              the labels read as something the crawler is holding. */
           const ln = lineRefs.current[i];
           if (ln) {
-            ln.setAttribute("x1", String(bodyX));
-            ln.setAttribute("y1", String(bodyY));
-            ln.setAttribute("x2", String(x));
-            ln.setAttribute("y2", String(y));
+            /* bowed the way the canvas bends a leg, so these read as
+               the same creature's limbs rather than as rays */
+            const dx = x - bodyX;
+            const dy = y - bodyY;
+            const nl = Math.hypot(dx, dy) || 1;
+            const bend = i % 2 === 0 ? 16 : -16;
+            const kx = bodyX + dx / 2 + (-dy / nl) * bend;
+            const ky = bodyY + dy / 2 + (dx / nl) * bend - 6;
+            ln.setAttribute(
+              "d",
+              `M ${bodyX} ${bodyY} Q ${kx} ${ky} ${x} ${y}`
+            );
             ln.style.opacity = String(t * 0.9);
           }
         }
@@ -540,7 +552,7 @@ export default function CrawlerField() {
         />
         <svg className="crawl-web" aria-hidden="true">
           {CARRIES.map((c, i) => (
-            <line
+            <path
               key={c.label}
               ref={(el) => {
                 lineRefs.current[i] = el;
