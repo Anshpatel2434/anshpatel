@@ -54,6 +54,7 @@ export default function CrawlerField() {
   const replantRef = useRef<() => void>(() => {});
   const ref = useRef<HTMLCanvasElement | null>(null);
   const hubRef = useRef<HTMLButtonElement | null>(null);
+  const hudRef = useRef<HTMLDivElement | null>(null);
   const legsRef = useRef<HTMLElement | null>(null);
   const tagRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const lineRefs = useRef<(SVGPathElement | null)[]>([]);
@@ -141,6 +142,8 @@ export default function CrawlerField() {
        its front legs are holding while it is */
     let open = false;
     let openT = 0;
+    let wasOpen = false;
+    let wasLive = false;
     let mx = -1e4;
     let my = -1e4;
     const held = Array.from({ length: 5 }, () => ({ x: 0, y: 0 }));
@@ -291,7 +294,14 @@ export default function CrawlerField() {
           held[i].y = Math.max(74, Math.min(H - 74, bodyY + Math.sin(a) * OPEN_R));
         }
       }
-      openT += ((open ? 1 : 0) - openT) * 0.18;
+      /* Tested here rather than in the pointer handler, so that it
+         also closes when the pointer has stopped moving or the body
+         has walked out from under it. */
+      if (open && Math.hypot(mx - bodyX, my - bodyY) > OPEN_R + 70) {
+        open = false;
+      }
+      openT += ((open ? 1 : 0) - openT) * 0.2;
+      if (!open && openT < 0.003) openT = 0;
 
       const vx = bodyX - px;
       const vy = bodyY - py;
@@ -400,7 +410,10 @@ export default function CrawlerField() {
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
       const CEIL = REACH * 2;
-      for (let i = 0; i < LEGS; i++) {
+      /* Offering: the five legs drawn over the page are the whole
+         creature. Drawing these as well gives it thirteen limbs. */
+      const offering = openT > 0.02;
+      for (let i = 0; i < LEGS && !offering; i++) {
         const leg = legs[i];
         const span = Math.hypot(leg.fx - bodyX, leg.fy - bodyY);
         if (span < 7) continue;
@@ -429,13 +442,26 @@ export default function CrawlerField() {
       }
 
       /* ---- the body ---- */
-      /* The overlay is positioned from here rather than from React,
-         so following the body costs nothing per frame. */
+      /* The hub is the only part that must follow every frame, because
+         it is the target you have to be able to catch. */
       const hub = hubRef.current;
       if (hub) hub.style.transform = `translate3d(${bodyX}px, ${bodyY}px, 0)`;
+
       const legsEl = legsRef.current;
-      if (legsEl) {
+      const live = open || openT > 0.002;
+      if (live !== wasLive) {
+        hudRef.current?.classList.toggle("live", live);
+        wasLive = live;
+      }
+      if (legsEl && open !== wasOpen) {
         legsEl.classList.toggle("on", open);
+        wasOpen = open;
+      }
+
+      /* Shut and settled: nothing to position, so nothing is touched.
+         Writing to five shadowed boxes and a viewport-sized SVG every
+         frame is what made the whole page feel heavy. */
+      if (legsEl && live) {
         for (let i = 0; i < 5; i++) {
           const tag = tagRefs.current[i];
           if (!tag) continue;
@@ -503,7 +529,6 @@ export default function CrawlerField() {
     const onMove = (e: PointerEvent) => {
       mx = e.clientX;
       my = e.clientY;
-      if (open && Math.hypot(mx - bodyX, my - bodyY) > OPEN_R + 86) open = false;
     };
     const onEnter = () => { open = true; };
     const onLeaveAll = () => { open = false; };
@@ -543,7 +568,7 @@ export default function CrawlerField() {
 
       {/* The crawler's purpose, made available: put the pointer on it
           and it hands you the five things it has been carrying. */}
-      <div className="crawl-hud">
+      <div className="crawl-hud" ref={hudRef}>
         <button
           ref={hubRef}
           className="crawl-hub"

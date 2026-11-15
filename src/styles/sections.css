@@ -1059,6 +1059,14 @@ main, .top { position: relative; z-index: 1; }
   outline-offset: -2px;
 }
 
+/* Shut, the overlay is taken out of the paint entirely — otherwise
+   a viewport-sized SVG and five shadowed boxes sit in every frame
+   the site ever draws. */
+.crawl-hud .crawl-legs,
+.crawl-hud .crawl-web { visibility: hidden; }
+.crawl-hud.live .crawl-legs,
+.crawl-hud.live .crawl-web { visibility: visible; }
+
 .crawl-legs { position: absolute; inset: 0; }
 
 /* the five legs, drawn over the page rather than under it */
