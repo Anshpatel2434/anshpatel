@@ -119,84 +119,81 @@ main, .top { position: relative; z-index: 1; }
 }
 .band-plate { position: relative; }
 
-/* A plate holds back until the pointer is on it. Blurred, drained
-   and sunk into the ground so it reads as part of the page rather
-   than a screenshot pasted on top of it; on hover it resolves. */
+/* A plate carries two renditions of one cover. Underneath, the
+   project in its own colours. Over it, the same cover redrawn in
+   parchment and umber, blurred and settled into the ground — so
+   six palettes read as one set while nobody is looking.
+
+   Look at it and the theme layer lifts. Nothing about the
+   project's colour changed; it was only held back. */
 .plate {
   position: relative; aspect-ratio: 16 / 10; overflow: hidden;
   border: 1px solid var(--rule); background: var(--field-dn);
   isolation: isolate;
 }
 .plate img {
+  position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover; display: block;
-  filter: blur(8px) saturate(0.45) contrast(1.02);
-  transform: scale(1.04);
-  opacity: 0.92;
-  transition: filter 620ms var(--ease), opacity 620ms var(--ease),
+}
+
+/* the project, as it really is */
+.plate-live { z-index: 0; }
+
+/* the page's own colours, over the top */
+.plate-rest {
+  z-index: 1;
+  filter: blur(7px) contrast(1.02);
+  transform: scale(1.08);
+  transition: opacity 620ms var(--ease), filter 620ms var(--ease),
     transform 900ms var(--ease);
 }
 .plate-ph {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 1;
   background: repeating-linear-gradient(
     -45deg, transparent 0 9px,
     color-mix(in oklab, var(--ink) 5%, transparent) 9px 10px
   );
 }
-/* the ground, laid over the image, so the plate sits in the page */
-.plate-veil {
-  position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--field-dn) 30%, transparent),
-    color-mix(in oklab, var(--field-dn) 58%, transparent)
-  );
-  transition: opacity 620ms var(--ease);
-}
-.plate-note {
-  position: absolute; left: 22px; bottom: 13px; z-index: 3;
-  font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase;
-  color: var(--pk, var(--key-t));
-  opacity: 0;
-  transition: opacity 420ms var(--ease);
-}
-
-/* The project's name, over its own plate, in its own colour. It is
-   what you read while the plate is still held back; once the plate
-   resolves it steps aside, because by then the thing speaks. */
 .plate-name {
-  position: absolute; left: 22px; bottom: 26px; right: 22px; z-index: 3;
+  position: absolute; left: 24px; bottom: 26px; right: 24px; z-index: 3;
   font-size: clamp(26px, 3.4vw, 54px); line-height: 0.95;
   font-weight: 900; font-variation-settings: "wdth" 66;
   letter-spacing: -0.02em;
-  color: var(--pk, var(--ink-strong));
-  text-shadow: 0 1px 0 color-mix(in oklab, var(--field) 55%, transparent);
+  color: var(--paper-name, oklch(96% 0.02 85));
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
   pointer-events: none;
 }
-.band:hover .plate img,
-.band:focus-within .plate img,
-.cat-hit:hover .plate img,
-.cat-hit:focus-visible .plate img,
-.plate:hover img {
-  filter: none; opacity: 1; transform: scale(1);
+.plate-note {
+  position: absolute; left: 24px; bottom: 13px; right: 24px; z-index: 3;
+  font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: oklch(88% 0.03 85);
+  opacity: 0;
+  transition: opacity 420ms var(--ease);
+  pointer-events: none;
 }
-.band:hover .plate-veil,
-.band:focus-within .plate-veil,
-.cat-hit:hover .plate-veil,
-.cat-hit:focus-visible .plate-veil,
-.plate:hover .plate-veil { opacity: 0; }
+
+/* the reveal */
+.band:hover .plate-rest,
+.band:focus-within .plate-rest,
+.cat-hit:hover .plate-rest,
+.cat-hit:focus-visible .plate-rest,
+.plate:hover .plate-rest {
+  opacity: 0; filter: blur(0); transform: scale(1);
+}
 .band:hover .plate-note,
 .band:focus-within .plate-note,
 .cat-hit:hover .plate-note,
 .cat-hit:focus-visible .plate-note,
 .plate:hover .plate-note { opacity: 1; }
 
-/* No pointer to hover with, or no appetite for motion: show it. */
+/* No pointer to hover with, or no appetite for motion: the project
+   gets its own colours straight away. */
 @media (hover: none), (prefers-reduced-motion: reduce) {
-  .plate img { filter: none; opacity: 1; transform: none; transition: none; }
-  .plate-veil { opacity: 0; }
-  .plate-name { opacity: 0; }
+  .plate-rest { opacity: 0; transition: none; }
   .plate-note { opacity: 1; }
 }
+
+.band-plate { position: relative; }
 .band-copy { position: relative; }
 .band-n {
   position: absolute; top: -0.5em; right: 0;
@@ -259,11 +256,11 @@ main, .top { position: relative; z-index: 1; }
     background 380ms var(--ease);
 }
 .idx2-hit:hover, .idx2-hit:focus-visible {
-  border-left-color: var(--pk, var(--key));
+  border-left-color: var(--key);
   padding-left: 14px;
   background: linear-gradient(
     to right,
-    color-mix(in oklab, var(--pk, var(--key)) 7%, transparent),
+    color-mix(in oklab, var(--key) 7%, transparent),
     transparent 62%
   );
 }
@@ -273,7 +270,7 @@ main, .top { position: relative; z-index: 1; }
   color: var(--ink-strong);
   transition: color 380ms var(--ease);
 }
-.idx2-hit:hover .idx2-name { color: var(--pk, var(--key-t)); }
+.idx2-hit:hover .idx2-name { color: var(--key-t); }
 .idx2-what { font-size: 14px; color: var(--muted); line-height: 1.6; }
 .idx2-ctx {
   grid-column: 1; font-size: 9.5px; letter-spacing: 0.13em;
@@ -303,11 +300,11 @@ main, .top { position: relative; z-index: 1; }
 .cat-copy {
   margin-top: 20px;
   padding-left: 16px;
-  border-left: 2px solid color-mix(in oklab, var(--pk) 38%, transparent);
+  border-left: 2px solid color-mix(in oklab, var(--key) 32%, transparent);
   transition: border-color 380ms var(--ease);
 }
 .cat-hit:hover .cat-copy, .cat-hit:focus-visible .cat-copy {
-  border-left-color: var(--pk);
+  border-left-color: var(--key);
 }
 .cat-name {
   margin: 0; font-size: clamp(24px, 2.8vw, 38px); font-weight: 900;
@@ -315,7 +312,7 @@ main, .top { position: relative; z-index: 1; }
   color: var(--ink-strong);
   transition: color 380ms var(--ease);
 }
-.cat-hit:hover .cat-name { color: var(--pk); }
+.cat-hit:hover .cat-name { color: var(--key-t); }
 .cat-meta {
   margin: 9px 0 0; display: flex; align-items: center; gap: 8px;
   font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
@@ -325,10 +322,10 @@ main, .top { position: relative; z-index: 1; }
   width: 6px; height: 6px; border-radius: 50%;
   border: 1px solid var(--dim); background: transparent;
 }
-.cat-meta .dot.live { background: var(--pk); border-color: var(--pk); }
+.cat-meta .dot.live { background: var(--key); border-color: var(--key); }
 .cat-ctx {
   margin: 7px 0 0; font-size: 9.5px; letter-spacing: 0.13em;
-  text-transform: uppercase; color: var(--pk);
+  text-transform: uppercase; color: var(--key-t);
 }
 .cat-what { margin: 13px 0 0; font-size: 15px; line-height: 1.6; color: var(--muted); max-width: 48ch; }
 .cat-stack {

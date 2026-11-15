@@ -64,11 +64,9 @@ export default function ProjectPage() {
         </div>
       </header>
 
-      {(p.shotWide || p.shot) && (
-        <div className="wrap proj-plate">
-          <Plate project={p} wide silent />
-        </div>
-      )}
+      <div className="wrap proj-plate">
+        <Plate project={p} wide silent />
+      </div>
 
       <div className="wrap proj-body">
         <section className="proj-part">

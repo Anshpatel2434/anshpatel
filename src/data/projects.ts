@@ -1,15 +1,27 @@
-import PrepToDoBand from "../assets/shots/preptodo-band.jpg";
-import PrepToDoWide from "../assets/shots/preptodo-wide.jpg";
-import UniAskBand from "../assets/shots/uniask-band.jpg";
-import UniAskWide from "../assets/shots/uniask-wide.jpg";
-import AgroBand from "../assets/shots/agro-band.jpg";
-import AgroWide from "../assets/shots/agro-wide.jpg";
-import KavachBand from "../assets/shots/kavach-band.jpg";
-import KavachWide from "../assets/shots/kavach-wide.jpg";
-import OuroborosBand from "../assets/shots/ouroboros-band.jpg";
-import OuroborosWide from "../assets/shots/ouroboros-wide.jpg";
-import StudyShareBand from "../assets/shots/studyshare-band.jpg";
-import StudyShareWide from "../assets/shots/studyshare-wide.jpg";
+import PrepToDoRest from "../assets/shots/preptodo-rest.jpg";
+import PrepToDoLive from "../assets/shots/preptodo-live.jpg";
+import PrepToDoWRest from "../assets/shots/preptodo-w-rest.jpg";
+import PrepToDoWLive from "../assets/shots/preptodo-w-live.jpg";
+import UniAskRest from "../assets/shots/uniask-rest.jpg";
+import UniAskLive from "../assets/shots/uniask-live.jpg";
+import UniAskWRest from "../assets/shots/uniask-w-rest.jpg";
+import UniAskWLive from "../assets/shots/uniask-w-live.jpg";
+import AgroRest from "../assets/shots/agro-rest.jpg";
+import AgroLive from "../assets/shots/agro-live.jpg";
+import AgroWRest from "../assets/shots/agro-w-rest.jpg";
+import AgroWLive from "../assets/shots/agro-w-live.jpg";
+import KavachRest from "../assets/shots/kavach-rest.jpg";
+import KavachLive from "../assets/shots/kavach-live.jpg";
+import KavachWRest from "../assets/shots/kavach-w-rest.jpg";
+import KavachWLive from "../assets/shots/kavach-w-live.jpg";
+import OuroborosRest from "../assets/shots/ouroboros-rest.jpg";
+import OuroborosLive from "../assets/shots/ouroboros-live.jpg";
+import OuroborosWRest from "../assets/shots/ouroboros-w-rest.jpg";
+import OuroborosWLive from "../assets/shots/ouroboros-w-live.jpg";
+import StudyShareRest from "../assets/shots/studyshare-rest.jpg";
+import StudyShareLive from "../assets/shots/studyshare-live.jpg";
+import StudyShareWRest from "../assets/shots/studyshare-w-rest.jpg";
+import StudyShareWLive from "../assets/shots/studyshare-w-live.jpg";
 
 /* ============================================================
    EVERY PROJECT, IN ONE PLACE
@@ -49,14 +61,15 @@ export type Project = {
   decision: string;
   build: string[];
   stack: { k: string; items: string[] }[];
-  /* the project's own colour: the seam on its plate, and the ink
-     its name is set in over that plate */
-  key: string;
-  ink: string;
-  /* the plate on the work band, and a second one for its own page */
-  shot?: string;
+  /* The cover, in two renditions of one composition: `Rest` is the
+     page's own parchment and umber, `Live` is the project's real
+     colours. The plate cross-fades from one to the other. `Wide`
+     is the 21:9 pair the project page uses. */
+  coverRest: string;
+  coverLive: string;
+  coverWideRest?: string;
+  coverWideLive?: string;
   shotNote?: string;
-  shotWide?: string;
 };
 
 export const projects: Project[] = [
@@ -64,8 +77,6 @@ export const projects: Project[] = [
   {
     slug: "preptodo",
     when: 202602,
-    key: "#1fa87e",
-    ink: "#103e30",
     name: "PrepToDo",
     year: "February 2026",
     shipped: true,
@@ -73,8 +84,10 @@ export const projects: Project[] = [
     live: "https://preptodo.in",
     liveLabel: "preptodo.in",
     repo: "https://github.com/Anshpatel2434/PrepToDo",
-    shot: PrepToDoBand,
-    shotWide: PrepToDoWide,
+    coverRest: PrepToDoRest,
+    coverLive: PrepToDoLive,
+    coverWideRest: PrepToDoWRest,
+    coverWideLive: PrepToDoWLive,
     shotNote: "PrepToDo — every wrong answer has a pattern",
     blurb:
       "A CAT VARC platform that names the reasoning pattern behind your wrong answers instead of marking them wrong.",
@@ -102,8 +115,6 @@ export const projects: Project[] = [
   {
     slug: "uniask",
     when: 202411,
-    key: "#6c5ce7",
-    ink: "#262056",
     name: "UniAsk",
     year: "November 2024",
     shipped: true,
@@ -111,8 +122,10 @@ export const projects: Project[] = [
     live: "https://uni-ask.vercel.app",
     liveLabel: "uni-ask.vercel.app",
     repo: "https://github.com/Anshpatel2434/UniAsk",
-    shot: UniAskBand,
-    shotWide: UniAskWide,
+    coverRest: UniAskRest,
+    coverLive: UniAskLive,
+    coverWideRest: UniAskWRest,
+    coverWideLive: UniAskWLive,
     shotNote: "UniAsk — a year of answers, by day",
     blurb:
       "A real-time academic Q&A platform for LJ University, where a doubt reaches a person rather than a help desk.",
@@ -138,8 +151,6 @@ export const projects: Project[] = [
   {
     slug: "agroquality",
     when: 202408,
-    key: "#2e8b4f",
-    ink: "#173a24",
     name: "AgroQuality",
     context: "Hackout '24, DAIICT",
     year: "August 2024",
@@ -147,8 +158,10 @@ export const projects: Project[] = [
     live: "https://hackout24-mpi8.vercel.app",
     liveLabel: "hackout24-mpi8.vercel.app",
     repo: "https://github.com/Anshpatel2434/Hackout24",
-    shot: AgroBand,
-    shotWide: AgroWide,
+    coverRest: AgroRest,
+    coverLive: AgroLive,
+    coverWideRest: AgroWRest,
+    coverWideLive: AgroWLive,
     shotNote: "AgroQuality — a farm, read remotely",
     blurb:
       "Built and deployed inside a 48-hour deadline: live soil and weather readings for a farm, turned into advice a farmer can act on.",
@@ -174,15 +187,15 @@ export const projects: Project[] = [
   {
     slug: "kavach",
     when: 202606,
-    key: "#c0502f",
-    ink: "#481d13",
     name: "Kavach",
     context: "GST reconciliation for CA practices",
     year: "2026",
     shipped: false,
     repo: "https://github.com/Anshpatel2434/gst",
-    shot: KavachBand,
-    shotWide: KavachWide,
+    coverRest: KavachRest,
+    coverLive: KavachLive,
+    coverWideRest: KavachWRest,
+    coverWideLive: KavachWLive,
     shotNote: "Kavach — 45 documents, 33 agree, 12 need a decision",
     blurb:
       "GSTR-2B reconciled against a purchase register, in the browser, without the data ever leaving the machine.",
@@ -210,15 +223,15 @@ export const projects: Project[] = [
   {
     slug: "ouroboros",
     when: 202604,
-    key: "#9a622b",
-    ink: "#3a2512",
     name: "Ouroboros",
     context: "An agent harness generator",
     year: "2026",
     shipped: false,
     repo: "https://github.com/Anshpatel2434/Ouroboros",
-    shot: OuroborosBand,
-    shotWide: OuroborosWide,
+    coverRest: OuroborosRest,
+    coverLive: OuroborosLive,
+    coverWideRest: OuroborosWRest,
+    coverWideLive: OuroborosWLive,
     shotNote: "Ouroboros — the pipeline, and what it writes",
     blurb:
       "Interviews a project until it is unambiguous, then generates the harness a coding agent has to work inside.",
@@ -246,15 +259,15 @@ export const projects: Project[] = [
   {
     slug: "studyshare",
     when: 202409,
-    key: "#2f6fd0",
-    ink: "#162e58",
     name: "StudyShare",
     context: "Tic-Tech-Toe '24 — top 14 of 100+ teams",
     year: "September 2024",
     shipped: false,
     repo: "https://github.com/Anshpatel2434/Tic-Tech-Toe-24",
-    shot: StudyShareBand,
-    shotWide: StudyShareWide,
+    coverRest: StudyShareRest,
+    coverLive: StudyShareLive,
+    coverWideRest: StudyShareWRest,
+    coverWideLive: StudyShareWLive,
     shotNote: "StudyShare — ranked by what people actually read",
     blurb:
       "An e-library built in 48 hours, where the catalogue learns what to put in front of you next.",

@@ -28,11 +28,7 @@ export default function Unshipped() {
           <ul className="idx2">
             {unshipped.map((p) => (
               <li className="idx2-row" key={p.slug}>
-                <Link
-                  className="idx2-hit"
-                  to={`/project/${p.slug}`}
-                  style={{ ["--pk" as string]: p.key }}
-                >
+                <Link className="idx2-hit" to={`/project/${p.slug}`}>
                   <span className="idx2-name">{p.name}</span>
                   <span className="idx2-what">{p.blurb}</span>
                   {p.context && (

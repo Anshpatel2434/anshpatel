@@ -26,7 +26,7 @@ export default function Catalogue() {
               <Link className="cat-hit" to={`/project/${p.slug}`}>
                 <Plate project={p} />
 
-                <div className="cat-copy" style={{ ["--pk" as string]: p.key }}>
+                <div className="cat-copy">
                   <h2 className="vh">{p.name}</h2>
                   <p className="cat-meta mono">
                     <span className={p.shipped ? "dot live" : "dot"} aria-hidden="true" />

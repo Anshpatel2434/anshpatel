@@ -1,41 +1,35 @@
-import type { CSSProperties } from "react";
 import type { Project } from "../data/projects";
 
 /* ============================================================
-   PLATE — a project's image, and its name set over it.
+   PLATE — two renditions of one cover, cross-faded.
 
-   The image is composed rather than captured: the screenshot is
-   reduced to two tones of the project's own colour, with that
-   colour spent on a thin seam. The name sits on top in CSS, in the
-   same colour, so it stays crisp at any size and can be read even
-   while the plate is held back.
+   Underneath sits the project in its own colours, exactly as it
+   really looks. Over it sits the same cover redrawn in the page's
+   two colours — parchment and umber — blurred and settled into the
+   ground, so six projects with six palettes read as one set while
+   nobody is looking at them.
 
-   Held back is the resting state. Blurred and washed toward the
-   ground until the pointer arrives, then it resolves. The name
-   stays put through that, sitting on the wash composed into the
-   bottom of the image for exactly that purpose.
+   Look at one and the theme layer lifts: its real colours arrive.
+   Nothing about a project's colour was changed. It was only held
+   back until someone asked.
    ============================================================ */
 
 type Props = {
   project: Project;
   wide?: boolean;
-  /* a band and a project page already carry the name beside the
-     plate, so there it stays quiet */
+  /* a band and a project page already name the thing beside the
+     plate, so there the plate stays quiet */
   silent?: boolean;
 };
 
 export default function Plate({ project: p, wide = false, silent = false }: Props) {
-  const src = wide ? p.shotWide || p.shot : p.shot;
-  const style = { "--pk": p.key, "--pi": p.ink } as CSSProperties;
+  const rest = wide ? p.coverWideRest || p.coverRest : p.coverRest;
+  const live = wide ? p.coverWideLive || p.coverLive : p.coverLive;
 
   return (
-    <div className={"plate" + (wide ? " plate-w" : "")} style={style}>
-      {src ? (
-        <img src={src} alt={p.name} loading="lazy" />
-      ) : (
-        <div className="plate-ph" aria-hidden="true" />
-      )}
-      <span className="plate-veil" aria-hidden="true" />
+    <div className={"plate" + (wide ? " plate-w" : "")}>
+      <img className="plate-live" src={live} alt={p.name} loading="lazy" />
+      <img className="plate-rest" src={rest} alt="" aria-hidden="true" loading="lazy" />
       {!silent && (
         <span className="plate-name d-tight" aria-hidden="true">
           {p.name}
