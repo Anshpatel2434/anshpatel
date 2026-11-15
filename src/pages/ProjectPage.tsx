@@ -65,7 +65,7 @@ export default function ProjectPage() {
       </header>
 
       <div className="wrap proj-plate">
-        <Plate project={p} wide silent />
+        <Plate project={p} wide silent lit />
       </div>
 
       <div className="wrap proj-body">

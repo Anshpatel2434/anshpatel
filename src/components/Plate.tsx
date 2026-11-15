@@ -20,14 +20,29 @@ type Props = {
   /* a band and a project page already name the thing beside the
      plate, so there the plate stays quiet */
   silent?: boolean;
+  /* on a project's own page the visitor is already looking at that
+     project, so there is nothing left to hold back */
+  lit?: boolean;
 };
 
-export default function Plate({ project: p, wide = false, silent = false }: Props) {
+export default function Plate({
+  project: p,
+  wide = false,
+  silent = false,
+  lit = false,
+}: Props) {
   const rest = wide ? p.coverWideRest || p.coverRest : p.coverRest;
   const live = wide ? p.coverWideLive || p.coverLive : p.coverLive;
 
   return (
-    <div className={"plate" + (wide ? " plate-w" : "")}>
+    <div
+      className={
+        "plate" +
+        (wide ? " plate-w" : "") +
+        (lit ? " lit" : "") +
+        (silent && !p.shotNote ? " quiet" : "")
+      }
+    >
       <img className="plate-live" src={live} alt={p.name} loading="lazy" />
       <img className="plate-rest" src={rest} alt="" aria-hidden="true" loading="lazy" />
       {!silent && (

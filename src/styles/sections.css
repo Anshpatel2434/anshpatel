@@ -154,13 +154,25 @@ main, .top { position: relative; z-index: 1; }
     color-mix(in oklab, var(--ink) 5%, transparent) 9px 10px
   );
 }
+/* a scrim under the name, so it reads the same whichever
+   rendition is showing */
+.plate::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+  height: 42%; z-index: 2; pointer-events: none;
+  background: linear-gradient(
+    to top, rgba(26, 18, 13, 0.62), rgba(26, 18, 13, 0.18) 46%,
+    rgba(26, 18, 13, 0)
+  );
+}
+.plate.quiet::after { display: none; }
+
 .plate-name {
   position: absolute; left: 24px; bottom: 26px; right: 24px; z-index: 3;
   font-size: clamp(26px, 3.4vw, 54px); line-height: 0.95;
   font-weight: 900; font-variation-settings: "wdth" 66;
   letter-spacing: -0.02em;
-  color: var(--paper-name, oklch(96% 0.02 85));
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
+  color: oklch(97% 0.016 85);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.4);
   pointer-events: none;
 }
 .plate-note {
@@ -173,18 +185,22 @@ main, .top { position: relative; z-index: 1; }
 }
 
 /* the reveal */
-.band:hover .plate-rest,
-.band:focus-within .plate-rest,
+.band-in:hover .plate-rest,
+.band-in:focus-within .plate-rest,
 .cat-hit:hover .plate-rest,
 .cat-hit:focus-visible .plate-rest,
 .plate:hover .plate-rest {
   opacity: 0; filter: blur(0); transform: scale(1);
 }
-.band:hover .plate-note,
-.band:focus-within .plate-note,
+.band-in:hover .plate-note,
+.band-in:focus-within .plate-note,
 .cat-hit:hover .plate-note,
 .cat-hit:focus-visible .plate-note,
 .plate:hover .plate-note { opacity: 1; }
+
+/* On the project's own page there is nothing left to hold back. */
+.plate.lit .plate-rest { opacity: 0; }
+.plate.lit .plate-note { opacity: 1; }
 
 /* No pointer to hover with, or no appetite for motion: the project
    gets its own colours straight away. */
