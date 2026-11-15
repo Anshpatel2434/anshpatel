@@ -43,8 +43,18 @@ export default function Plate({
         (silent ? " quiet" : "")
       }
     >
-      <img className="plate-live" src={live} alt={p.name} loading="lazy" />
-      <img className="plate-rest" src={rest} alt="" aria-hidden="true" loading="lazy" />
+      {/* The wide cover is drawn at 21:9. A phone shows it in a 16:10
+          box, and object-fit then crops the words off both ends — so
+          a narrow screen is served the cover drawn for that shape.
+          <picture> rather than script, so only one is downloaded. */}
+      <picture>
+        {wide && <source media="(max-width: 760px)" srcSet={p.coverLive} />}
+        <img className="plate-live" src={live} alt={p.name} loading="lazy" />
+      </picture>
+      <picture>
+        {wide && <source media="(max-width: 760px)" srcSet={p.coverRest} />}
+        <img className="plate-rest" src={rest} alt="" aria-hidden="true" loading="lazy" />
+      </picture>
       {!silent && (
         <span className="plate-name d-tight" aria-hidden="true">
           {p.name}

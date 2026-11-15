@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { links } from "../data/profile";
+import { identity, links } from "../data/profile";
 import { scrollPageTo } from "../lib/motion";
 
 /* ============================================================
@@ -24,6 +24,17 @@ const ITEMS: Item[] = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
+
+  /* The panel covers the page, so the page behind it should not
+     still be scrolling under the thumb. */
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
   const navigate = useNavigate();
   const { pathname, hash } = useLocation();
 
@@ -76,6 +87,19 @@ export default function Nav() {
         >
           CV
         </a>
+
+        {/* A full-screen sheet with five words in the middle of it
+            reads as unfinished. On a phone this is the whole site
+            in one view, so it ends the way the site does. */}
+        <div className="top-foot">
+          <a className="top-mail" href={`mailto:${identity.email}`}>
+            {identity.email}
+          </a>
+          <p className="top-open">
+            <i aria-hidden="true" />
+            {identity.availability}
+          </p>
+        </div>
       </nav>
 
       <button

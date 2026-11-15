@@ -1,0 +1,249 @@
+/* ============================================================
+   MOBILE
+
+   A phone is not a narrow desktop. The desktop layout leans on two
+   things a phone does not have — width to put two columns side by
+   side, and a pointer to hover with — so the pieces that depend on
+   either are rebuilt here rather than squeezed.
+
+   Loaded last, so it wins without needing !important.
+   ============================================================ */
+
+@media (max-width: 760px) {
+  /* ----------------------------------------------------------
+     THE BAR
+
+     On a wide screen the bar blends in difference mode, which
+     keeps it legible over both grounds with no scroll listener.
+     That cannot survive a phone: the menu panel is a CHILD of the
+     bar, so a full-screen panel inside a difference-blended parent
+     comes out inverted over the whole page. Setting the blend back
+     to normal on the child does not help — the parent establishes
+     the group, and a child cannot leave it.
+
+     So on a phone the bar does not blend at all. It carries its
+     own ground instead, which is the usual way a phone bar stays
+     readable over whatever is under it.
+     ---------------------------------------------------------- */
+  .top {
+    mix-blend-mode: normal;
+    align-items: center;
+    padding-block: 12px;
+  }
+
+  /* The ground is laid on a pseudo-element rather than on the bar
+     itself, because backdrop-filter makes its element a containing
+     block for fixed-position descendants — and the menu panel is a
+     fixed-position descendant. Put the blur on .top and the panel
+     stops covering the page and gets clipped to the bar. */
+  .top::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: color-mix(in oklab, var(--field) 86%, transparent);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    border-bottom: 1px solid color-mix(in oklab, var(--rule) 55%, transparent);
+  }
+  .top a,
+  .top button { color: var(--ink-strong); }
+  .top-mark { font-size: 18px; }
+
+  /* the panel, now that it is not being inverted */
+  .top-nav {
+    position: fixed;
+    inset: 0;
+    background: var(--field);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 96px var(--gutter) var(--gutter);
+    transform: translateY(-101%);
+    transition: transform 0.5s var(--ease-out-expo);
+    overflow-y: auto;
+  }
+  .top-nav.open { transform: none; }
+  .top-nav a {
+    font-family: var(--sans);
+    font-size: clamp(32px, 9vw, 44px);
+    font-weight: 900;
+    font-variation-settings: "wdth" 68;
+    letter-spacing: -0.028em;
+    text-transform: none;
+    color: var(--ink-strong);
+    opacity: 1;
+    border: 0;
+    padding: 9px 0;
+  }
+  .top-nav a.on { color: var(--key-t); }
+
+  /* the sheet's own footer, so it ends rather than stops */
+  .top-foot {
+    margin-top: auto;
+    align-self: stretch;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 10px;
+  }
+  .top-mail {
+    font-family: var(--mono) !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+    color: var(--ink-strong);
+    padding: 0 !important;
+    border-bottom: 1px solid var(--key) !important;
+    justify-self: start;
+  }
+  .top-open {
+    display: flex; align-items: center; gap: 8px; margin: 0;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
+  }
+  .top-open i {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--key); flex: none;
+  }
+
+  /* the mark stays above the sheet, so it has a header */
+  .top-mark { position: relative; z-index: 2; }
+
+  /* the links sit under the mark rather than centred in nothing */
+  .top-nav { justify-content: flex-start; padding-top: 112px; }
+
+  /* the toggle sits above the panel it opens */
+  .top-toggle {
+    display: block;
+    position: relative;
+    z-index: 2;
+    font-size: 11px;
+  }
+
+  /* ----------------------------------------------------------
+     THE HERO
+
+     The constellation is five labels scattered by percentage with
+     nowrap text. At 390px they run off the right edge — and worse,
+     its `aspect-ratio` against a `min-height` forced the grid track
+     to 393px inside a 339px column, which is what pushed the whole
+     document sideways.
+
+     On a phone the same five become what they always were
+     underneath: a contents list. The crawler still grips them,
+     because they are still the nodes it reads.
+     ---------------------------------------------------------- */
+  .hero { padding-block: 108px 56px; }
+  .hero-in { gap: 36px; min-height: 0; }
+
+  .cons {
+    aspect-ratio: auto;
+    min-height: 0;
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+  /* Kept in the layout, not hidden: this 2px marker is the anchor
+     the crawler reads for the hero, and a display:none element
+     measures as 0,0 — which parked it in the corner. */
+  .cons-origin { left: 50%; top: 38%; }
+  .cons-node {
+    position: static;
+    transform: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 0;
+    font-size: 11px;
+    border-bottom: 1px solid var(--rule-faint);
+    color: var(--ink);
+  }
+  .cons-node span { width: 6px; height: 6px; }
+
+  /* mono is the voice of this line everywhere else, so it keeps it
+     here — but a phone column is narrow, so it comes down a size
+     and opens up its leading rather than getting wider */
+  .hero-note { max-width: none; font-size: 13px; line-height: 1.75; }
+  .hero-foot { margin-top: 26px; }
+
+  /* ----------------------------------------------------------
+     WORK
+
+     The oversized numeral is set in the margin on a wide screen.
+     There is no margin on a phone, so it lands on the title.
+     ---------------------------------------------------------- */
+  .band-n {
+    position: static;
+    display: block;
+    font-size: 54px;
+    line-height: 1;
+    margin-bottom: 2px;
+    color: color-mix(in oklab, var(--key) 22%, transparent);
+  }
+  .band { padding-block: 34px; }
+  .band-in { gap: 20px; }
+  .band-title { font-size: clamp(30px, 8.6vw, 44px); }
+  .band-what { font-size: 15px; }
+  .band-detail { font-size: 14px; }
+  .band-foot { gap: 10px 20px; margin-top: 20px; }
+
+  /* the plate names itself on a phone, where there is no hover to
+     resolve it with */
+  .plate-name { font-size: clamp(24px, 7vw, 34px); left: 18px; right: 18px; }
+
+  /* ----------------------------------------------------------
+     EXPERIENCE AND THE REST
+     ---------------------------------------------------------- */
+  .jobs { grid-template-columns: 1fr; gap: 34px; }
+  .job-when { font-size: 11.5px; gap: 0 8px; }
+  .extras { grid-template-columns: 1fr; gap: 26px; }
+
+  /* The label rail needs width to sit beside the prose. It did not
+     collapse because the two-column rule is declared after its own
+     media query — rather than reorder that file, it is settled here,
+     which loads last. */
+  .proj-part { grid-template-columns: 1fr; }
+  .proj-prose, .proj-list, .proj-stack { grid-column: 1; }
+  .proj-part > .label { padding-top: 0; }
+
+  .cat-grid { gap: 36px; }
+  .proj-acts .btn { width: 100%; text-align: center; }
+
+  .sec-sub { font-size: 15px; }
+
+  /* a fixed bar means an anchored section must clear it */
+  .sec-say, .page-title { scroll-margin-top: 76px; }
+}
+
+/* ------------------------------------------------------------
+   TOUCH
+
+   Separate from width on purpose: a small laptop with a trackpad
+   still hovers, and a large tablet still does not.
+   ------------------------------------------------------------ */
+@media (hover: none) {
+  /* The crawler's shortcuts are the one piece that was simply
+     switched off here, on the grounds that you cannot hover a
+     moving target. You can tap one, though — so it is a tap, and
+     the crawler holds still while the menu is out. */
+  .crawl-hud { display: block; }
+
+  /* a thumb needs more than a cursor does */
+  .crawl-hub {
+    width: 132px;
+    height: 132px;
+    margin: -66px 0 0 -66px;
+  }
+  .crawl-tag {
+    padding: 10px 13px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+
+  /* nothing resolves on hover, so nothing waits for one */
+  .plate-rest { opacity: 0; }
+}

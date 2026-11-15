@@ -146,13 +146,23 @@ export default function CrawlerField() {
        its front legs are holding while it is */
     let open = false;
     let openT = 0;
-    let wasOpen = false;
-    let wasLive = false;
     /* It may only open when the pointer has moved since the last
        scroll. Scrolling is how you tell it to get back to work, and
        without this it would re-open the moment it walked back under
        a cursor that had been sitting still the whole time. */
     let armed = true;
+    /* whether the menu currently on screen was opened by a finger */
+    let byTouch = false;
+    /* A pointer hovers; a finger taps. The same menu, opened two
+       different ways, because there is nothing to hover with on a
+       phone and a tap that only worked by proximity would fire
+       every time you scrolled past the thing. */
+    const touch = window.matchMedia("(hover: none)").matches;
+    /* On a phone the hero's five links are a list down the page
+       rather than a constellation across it. Gripping a vertical
+       column drags five legs over the text as a tangle, so there it
+       simply walks instead. */
+    const narrow = window.matchMedia("(max-width: 760px)").matches;
     let mx = -1e4;
     let my = -1e4;
     const held = Array.from({ length: 5 }, () => ({ x: 0, y: 0 }));
@@ -297,11 +307,24 @@ export default function CrawlerField() {
          to whichever side has room, and clamped so a label never
          leaves the screen. */
       if (open || openT > 0) {
-        const base = bodyX > W * 0.55 ? Math.PI : 0;
-        for (let i = 0; i < 5; i++) {
-          const a = base + FAN[i] * (base ? -1 : 1);
-          held[i].x = Math.max(120, Math.min(W - 120, bodyX + Math.cos(a) * OPEN_R));
-          held[i].y = Math.max(74, Math.min(H - 74, bodyY + Math.sin(a) * OPEN_R));
+        if (narrow) {
+          /* A fan needs width to open into, and a phone has none —
+             the labels land on top of each other and on the page.
+             So on a narrow screen it holds them in a column, on
+             whichever side of itself has more room. */
+          const right = bodyX < W * 0.5;
+          const cx = right ? bodyX + 86 : bodyX - 86;
+          for (let i = 0; i < 5; i++) {
+            held[i].x = Math.max(84, Math.min(W - 84, cx));
+            held[i].y = Math.max(70, Math.min(H - 70, bodyY + (i - 2) * 46));
+          }
+        } else {
+          const base = bodyX > W * 0.55 ? Math.PI : 0;
+          for (let i = 0; i < 5; i++) {
+            const a = base + FAN[i] * (base ? -1 : 1);
+            held[i].x = Math.max(120, Math.min(W - 120, bodyX + Math.cos(a) * OPEN_R));
+            held[i].y = Math.max(74, Math.min(H - 74, bodyY + Math.sin(a) * OPEN_R));
+          }
         }
       }
       /* Scrolling always hands it back its own business: the menu
@@ -311,14 +334,21 @@ export default function CrawlerField() {
       if (scrolled) {
         open = false;
         armed = false;
+        byTouch = false;
       }
 
       /* Opening and closing are the same distance test every frame,
          rather than an event that can be missed while the body is
          moving underneath a still pointer. */
+      /* Proximity is how a pointer opens and closes it. A menu a
+         finger opened must not answer to it — on a hybrid device
+         the mouse may be parked across the room, and on a phone
+         there is no mouse position to speak of. */
       const reach = Math.hypot(mx - bodyX, my - bodyY);
-      if (armed && reach < HUB_R) open = true;
-      if (open && reach > OPEN_R + 70) open = false;
+      if (!touch && !byTouch) {
+        if (armed && reach < HUB_R) open = true;
+        if (open && reach > OPEN_R + 70) open = false;
+      }
       openT += ((open ? 1 : 0) - openT) * 0.2;
       if (!open && openT < 0.003) openT = 0;
 
@@ -340,7 +370,7 @@ export default function CrawlerField() {
          nodes that were no longer there. */
       const heroBox = document.querySelector(".cons")?.getBoundingClientRect();
       const heroHere = !!heroBox && heroBox.bottom > H * 0.35 && heroBox.top < H * 0.9;
-      const inHero = heroHere && navs.length >= 5;
+      const inHero = heroHere && navs.length >= 5 && !narrow;
 
       if (inHero) {
         for (const n of navs) {
@@ -466,15 +496,18 @@ export default function CrawlerField() {
       const hub = hubRef.current;
       if (hub) hub.style.transform = `translate3d(${bodyX}px, ${bodyY}px, 0)`;
 
+      /* The class is compared against the element rather than against
+         a local mirror. A mirror only has to fall out of step once —
+         a re-render, a route change — and the menu is then stuck
+         until the next toggle flips it back by luck. */
       const legsEl = legsRef.current;
+      const hudEl2 = hudRef.current;
       const live = open || openT > 0.002;
-      if (live !== wasLive) {
-        hudRef.current?.classList.toggle("live", live);
-        wasLive = live;
+      if (hudEl2 && hudEl2.classList.contains("live") !== live) {
+        hudEl2.classList.toggle("live", live);
       }
-      if (legsEl && open !== wasOpen) {
+      if (legsEl && legsEl.classList.contains("on") !== open) {
         legsEl.classList.toggle("on", open);
-        wasOpen = open;
       }
 
       /* Shut and settled: nothing to position, so nothing is touched.
@@ -553,16 +586,45 @@ export default function CrawlerField() {
       mx = e.clientX;
       my = e.clientY;
     };
-    const onEnter = () => { armed = true; open = true; };
+    const onEnter = () => {
+      if (touch) return;
+      armed = true;
+      open = true;
+    };
+    /* Whether this is a tap is a property of the event, not of the
+       device: a tablet with a trackpad does both. A mouse click is
+       ignored because hover has already opened it. */
+    const onTap = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") return;
+      open = !open;
+      byTouch = open;
+    };
+    /* anywhere else puts it away again */
+    const onTapAway = (e: Event) => {
+      if (!byTouch || !open) return;
+      const t = e.target as HTMLElement | null;
+      if (t && t.closest(".crawl-hud")) return;
+      open = false;
+      byTouch = false;
+    };
     const onLeaveAll = () => { open = false; };
     /* once it has handed you one, it lets go of the rest */
     const onPick = () => { open = false; armed = false; };
 
+    /* Held in locals so the cleanup takes them off the same nodes.
+       Reading the refs again on the way out can find a different
+       element, or null — and a listener left behind keeps a whole
+       dead frame loop's state alive, toggling against the live one. */
+    const hubEl = hubRef.current;
+    const navEl = legsRef.current;
+
     document.addEventListener("pointermove", onMove, { passive: true });
-    hubRef.current?.addEventListener("pointerenter", onEnter);
-    hubRef.current?.addEventListener("focus", onEnter);
-    legsRef.current?.addEventListener("focusout", onLeaveAll);
-    legsRef.current?.addEventListener("click", onPick);
+    document.addEventListener("pointerdown", onTapAway, true);
+    hubEl?.addEventListener("pointerenter", onEnter);
+    hubEl?.addEventListener("pointerup", onTap as EventListener);
+    hubEl?.addEventListener("focus", onEnter);
+    navEl?.addEventListener("focusout", onLeaveAll);
+    navEl?.addEventListener("click", onPick);
     window.addEventListener("blur", onLeaveAll);
 
     raf = requestAnimationFrame(frame);
@@ -575,6 +637,12 @@ export default function CrawlerField() {
       mo.disconnect();
       window.removeEventListener("resize", resize);
       document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerdown", onTapAway, true);
+      hubEl?.removeEventListener("pointerenter", onEnter);
+      hubEl?.removeEventListener("pointerup", onTap as EventListener);
+      hubEl?.removeEventListener("focus", onEnter);
+      navEl?.removeEventListener("focusout", onLeaveAll);
+      navEl?.removeEventListener("click", onPick);
       window.removeEventListener("blur", onLeaveAll);
     };
   }, []);

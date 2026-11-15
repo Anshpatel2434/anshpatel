@@ -1103,8 +1103,8 @@ main, .top { position: relative; z-index: 1; }
   color: var(--field-up);
 }
 
-/* A roaming target is no use on a touch screen, and a reader who
-   has asked for less motion should not be chased by a menu. */
-@media (hover: none), (prefers-reduced-motion: reduce) {
+/* Someone who asked for less motion should not be chased by a menu.
+   Touch is handled in mobile.css, where it becomes a tap. */
+@media (prefers-reduced-motion: reduce) {
   .crawl-hud { display: none; }
 }
