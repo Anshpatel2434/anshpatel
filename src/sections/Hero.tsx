@@ -45,10 +45,6 @@ export default function Hero() {
             <a className="hero-mail" href={`mailto:${identity.email}`}>
               {identity.email}
             </a>
-            <p className="hero-open">
-              <i aria-hidden="true" />
-              {identity.availability}
-            </p>
           </div>
         </div>
 

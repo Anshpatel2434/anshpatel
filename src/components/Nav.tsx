@@ -1,16 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { identity, links } from "../data/profile";
 import { scrollPageTo } from "../lib/motion";
 
 /* ============================================================
-   NAV — corner text, not an object.
+   NAV — corner text at the top, a rule once you move.
 
-   Denny and Daksh both do this: a small mark top-left, tiny
-   uppercase letter-spaced links top-right, and nothing else. No
-   pill, no box, no background, no spine. The nav should be
-   findable and otherwise invisible, because on those sites the
-   page itself is the thing you are meant to look at.
+   It used to blend in difference mode, which was the right answer
+   when sections alternated between a parchment and a near-black
+   ground: one rule, legible over both, no scroll listener. Those
+   alternating grounds were removed a long time ago, so all the
+   blend did afterwards was invert the nav against whatever heading
+   happened to be passing under it — which is the "merging with the
+   text" problem. It is gone.
+
+   In its place: at the top of a page the bar is plain text on
+   parchment, because there is nothing behind it. The moment you
+   scroll it earns its own ground, so it never sits directly on
+   type again — and that ground carries a rule showing how far down
+   the document you are, with the section you are currently in
+   marked in the list. The bar stops being decoration and starts
+   telling you where you are.
    ============================================================ */
 
 type Item = { to: string; label: string; hash?: string };
@@ -24,6 +34,12 @@ const ITEMS: Item[] = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const [lifted, setLifted] = useState(false);
+  const [here, setHere] = useState("");
+  const progRef = useRef<HTMLSpanElement | null>(null);
+
+  const navigate = useNavigate();
+  const { pathname, hash } = useLocation();
 
   /* The panel covers the page, so the page behind it should not
      still be scrolling under the thumb. */
@@ -35,8 +51,62 @@ export default function Nav() {
       document.body.style.overflow = prev;
     };
   }, [open]);
-  const navigate = useNavigate();
-  const { pathname, hash } = useLocation();
+
+  /* How far down we are. The rule is written straight to the node
+     rather than through state, so a scroll does not re-render the
+     whole bar sixty times a second. */
+  useEffect(() => {
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const y = window.scrollY;
+      const max =
+        document.documentElement.scrollHeight - window.innerHeight;
+      setLifted(y > 24);
+      const el = progRef.current;
+      if (el) {
+        const p = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+        el.style.transform = `scaleX(${p})`;
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(read);
+    };
+    read();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
+
+  /* Which section is under the middle of the screen. Only the home
+     page has sections to be in. */
+  useEffect(() => {
+    if (pathname !== "/") {
+      setHere("");
+      return;
+    }
+    const targets = ITEMS.filter((i) => i.hash)
+      .map((i) => document.getElementById(i.hash!.slice(1)))
+      .filter((el): el is HTMLElement => !!el);
+    if (!targets.length) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const seen = entries.filter((e) => e.isIntersecting);
+        if (seen.length) setHere("#" + seen[0].target.id);
+        else setHere("");
+      },
+      /* a band across the middle of the viewport: you are "in" the
+         section the middle of the screen is looking at */
+      { rootMargin: "-48% 0px -48% 0px" }
+    );
+    targets.forEach((t) => io.observe(t));
+    return () => io.disconnect();
+  }, [pathname]);
 
   /* Put the section in the URL and let ScrollToTop act on it. Two
      things moving the page at once is how it ends up halfway. */
@@ -52,8 +122,8 @@ export default function Nav() {
   };
 
   return (
-    <header className="top">
-      <Link to="/" className="top-mark">
+    <header className={"top" + (lifted ? " lifted" : "") + (open ? " shown" : "")}>
+      <Link to="/" className="top-mark" onClick={() => setOpen(false)}>
         Ansh&nbsp;Patel
       </Link>
 
@@ -64,6 +134,8 @@ export default function Nav() {
               key={i.label}
               href={i.hash}
               data-own-scroll
+              className={here === i.hash ? "on" : undefined}
+              aria-current={here === i.hash ? "true" : undefined}
               onClick={(e) => goHash(e, i)}
             >
               {i.label}
@@ -88,17 +160,13 @@ export default function Nav() {
           CV
         </a>
 
-        {/* A full-screen sheet with five words in the middle of it
-            reads as unfinished. On a phone this is the whole site
-            in one view, so it ends the way the site does. */}
+        {/* On a phone this sheet is the whole site in one view, so
+            it ends with the one thing a visitor might actually want
+            from it. */}
         <div className="top-foot">
           <a className="top-mail" href={`mailto:${identity.email}`}>
             {identity.email}
           </a>
-          <p className="top-open">
-            <i aria-hidden="true" />
-            {identity.availability}
-          </p>
         </div>
       </nav>
 
@@ -108,8 +176,15 @@ export default function Nav() {
         aria-label={open ? "Close menu" : "Open menu"}
         onClick={() => setOpen((v) => !v)}
       >
-        {open ? "Close" : "Menu"}
+        <span className="top-toggle-word">{open ? "Close" : "Menu"}</span>
+        <span className="top-toggle-bars" aria-hidden="true">
+          <i />
+          <i />
+        </span>
       </button>
+
+      {/* how far down the document you are */}
+      <span className="top-prog" ref={progRef} aria-hidden="true" />
     </header>
   );
 }

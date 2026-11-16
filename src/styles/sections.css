@@ -25,7 +25,19 @@
 main, .top { position: relative; z-index: 1; }
 
 /* ============================================================
-   NAV — corner text
+   NAV
+
+   The bar used to blend in difference mode. That was the right
+   answer while sections alternated between a parchment and a
+   near-black ground — one rule, legible over both, no listener.
+   Those alternating grounds were removed, so afterwards the blend
+   only inverted the bar against whatever heading was passing under
+   it. That is the merging.
+
+   Now: plain text at the top of a page, because nothing is behind
+   it there. The moment you scroll it takes its own ground, so it
+   never sits on type again — and that ground carries a rule
+   showing how far down you are.
    ============================================================ */
 .top {
   position: fixed;
@@ -37,21 +49,44 @@ main, .top { position: relative; z-index: 1; }
   gap: 16px 32px;
   padding: clamp(20px, 2.6vw, 34px) var(--gutter);
   pointer-events: none;
+  transition: padding 0.4s var(--ease);
 }
 .top > * { pointer-events: auto; }
+.top a,
+.top button { color: var(--ink-strong); }
 
-/* The nav is fixed over sections that flip between a parchment and
-   a near-black ground. Rather than tracking which section is under
-   it, the whole bar blends in difference mode against white: over
-   light ground it resolves dark, over dark ground it resolves
-   light. One rule, always legible, no scroll listener. */
-.top { mix-blend-mode: difference; }
-.top a, .top button { color: #efe7da; }
+/* The ground is a pseudo-element, not the bar itself: a
+   backdrop-filter makes its element a containing block for
+   fixed-position descendants, and the mobile menu panel is one. */
+.top::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: color-mix(in oklab, var(--field) 88%, transparent);
+  backdrop-filter: blur(16px) saturate(1.08);
+  -webkit-backdrop-filter: blur(16px) saturate(1.08);
+  border-bottom: 1px solid var(--rule-faint);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.top.lifted::before { opacity: 1; }
+.top.lifted { padding-block: clamp(14px, 1.5vw, 20px); }
+
+/* how far down the document you are, drawn along the bar's edge */
+.top-prog {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: var(--key);
+  transform: scaleX(0); transform-origin: 0 50%;
+  opacity: 0; transition: opacity 0.4s var(--ease);
+  pointer-events: none;
+}
+.top.lifted .top-prog { opacity: 1; }
 
 .top-mark {
   font-size: clamp(17px, 1.7vw, 23px);
   font-weight: 900;
-  letter-spacing: 0.01em;
   font-variation-settings: "wdth" 72;
   letter-spacing: -0.018em;
   text-decoration: none;
@@ -59,49 +94,54 @@ main, .top { position: relative; z-index: 1; }
 
 .top-nav { display: flex; gap: clamp(14px, 1.8vw, 30px); align-items: baseline; }
 .top-nav a {
+  position: relative;
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  opacity: 0.74;
+  color: var(--muted);
   text-decoration: none;
   padding-bottom: 3px;
-  border-bottom: 1px solid transparent;
-  transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
+  transition: color 0.25s var(--ease);
 }
-.top-nav a:hover,
-.top-nav a.on { opacity: 1; border-bottom-color: currentColor; }
+.top-nav a:hover { color: var(--ink-strong); }
 
+/* where you are: a mark under the section you are reading, rather
+   than an underline on everything you could click */
+.top-nav a::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -2px; height: 1px;
+  background: var(--key);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 0.35s var(--ease);
+}
+.top-nav a:hover::after { transform: scaleX(1); }
+.top-nav a.on { color: var(--ink-strong); }
+.top-nav a.on::after { transform: scaleX(1); }
+
+/* the way in, on a small screen: a control that looks like one */
 .top-toggle {
   display: none;
+  align-items: center;
+  gap: 9px;
   font-family: var(--mono);
   font-size: 10.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  background: none; border: 0; padding: 0; cursor: pointer;
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
 }
-
-@media (max-width: 860px) {
-  .top { align-items: center; }
-  .top-toggle { display: block; z-index: 2; }
-  .top-nav {
-    position: fixed; inset: 0;
-    background: var(--field);
-    flex-direction: column; justify-content: center; align-items: flex-start;
-    gap: 4px; padding: var(--gutter);
-    transform: translateY(-101%);
-    transition: transform 0.45s var(--ease-out-expo);
-  }
-  .top-nav.open { transform: none; }
-  .top-nav { mix-blend-mode: normal; isolation: isolate; }
-  .top-nav a { color: var(--ink-strong); opacity: 1; }
-  .top-nav a {
-    font-size: 30px; font-family: var(--sans);
-    font-weight: 900; font-variation-settings: "wdth" 70;
-    letter-spacing: -0.02em; text-transform: none;
-    color: var(--ink-strong); border: 0; padding: 6px 0;
-  }
+.top-toggle-bars { display: inline-flex; flex-direction: column; gap: 3px; }
+.top-toggle-bars i {
+  display: block; width: 14px; height: 1.5px; background: currentColor;
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
 }
+.top.shown .top-toggle { border-color: var(--key); }
+.top.shown .top-toggle-bars i:first-child { transform: translateY(2.25px) rotate(45deg); }
+.top.shown .top-toggle-bars i:last-child { transform: translateY(-2.25px) rotate(-45deg); }
 
 /* ============================================================
    WORK — bands with hard-edged plates
@@ -504,43 +544,75 @@ main, .top { position: relative; z-index: 1; }
 .proj-flag { font-size: 10.5px; letter-spacing: 0.1em; color: var(--dim); font-style: italic; }
 
 /* ============================================================
-   CONTACT + FOOTER
+   THE FOOTER
+
+   One block, not two. It used to be a contact section with a
+   separate footer beneath it, divided by a rule — which put the
+   links on the wrong side of that rule, reading as the last thing
+   on the page rather than as part of the ending.
+
+   Now the ask opens it, the colophon closes it, and the links sit
+   in the colophon where footer links belong.
    ============================================================ */
-.contact { padding-block: clamp(90px, 12vw, 180px) 0; }
-.contact-grid {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 0.6fr);
-  gap: 32px clamp(30px, 4vw, 64px); align-items: end; margin-top: clamp(20px, 3vw, 36px);
+.foot {
+  position: relative;
+  padding-block: clamp(90px, 12vw, 170px) 0;
+  border-top: 1px solid var(--rule);
+  margin-top: clamp(80px, 10vw, 150px);
 }
-@media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; } }
-.contact-ask { line-height: 0.9; margin: 0; }
-.contact-gloss {
-  margin: 18px 0 0; max-width: 34ch;
+
+.foot-ask {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 0.72fr);
+  gap: 34px clamp(30px, 4vw, 70px); align-items: end;
+  margin-top: clamp(20px, 3vw, 36px);
+}
+@media (max-width: 860px) { .foot-ask { grid-template-columns: 1fr; } }
+
+.foot-line { line-height: 0.9; margin: 0; }
+.foot-gloss {
+  margin: 0 0 22px; max-width: 34ch;
   font-size: 15px; line-height: 1.6; color: var(--muted);
 }
-.contact-mail {
+.foot-mail {
+  display: inline-block;
   font-size: clamp(16px, 1.8vw, 21px); font-weight: 600;
   color: var(--ink-strong); text-decoration: none;
-  border-bottom: 2px solid var(--key); padding-bottom: 4px; word-break: break-word;
+  border-bottom: 2px solid var(--key); padding-bottom: 4px;
+  word-break: break-word;
 }
-.contact-mail:hover { color: var(--key-t); }
-.contact-where { margin: 18px 0 0; font-size: 14px; color: var(--muted); }
-.contact-links { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 18px; }
-.contact-links a {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
-  color: var(--muted); text-decoration: none;
-}
-.contact-links a:hover { color: var(--ink-strong); }
+.foot-mail:hover { color: var(--key-t); }
+.foot-where { margin: 16px 0 0; font-size: 14px; color: var(--muted); }
 
-.footer { margin-top: clamp(70px, 9vw, 120px); border-top: 1px solid var(--rule); }
-.foot-in {
-  display: flex; flex-wrap: wrap; gap: 16px 32px;
-  align-items: center; justify-content: space-between; padding-block: 22px 0;
+/* the colophon: who made it, where else to find him, when */
+.foot-base {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 18px 36px;
+  margin-top: clamp(56px, 7vw, 96px);
+  padding-top: 22px;
+  border-top: 1px solid var(--rule-faint);
 }
 .foot-who { display: flex; align-items: center; gap: 14px; }
-.foot-who img { width: 46px; height: 46px; object-fit: cover; filter: grayscale(1); border: 1px solid var(--rule); }
+.foot-who img {
+  width: 46px; height: 46px; object-fit: cover;
+  filter: grayscale(1); border: 1px solid var(--rule);
+}
 .foot-who strong { display: block; font-size: 13.5px; color: var(--ink-strong); }
 .foot-who span { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--dim); }
-.foot-note { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--dim); }
+
+.foot-links { display: flex; gap: 22px; flex-wrap: wrap; }
+.foot-links a {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  border-bottom: 1px solid transparent; padding-bottom: 2px;
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.foot-links a:hover { color: var(--ink-strong); border-bottom-color: var(--key); }
+
+.foot-note {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.1em; color: var(--dim);
+}
 
 /* the ending: pressed into the stock */
 .watermark {
@@ -678,11 +750,6 @@ main, .top { position: relative; z-index: 1; }
 
 
 
-.hero-open {
-  display: inline-flex; align-items: center; gap: 8px;
-  color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; font-size: 10.5px;
-}
-.hero-open i { width: 6px; height: 6px; border-radius: 50%; background: var(--key); flex: none; }
 
 /* a repo we are still waiting on */
 .act-quiet.waiting { color: var(--dim); font-style: italic; }
@@ -808,11 +875,6 @@ main, .top { position: relative; z-index: 1; }
 
 
 
-.hero-open {
-  display: inline-flex; align-items: center; gap: 8px;
-  color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; font-size: 10.5px;
-}
-.hero-open i { width: 6px; height: 6px; border-radius: 50%; background: var(--key); flex: none; }
 
 /* a repo we are still waiting on */
 .act-quiet.waiting { color: var(--dim); font-style: italic; }
@@ -873,12 +935,6 @@ main, .top { position: relative; z-index: 1; }
   border-bottom: 1px solid var(--key); padding-bottom: 3px;
 }
 .hero-mail:hover { color: var(--key-t); }
-.hero-open {
-  display: flex; align-items: center; gap: 8px; margin: 16px 0 0;
-  font-family: var(--mono); font-size: 10px;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
-}
-.hero-open i { width: 6px; height: 6px; border-radius: 50%; background: var(--key); flex: none; }
 
 /* ---- where it stands ---- */
 .feet {
@@ -1006,12 +1062,6 @@ main, .top { position: relative; z-index: 1; }
   border-bottom: 1px solid var(--key); padding-bottom: 3px;
 }
 .hero-mail:hover { color: var(--key-t); }
-.hero-open {
-  display: flex; align-items: center; gap: 8px; margin: 14px 0 0;
-  font-family: var(--mono); font-size: 10px;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
-}
-.hero-open i { width: 6px; height: 6px; border-radius: 50%; background: var(--key); flex: none; }
 
 /* where it rests, and the nodes it links to */
 .cons { position: relative; aspect-ratio: 1 / 0.84; min-height: 310px; }

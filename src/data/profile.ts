@@ -15,7 +15,6 @@ export const identity = {
   timezone: "Asia/Kolkata",
   email: "ansh.worksocial@gmail.com",
   phone: "+91 7046557755",
-  availability: "Open to roles from June 2026",
   thesisWide: "I build software that",
   thesisTight: "shows its work.",
   intro:
