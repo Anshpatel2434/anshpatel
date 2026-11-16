@@ -72,17 +72,94 @@ main, .top { position: relative; z-index: 1; }
   transition: opacity 0.4s var(--ease);
 }
 .top.lifted::before { opacity: 1; }
-.top.lifted { padding-block: clamp(14px, 1.5vw, 20px); }
+.top.lifted { padding: clamp(14px, 1.5vw, 20px) var(--gutter) clamp(22px, 2.2vw, 28px); }
 
-/* how far down the document you are, drawn along the bar's edge */
-.top-prog {
-  position: absolute; left: 0; right: 0; top: 0; height: 2px;
-  background: var(--key);
-  transform: scaleX(0); transform-origin: 0 50%;
-  opacity: 0; transition: opacity 0.4s var(--ease);
+/* ------------------------------------------------------------
+   THE THREAD
+
+   The bottom edge of the bar is the whole document laid end to
+   end. Each section is marked at its own proportional position —
+   so the work takes a long stretch of it and the unshipped a
+   short one — and the crawler walks it at the point you have
+   reached. A map of this page rather than a bar that fills.
+   ------------------------------------------------------------ */
+.top-thread {
+  position: absolute; left: 0; right: 0; bottom: 10px; height: 1px;
+  background: var(--rule);
+  opacity: 0; transition: opacity 0.45s var(--ease);
   pointer-events: none;
 }
-.top.lifted .top-prog { opacity: 1; }
+.top.lifted .top-thread { opacity: 1; }
+
+/* the ground already walked */
+.top-thread-fill {
+  position: absolute; inset: 0;
+  background: color-mix(in oklab, var(--key) 55%, transparent);
+  transform: scaleX(0); transform-origin: 0 50%;
+}
+
+/* a section, at its place on the page */
+.top-tick {
+  position: absolute; top: 50%;
+  width: 26px; height: 22px; margin: -11px 0 0 -13px;
+  padding: 0; border: 0; background: none; cursor: pointer;
+  pointer-events: auto;
+}
+.top-tick::before {
+  content: "";
+  position: absolute; left: 50%; top: 50%;
+  width: 1px; height: 10px; margin: -5px 0 0 -0.5px;
+  background: var(--muted);
+  transition: height 0.3s var(--ease), margin 0.3s var(--ease),
+    background 0.3s var(--ease);
+}
+.top-tick:hover::before,
+.top-tick:focus-visible::before {
+  height: 16px; margin-top: -8px; background: var(--ink-strong);
+}
+.top-tick.on::before {
+  height: 14px; margin-top: -7px; background: var(--key); width: 2px;
+  margin-left: -1px;
+}
+.top-tick:focus-visible { outline: 1px solid var(--key); outline-offset: 2px; }
+
+/* its name, only when you go looking for it */
+.top-tick-label {
+  position: absolute; left: 50%; bottom: 15px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-strong);
+  background: var(--field-up);
+  border: 1px solid var(--rule);
+  padding: 4px 8px;
+  opacity: 0; transition: opacity 0.25s var(--ease);
+  pointer-events: none;
+}
+.top-tick:hover .top-tick-label,
+.top-tick:focus-visible .top-tick-label { opacity: 1; }
+
+/* and the creature, walking it */
+.top-walker {
+  position: absolute; top: 50%; left: 0;
+  margin: -8px 0 0 -13px;
+  color: var(--ink-strong);
+  pointer-events: none;
+  display: block;
+}
+.top-walker svg { display: block; }
+
+/* where you are, said in words, beside the mark */
+.top-now {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--key-t);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  opacity: 0; transform: translateY(2px);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+}
+.top.lifted .top-now { opacity: 1; transform: none; }
 
 .top-mark {
   font-size: clamp(17px, 1.7vw, 23px);
@@ -559,24 +636,28 @@ main, .top { position: relative; z-index: 1; }
    Now the ask opens it, the colophon closes it, and the links sit
    in the colophon where footer links belong.
    ============================================================ */
+/* A footer is the end of a document, not another section of it.
+   It had the padding of a full section at both ends and a 300px
+   watermark under that — a screen and a half of mostly nothing.
+   Everything here is roughly halved. */
 .foot {
   position: relative;
-  padding-block: clamp(90px, 12vw, 170px) 0;
+  padding-block: clamp(48px, 6vw, 84px) 0;
   border-top: 1px solid var(--rule);
-  margin-top: clamp(80px, 10vw, 150px);
+  margin-top: clamp(48px, 6vw, 90px);
 }
 
 .foot-ask {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 0.72fr);
-  gap: 34px clamp(30px, 4vw, 70px); align-items: end;
-  margin-top: clamp(20px, 3vw, 36px);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, 0.7fr);
+  gap: 26px clamp(28px, 4vw, 64px); align-items: end;
+  margin-top: 14px;
 }
 @media (max-width: 860px) { .foot-ask { grid-template-columns: 1fr; } }
 
 .foot-line { line-height: 0.9; margin: 0; }
 .foot-gloss {
-  margin: 0 0 22px; max-width: 34ch;
-  font-size: 15px; line-height: 1.6; color: var(--muted);
+  margin: 0 0 16px; max-width: 34ch;
+  font-size: 14.5px; line-height: 1.58; color: var(--muted);
 }
 .foot-mail {
   display: inline-block;
@@ -586,33 +667,35 @@ main, .top { position: relative; z-index: 1; }
   word-break: break-word;
 }
 .foot-mail:hover { color: var(--key-t); }
-.foot-where { margin: 16px 0 0; font-size: 14px; color: var(--muted); }
+.foot-where { margin: 12px 0 0; font-size: 13.5px; color: var(--muted); }
 
 /* the colophon: who made it, where else to find him, when */
 .foot-base {
   display: flex; flex-wrap: wrap; align-items: center;
-  justify-content: space-between; gap: 18px 36px;
-  margin-top: clamp(56px, 7vw, 96px);
-  padding-top: 22px;
+  justify-content: space-between; gap: 14px 32px;
+  margin-top: clamp(30px, 4vw, 52px);
+  padding-top: 18px;
   border-top: 1px solid var(--rule-faint);
 }
 .foot-who { display: flex; align-items: center; gap: 14px; }
 .foot-who img {
-  width: 46px; height: 46px; object-fit: cover;
+  width: 38px; height: 38px; object-fit: cover;
   filter: grayscale(1); border: 1px solid var(--rule);
 }
 .foot-who strong { display: block; font-size: 13.5px; color: var(--ink-strong); }
 .foot-who span { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--dim); }
 
-.foot-links { display: flex; gap: 22px; flex-wrap: wrap; }
+.foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
 .foot-links a {
+  display: inline-flex; align-items: center; gap: 7px;
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted); text-decoration: none;
-  border-bottom: 1px solid transparent; padding-bottom: 2px;
-  transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
+  transition: color 0.25s var(--ease);
 }
-.foot-links a:hover { color: var(--ink-strong); border-bottom-color: var(--key); }
+.foot-links a svg { opacity: 0.72; transition: opacity 0.25s var(--ease); }
+.foot-links a:hover { color: var(--ink-strong); }
+.foot-links a:hover svg { opacity: 1; color: var(--key); }
 
 .foot-note {
   font-family: var(--mono); font-size: 10px;
@@ -621,8 +704,8 @@ main, .top { position: relative; z-index: 1; }
 
 /* the ending: pressed into the stock */
 .watermark {
-  margin: clamp(20px, 3vw, 36px) 0 0; text-align: center;
-  font-size: clamp(56px, 18.4vw, 300px); line-height: 0.76;
+  margin: clamp(14px, 2vw, 26px) 0 0; text-align: center;
+  font-size: clamp(42px, 12.4vw, 190px); line-height: 0.74;
   font-weight: 900; font-variation-settings: "wdth" 84; letter-spacing: -0.05em;
   color: color-mix(in oklab, var(--ink) 7%, var(--field));
   white-space: nowrap; overflow: hidden; user-select: none;

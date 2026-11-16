@@ -1,5 +1,6 @@
 import { identity, links } from "../data/profile";
 import MyPic from "../assets/images/mypic.jpg";
+import Mark from "../components/Mark";
 
 /* ============================================================
    THE FOOTER — one block, not two.
@@ -55,12 +56,15 @@ export default function Contact() {
 
           <nav className="foot-links" aria-label="Elsewhere">
             <a href={links.github} target="_blank" rel="noopener noreferrer">
+              <Mark name="github" />
               GitHub
             </a>
             <a href={links.linkedin} target="_blank" rel="noopener noreferrer">
+              <Mark name="linkedin" />
               LinkedIn
             </a>
             <a href={links.resume} target="_blank" rel="noopener noreferrer">
+              <Mark name="cv" />
               R&eacute;sum&eacute;
             </a>
           </nav>
