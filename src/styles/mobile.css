@@ -63,6 +63,7 @@
 
   /* the sheet's own footer, so it ends rather than stops */
   .top-foot {
+    display: block;
     margin-top: auto;
     align-self: stretch;
     padding-top: 26px;

@@ -94,11 +94,20 @@ export default function Nav() {
       .filter((el): el is HTMLElement => !!el);
     if (!targets.length) return;
 
+    /* The callback only reports what CHANGED, not everything being
+       observed — so deciding from the entries alone clears the mark
+       whenever one section leaves the band while another is still
+       inside it. The set is kept, and the answer read from the set. */
+    const inside = new Set<string>();
     const io = new IntersectionObserver(
       (entries) => {
-        const seen = entries.filter((e) => e.isIntersecting);
-        if (seen.length) setHere("#" + seen[0].target.id);
-        else setHere("");
+        for (const e of entries) {
+          if (e.isIntersecting) inside.add(e.target.id);
+          else inside.delete(e.target.id);
+        }
+        /* document order, so two at once resolves to the upper one */
+        const first = targets.find((t) => inside.has(t.id));
+        setHere(first ? "#" + first.id : "");
       },
       /* a band across the middle of the viewport: you are "in" the
          section the middle of the screen is looking at */
