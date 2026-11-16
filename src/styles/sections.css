@@ -72,94 +72,7 @@ main, .top { position: relative; z-index: 1; }
   transition: opacity 0.4s var(--ease);
 }
 .top.lifted::before { opacity: 1; }
-.top.lifted { padding: clamp(14px, 1.5vw, 20px) var(--gutter) clamp(22px, 2.2vw, 28px); }
-
-/* ------------------------------------------------------------
-   THE THREAD
-
-   The bottom edge of the bar is the whole document laid end to
-   end. Each section is marked at its own proportional position —
-   so the work takes a long stretch of it and the unshipped a
-   short one — and the crawler walks it at the point you have
-   reached. A map of this page rather than a bar that fills.
-   ------------------------------------------------------------ */
-.top-thread {
-  position: absolute; left: 0; right: 0; bottom: 10px; height: 1px;
-  background: var(--rule);
-  opacity: 0; transition: opacity 0.45s var(--ease);
-  pointer-events: none;
-}
-.top.lifted .top-thread { opacity: 1; }
-
-/* the ground already walked */
-.top-thread-fill {
-  position: absolute; inset: 0;
-  background: color-mix(in oklab, var(--key) 55%, transparent);
-  transform: scaleX(0); transform-origin: 0 50%;
-}
-
-/* a section, at its place on the page */
-.top-tick {
-  position: absolute; top: 50%;
-  width: 26px; height: 22px; margin: -11px 0 0 -13px;
-  padding: 0; border: 0; background: none; cursor: pointer;
-  pointer-events: auto;
-}
-.top-tick::before {
-  content: "";
-  position: absolute; left: 50%; top: 50%;
-  width: 1px; height: 10px; margin: -5px 0 0 -0.5px;
-  background: var(--muted);
-  transition: height 0.3s var(--ease), margin 0.3s var(--ease),
-    background 0.3s var(--ease);
-}
-.top-tick:hover::before,
-.top-tick:focus-visible::before {
-  height: 16px; margin-top: -8px; background: var(--ink-strong);
-}
-.top-tick.on::before {
-  height: 14px; margin-top: -7px; background: var(--key); width: 2px;
-  margin-left: -1px;
-}
-.top-tick:focus-visible { outline: 1px solid var(--key); outline-offset: 2px; }
-
-/* its name, only when you go looking for it */
-.top-tick-label {
-  position: absolute; left: 50%; bottom: 15px;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--ink-strong);
-  background: var(--field-up);
-  border: 1px solid var(--rule);
-  padding: 4px 8px;
-  opacity: 0; transition: opacity 0.25s var(--ease);
-  pointer-events: none;
-}
-.top-tick:hover .top-tick-label,
-.top-tick:focus-visible .top-tick-label { opacity: 1; }
-
-/* and the creature, walking it */
-.top-walker {
-  position: absolute; top: 50%; left: 0;
-  margin: -8px 0 0 -13px;
-  color: var(--ink-strong);
-  pointer-events: none;
-  display: block;
-}
-.top-walker svg { display: block; }
-
-/* where you are, said in words, beside the mark */
-.top-now {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--key-t);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  opacity: 0; transform: translateY(2px);
-  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
-}
-.top.lifted .top-now { opacity: 1; transform: none; }
+.top.lifted { padding-block: clamp(14px, 1.5vw, 20px); }
 
 .top-mark {
   font-size: clamp(17px, 1.7vw, 23px);
@@ -186,7 +99,56 @@ main, .top { position: relative; z-index: 1; }
   padding-bottom: 3px;
   transition: color 0.25s var(--ease);
 }
-.top-nav a:hover { color: var(--ink-strong); }
+.top-nav a:hover { --trail: var(--ink); color: var(--ink-strong); }
+
+/* ------------------------------------------------------------
+   THE WORDS FILL AS YOU READ THEM
+
+   A word that names a section of this page is painted with a hard
+   two-stop gradient and then clipped to its own letterforms. The
+   stop is the fraction of that section you have read, so the ink
+   crosses the word as the section crosses the screen.
+
+   Nothing is added to the bar to do this: the indicator is the
+   navigation. The two words that leave the page rather than move
+   down it never carry the attribute, so they never fill.
+   ------------------------------------------------------------ */
+.top-nav a[data-reads] {
+  --f: 0;
+  --trail: var(--muted);
+  background-image: linear-gradient(
+    90deg,
+    var(--ink-strong) 0 calc(var(--f) * 100%),
+    var(--trail) calc(var(--f) * 100%) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  transition: none;
+}
+
+/* A read section keeps its rule, so a word that has filled and
+   scrolled past still reads as somewhere you have been. */
+.top-nav a[data-reads]::after {
+  transform: scaleX(var(--f));
+  background: color-mix(in oklab, var(--key) 70%, transparent);
+  transition: none;
+}
+.top-nav a[data-reads]:hover::after,
+.top-nav a[data-reads]:focus-visible::after {
+  background: var(--key);
+}
+
+/* Clipping to text needs a painted background, which a forced-colours
+   mode throws away — so there, the word is simply a word. */
+@media (forced-colors: active) {
+  .top-nav a[data-reads] {
+    background-image: none;
+    color: currentColor;
+    -webkit-text-fill-color: currentColor;
+  }
+}
 
 /* where you are: a mark under the section you are reading, rather
    than an underline on everything you could click */
@@ -1016,13 +978,15 @@ main, .top { position: relative; z-index: 1; }
   margin: 0; max-width: 40ch;
   font-family: var(--mono); font-size: 11.5px; line-height: 1.86; color: var(--muted);
 }
-.hero-mail {
-  display: inline-block; margin-top: 18px;
-  font-family: var(--mono); font-size: 12.5px;
-  color: var(--ink-strong); text-decoration: none;
-  border-bottom: 1px solid var(--key); padding-bottom: 3px;
+/* the two ways in */
+.hero-do {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 12px 14px; margin-top: 26px;
 }
-.hero-mail:hover { color: var(--key-t); }
+.hero-mail {
+  font-family: var(--mono); font-size: 12.5px; letter-spacing: 0;
+  text-transform: none;
+}
 
 
 /* ============================================================
@@ -1120,13 +1084,15 @@ main, .top { position: relative; z-index: 1; }
   margin: 0; max-width: 46ch;
   font-size: clamp(14px, 1.4vw, 16.5px); line-height: 1.66; color: var(--muted);
 }
-.hero-mail {
-  display: inline-block; margin-top: 18px;
-  font-family: var(--mono); font-size: 12.5px;
-  color: var(--ink-strong); text-decoration: none;
-  border-bottom: 1px solid var(--key); padding-bottom: 3px;
+/* the two ways in */
+.hero-do {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 12px 14px; margin-top: 26px;
 }
-.hero-mail:hover { color: var(--key-t); }
+.hero-mail {
+  font-family: var(--mono); font-size: 12.5px; letter-spacing: 0;
+  text-transform: none;
+}
 
 /* where it rests, and the nodes it links to */
 .cons { position: relative; aspect-ratio: 1 / 0.84; min-height: 310px; }

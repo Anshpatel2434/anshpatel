@@ -61,6 +61,16 @@
   }
   .top-nav a.on { color: var(--key-t); }
 
+  /* The fill belongs to a bar you read past. In a full-screen sheet
+     a half-inked word is just a word that looks broken, so here the
+     links are solid. */
+  .top-nav a[data-reads] {
+    background-image: none;
+    color: var(--ink-strong);
+    -webkit-text-fill-color: var(--ink-strong);
+  }
+  .top-nav a[data-reads]::after { display: none; }
+
   /* the sheet's own footer, so it ends rather than stops */
   .top-foot {
     display: block;
@@ -94,21 +104,7 @@
   }
   /* the panel has its own ground, so the bar's would double up */
   .top.shown::before { opacity: 0; }
-  .top.shown .top-thread { opacity: 0; }
-
-  /* There is no room beside Menu for a running commentary, and no
-     hover to read a tick with — but the map itself still reads, so
-     it stays and only the words go. */
-  .top-now { display: none; }
-  .top-tick-label { display: none; }
-
-  /* The bar is short here, so a mark the desktop size hangs half of
-     itself out past the ground and onto the text underneath. */
-  .top-tick { width: 30px; height: 18px; margin-top: -9px; }
-  .top-tick::before { height: 7px; margin-top: -3.5px; }
-  .top-tick.on::before { height: 10px; margin-top: -5px; }
-  .top-walker { transform: scale(0.82); }
-  .top.lifted { padding: 10px var(--gutter) 20px; }
+  .top.lifted { padding-block: 10px; }
 
   /* ----------------------------------------------------------
      THE HERO

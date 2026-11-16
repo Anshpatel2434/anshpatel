@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { Link } from "react-router-dom";
 import { identity } from "../data/profile";
 
 /* ============================================================
@@ -42,9 +43,17 @@ export default function Hero() {
               what holds it up &mdash; interfaces, retrieval systems, real-time
               backends, mobile. Based in {identity.city}.
             </p>
-            <a className="hero-mail" href={`mailto:${identity.email}`}>
-              {identity.email}
-            </a>
+            {/* Two, and no more. One takes you to the evidence, the
+                other opens a mail window — and the second wears the
+                address as its label so nobody has to hunt for it. */}
+            <div className="hero-do">
+              <Link className="btn" to="/work">
+                See the work
+              </Link>
+              <a className="btn ghost hero-mail" href={`mailto:${identity.email}`}>
+                {identity.email}
+              </a>
+            </div>
           </div>
         </div>
 

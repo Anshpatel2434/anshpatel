@@ -1,25 +1,24 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { identity, links } from "../data/profile";
 import { scrollPageTo } from "../lib/motion";
 
 /* ============================================================
-   NAV — the bar's edge is the document, drawn to scale.
+   NAV — the words fill as you read them.
 
-   A progress bar tells you how far you have come and nothing
-   else. This tells you what the page is made of and where you
-   are inside it: the hairline along the bottom of the bar is the
-   whole document laid end to end, each section marked at its own
-   proportional position on it, and the crawler walking that line
-   at the point you have reached.
+   There is no bar, no rail, no travelling dot. The indicator is
+   the navigation itself: each word that names a section of this
+   page fills with ink, left to right, as that section passes the
+   middle of the screen. Half-read section, half-inked word.
 
-   So the five marks are not evenly spaced — the work is a long
-   stretch of this page and the unshipped is a short one, and the
-   spacing says so. The bar stops being a list of places and
-   becomes a map of this one.
+   So the bar shows three things at once with nothing added to it
+   — where you are, how far through it you are, and what is still
+   ahead, all of it in the type that was already there. The two
+   words that leave the page instead of moving down it, About and
+   CV, never fill, which is the truth about them.
 
-   Everything to do with scrolling is written straight to the
-   nodes. React is told only when the section changes.
+   The fill is written straight to the nodes as a custom property.
+   React is told nothing at all while you scroll.
    ============================================================ */
 
 type Item = { to: string; label: string; hash?: string };
@@ -31,41 +30,18 @@ const ITEMS: Item[] = [
   { to: "/", label: "Stack", hash: "#stack" },
 ];
 
-/* the document, in the order you meet it */
-const MAP = [
-  { id: "offer", label: "what I can do" },
-  { id: "work", label: "the work" },
-  { id: "unshipped", label: "never shipped" },
-  { id: "experience", label: "experience" },
-  { id: "stack", label: "the stack" },
-];
-
-type Tick = { id: string; label: string; at: number };
-
-/* The creature, at the size of a piece of punctuation. Six legs
-   radiating from a body is a star at 14px, not an animal — so this
-   is what the big one actually reduces to: the body and its halo,
-   with the legs bent under it the way they are when it stands. */
-function Walker() {
-  return (
-    <svg width="26" height="16" viewBox="0 0 26 16" aria-hidden="true" focusable="false">
-      <circle cx="13" cy="8" r="7" fill="currentColor" opacity="0.1" />
-      <g stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" fill="none">
-        <path d="M13 8c-3 0-4.6-1.6-6.2-3.6M13 8c-3.2 0-5 .8-6.8 2.4M13 8c3 0 4.6-1.6 6.2-3.6M13 8c3.2 0 5 .8 6.8 2.4" />
-      </g>
-      <ellipse cx="13" cy="8" rx="2.4" ry="2.9" fill="currentColor" />
-    </svg>
-  );
-}
+/* which words are parts of this document rather than exits from it */
+const READS: Record<string, string> = {
+  Work: "work",
+  Experience: "experience",
+  Stack: "stack",
+};
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
   const [lifted, setLifted] = useState(false);
-  const [here, setHere] = useState("");
-  const [ticks, setTicks] = useState<Tick[]>([]);
 
-  const fillRef = useRef<HTMLSpanElement | null>(null);
-  const walkRef = useRef<HTMLSpanElement | null>(null);
+  const wordRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
 
   const navigate = useNavigate();
   const { pathname, hash } = useLocation();
@@ -82,97 +58,53 @@ export default function Nav() {
     };
   }, [open]);
 
-  /* Where each section falls along the document. Measured, not
-     guessed, and measured again whenever the page changes height —
-     a webfont landing or an image loading moves every one of them. */
-  const measure = useCallback(() => {
-    if (!onHome) {
-      setTicks([]);
-      return;
-    }
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    if (max <= 0) return;
-    const next: Tick[] = [];
-    for (const m of MAP) {
-      const el = document.getElementById(m.id);
-      if (!el) continue;
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      next.push({ ...m, at: Math.max(0, Math.min(100, (top / max) * 100)) });
-    }
-    setTicks((prev) =>
-      prev.length === next.length &&
-      prev.every((p, i) => p.id === next[i].id && Math.abs(p.at - next[i].at) < 0.4)
-        ? prev
-        : next
-    );
-  }, [onHome]);
-
-  useEffect(() => {
-    const id = window.setTimeout(measure, 280);
-    const ro = new ResizeObserver(() => measure());
-    ro.observe(document.body);
-    window.addEventListener("load", measure);
-    return () => {
-      window.clearTimeout(id);
-      ro.disconnect();
-      window.removeEventListener("load", measure);
-    };
-  }, [measure]);
-
-  /* How far along the thread the creature has walked. */
   useEffect(() => {
     let raf = 0;
+
     const read = () => {
       raf = 0;
       const y = window.scrollY;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const p = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
       setLifted(y > 24);
-      if (fillRef.current) fillRef.current.style.transform = `scaleX(${p})`;
-      if (walkRef.current) walkRef.current.style.left = `${p * 100}%`;
+
+      /* the line you are reading at: the middle of the screen */
+      const eye = y + window.innerHeight / 2;
+
+      for (const [label, id] of Object.entries(READS)) {
+        const node = wordRefs.current[label];
+        if (!node) continue;
+        if (!onHome) {
+          node.style.setProperty("--f", "0");
+          continue;
+        }
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const box = el.getBoundingClientRect();
+        const top = box.top + y;
+        const h = box.height || 1;
+        const f = Math.min(1, Math.max(0, (eye - top) / h));
+        node.style.setProperty("--f", f.toFixed(4));
+      }
     };
+
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(read);
     };
+
     read();
+    /* sections move when a webfont lands or an image arrives */
+    const settle = window.setTimeout(read, 400);
+    const ro = new ResizeObserver(read);
+    ro.observe(document.body);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
       cancelAnimationFrame(raf);
+      window.clearTimeout(settle);
+      ro.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [pathname]);
-
-  /* Which section the middle of the screen is looking at. */
-  useEffect(() => {
-    if (!onHome) {
-      setHere("");
-      return;
-    }
-    const targets = MAP.map((m) => document.getElementById(m.id)).filter(
-      (el): el is HTMLElement => !!el
-    );
-    if (!targets.length) return;
-
-    /* The callback reports only what CHANGED, so deciding from the
-       entries alone clears the mark whenever one section leaves the
-       band while another is still inside it. */
-    const inside = new Set<string>();
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) inside.add(e.target.id);
-          else inside.delete(e.target.id);
-        }
-        const first = targets.find((t) => inside.has(t.id));
-        setHere(first ? first.id : "");
-      },
-      { rootMargin: "-48% 0px -48% 0px" }
-    );
-    targets.forEach((t) => io.observe(t));
-    return () => io.disconnect();
-  }, [onHome]);
+  }, [pathname, onHome]);
 
   /* Put the section in the URL and let ScrollToTop act on it. Two
      things moving the page at once is how it ends up halfway. */
@@ -187,24 +119,11 @@ export default function Nav() {
     navigate({ pathname: "/", hash: item.hash });
   };
 
-  const goTick = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) scrollPageTo(el);
-  };
-
-  const nowLabel = ticks.find((t) => t.id === here)?.label;
-
   return (
     <header className={"top" + (lifted ? " lifted" : "") + (open ? " shown" : "")}>
       <Link to="/" className="top-mark" onClick={() => setOpen(false)}>
         Ansh&nbsp;Patel
       </Link>
-
-      {/* where you are, named, so the thread never has to be
-          deciphered to be useful */}
-      <span className="top-now mono" aria-hidden="true">
-        {nowLabel || ""}
-      </span>
 
       <nav className={"top-nav" + (open ? " open" : "")} aria-label="Main">
         {ITEMS.map((i) =>
@@ -213,8 +132,10 @@ export default function Nav() {
               key={i.label}
               href={i.hash}
               data-own-scroll
-              className={"#" + here === i.hash ? "on" : undefined}
-              aria-current={"#" + here === i.hash ? "true" : undefined}
+              data-reads={READS[i.label] ? "" : undefined}
+              ref={(el) => {
+                wordRefs.current[i.label] = el;
+              }}
               onClick={(e) => goHash(e, i)}
             >
               {i.label}
@@ -223,6 +144,10 @@ export default function Nav() {
             <NavLink
               key={i.label}
               to={i.to}
+              data-reads={READS[i.label] && onHome ? "" : undefined}
+              ref={(el) => {
+                wordRefs.current[i.label] = el;
+              }}
               onClick={() => setOpen(false)}
               className={({ isActive }) => (isActive ? "on" : undefined)}
             >
@@ -260,26 +185,6 @@ export default function Nav() {
           <i />
         </span>
       </button>
-
-      {/* the document, to scale, along the edge of the bar */}
-      <div className={"top-thread" + (ticks.length ? " mapped" : "")}>
-        <span className="top-thread-fill" ref={fillRef} aria-hidden="true" />
-        {ticks.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            className={"top-tick" + (here === t.id ? " on" : "")}
-            style={{ left: `${t.at}%` }}
-            onClick={() => goTick(t.id)}
-            aria-label={`Go to ${t.label}`}
-          >
-            <span className="top-tick-label mono">{t.label}</span>
-          </button>
-        ))}
-        <span className="top-walker" ref={walkRef} aria-hidden="true">
-          <Walker />
-        </span>
-      </div>
     </header>
   );
 }
