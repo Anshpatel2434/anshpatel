@@ -270,6 +270,10 @@ export type Award = {
   host: string;
   year: string;
   result: string;
+  /* the same Mon YYYY the roles use, so everything can be put on
+     one scale rather than two lists that never meet */
+  from: string;
+  to: string;
   detail: string;
   /* what it was built with, so a hackathon entry says as much as a
      job entry does */
@@ -282,6 +286,8 @@ export const awards: Award[] = [
     name: "Tic-Tech-Toe '24",
     host: "DAIICT",
     year: "2024",
+    from: "Sep 2024",
+    to: "Sep 2024",
     result: "Top 14 of 100+ teams",
     detail:
       "Built a full-stack application within 48 hours, placing as a top-14 finalist on technical implementation and innovation.",
@@ -292,6 +298,8 @@ export const awards: Award[] = [
     name: "Hackout '24",
     host: "DAIICT",
     year: "2024",
+    from: "Aug 2024",
+    to: "Aug 2024",
     result: "Built and deployed in 48 hours",
     detail:
       "Built and deployed a full-stack web application during a competitive hackathon, applying rapid prototyping and debugging to ship a working solution before the deadline.",

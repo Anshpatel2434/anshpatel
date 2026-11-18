@@ -179,9 +179,8 @@
   /* ----------------------------------------------------------
      EXPERIENCE AND THE REST
      ---------------------------------------------------------- */
-  .jobs { grid-template-columns: 1fr; gap: 34px; }
-  .job-when { font-size: 11.5px; gap: 0 8px; }
-  .extras { grid-template-columns: 1fr; gap: 26px; }
+  .run-when { font-size: 11.5px; gap: 0 8px; }
+  .run-points { max-width: none; }
 
   /* The label rail needs width to sit beside the prose. It did not
      collapse because the two-column rule is declared after its own
