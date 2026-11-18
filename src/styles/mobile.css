@@ -152,25 +152,86 @@
   .hero-foot { margin-top: 26px; }
 
   /* ----------------------------------------------------------
-     WORK
+     WORK — the plate and its key
 
-     The oversized numeral is set in the margin on a wide screen.
-     There is no margin on a phone, so it lands on the title.
+     The leader lines are geometry, and on a phone the geometry
+     would be a lie: there is no margin for a claim to sit in, so a
+     line drawn to one would be decoration pretending to point.
+
+     They go, and the pins stay. Numbered on the screen, numbered
+     again in the key underneath — the same device, read in
+     portrait. The number is the line.
      ---------------------------------------------------------- */
-  .band-n {
-    position: static;
-    display: block;
-    font-size: 54px;
-    line-height: 1;
-    margin-bottom: 2px;
-    color: color-mix(in oklab, var(--key) 22%, transparent);
+  .work-head { align-items: flex-start; gap: 18px; }
+  .work-all { font-size: 9.5px; }
+
+  .sheets { margin-top: 26px; }
+  .sheet-row { padding-block: 32px; }
+  .sheet-name { font-size: clamp(32px, 9.4vw, 48px); }
+  .sheet-what { font-size: 15px; margin-top: 12px; }
+
+  /* the sheet stops being a frame with a margin and becomes a
+     plate with a key under it */
+  .sheet {
+    aspect-ratio: auto;
+    margin-top: 22px;
+    padding-top: 0;
   }
-  .band { padding-block: 34px; }
-  .band-in { gap: 20px; }
-  .band-title { font-size: clamp(30px, 8.6vw, 44px); }
-  .band-what { font-size: 15px; }
-  .band-detail { font-size: 14px; }
-  .band-foot { gap: 10px 20px; margin-top: 20px; }
+  .sheet-plate,
+  .sheet-left .sheet-plate,
+  .sheet-right .sheet-plate {
+    position: relative; left: auto; right: auto;
+    width: 100%; height: auto;
+    transform: rotate(var(--tilt, -0.7deg));
+  }
+  .sheet-right .sheet-plate { --tilt: 0.7deg; }
+  .sheet-plate .peel { aspect-ratio: 16 / 10; height: auto; }
+
+  /* no lines, and no faked ones */
+  .sheet-lines { display: none; }
+
+  .sheet-pin {
+    width: 20px; height: 20px; margin: -10px 0 0 -10px;
+    font-size: 9.5px;
+  }
+
+  /* the key */
+  .sheet-notes {
+    position: static;
+    display: grid; gap: 0;
+    margin-top: 22px;
+  }
+  .sheet-note,
+  .sheet-left .sheet-note,
+  .sheet-right .sheet-note {
+    position: static; width: auto;
+    left: auto; right: auto;
+    transform: none; text-align: left;
+    flex-direction: row; align-items: baseline;
+    gap: 14px;
+    padding: 13px 0;
+    border-top: 1px solid var(--rule-faint);
+  }
+  .sheet-note:first-child { border-top: 0; padding-top: 0; }
+  /* the number is doing the work the line used to do, so it is
+     given the weight of one */
+  .sheet-note-n {
+    font-size: 15px; font-weight: 700;
+    color: var(--key);
+    min-width: 2ch; flex: none;
+  }
+  .sheet-note-say { font-size: 15px; line-height: 1.5; }
+
+  .sheet-no {
+    font-size: 78px;
+    bottom: auto; top: -14px;
+    opacity: 0.8;
+  }
+  .sheet-left .sheet-no { right: 2px; }
+  .sheet-right .sheet-no { left: 2px; }
+
+  .sheet-foot { gap: 12px 20px; margin-top: 22px; padding-top: 16px; }
+  .sheet-acts { gap: 10px 20px; }
 
   /* the plate names itself on a phone, where there is no hover to
      resolve it with */

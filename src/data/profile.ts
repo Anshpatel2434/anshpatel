@@ -36,7 +36,7 @@ export const sections = {
   },
   work: {
     say: "Two I would put my name on.",
-    sub: "The bar is narrow — I designed it, I built what sits under it, and it is running where anyone can go and use it. Two things clear it. The rest is one link below.",
+    sub: "The bar is narrow — I designed it, I built what sits under it, and it is running where anyone can go and use it. Two things clear it. The rest is one link away.",
   },
   experience: {
     say: "Before that, other people's deadlines.",

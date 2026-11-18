@@ -74,6 +74,13 @@ export type Project = {
   /* What the cover is hiding. Only the two on the home page have
      one, because only they get the room to show it. */
   under?: string;
+  /* The home page annotates its two plates: a leader line runs from
+     a point on the real screen out to a claim about that point.
+     `at` is [x, y] as a percentage of the cover, read off the image
+     itself, so a line lands on the thing it is talking about. The
+     claim is short on purpose — it hangs off a line, it is not a
+     paragraph. */
+  marks?: { at: [number, number]; say: string }[];
   /* An unshipped thing has no product to show, only the question it
      was built to answer and the answer it arrived at. Those are the
      whole of it, so they are the whole of how it is shown. */
@@ -98,6 +105,11 @@ export const projects: Project[] = [
     coverWideRest: PrepToDoWRest,
     coverWideLive: PrepToDoWLive,
     under: PrepToDoUnder,
+    marks: [
+      { at: [50, 36], say: "The claim the whole product has to earn" },
+      { at: [22, 66], say: "0% is a diagnosis, not a grade" },
+      { at: [85, 70], say: "Eight reasoning skills, each scored apart" },
+    ],
     blurb:
       "A CAT VARC platform that names the reasoning pattern behind your wrong answers instead of marking them wrong.",
     problem:
@@ -136,6 +148,11 @@ export const projects: Project[] = [
     coverWideRest: UniAskWRest,
     coverWideLive: UniAskWLive,
     under: UniAskUnder,
+    marks: [
+      { at: [46, 35], say: "Eleven at night, and it still reaches a person" },
+      { at: [31, 64], say: "Latency was the problem, not knowledge" },
+      { at: [75, 52], say: "One broadcast per answer, not one query per reader" },
+    ],
     blurb:
       "A real-time academic Q&A platform for LJ University, where a doubt reaches a person rather than a help desk.",
     problem:

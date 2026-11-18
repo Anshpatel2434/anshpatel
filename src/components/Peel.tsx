@@ -2,20 +2,22 @@ import { useEffect, useRef } from "react";
 import type { Project } from "../data/projects";
 
 /* ============================================================
-   PEEL — the cover comes off as you scroll past it.
+   PEEL — the corner comes up as you scroll past it.
 
    The site's whole claim is that pretty is the easy half. On the
    two projects that get the room, that stops being a sentence: the
    designed screen is laid over the thing holding it up, and the
-   seam between them travels across the frame as the band goes by.
+   join between them opens as the plate goes by.
 
-   You see the screen on the way in, it comes off while the band is
-   centred, and what is underneath is what you are left looking at
-   on the way out. Nothing to click, nothing to drag — reading the
-   page is the gesture.
+   It used to take the whole cover off, travelling a seam right
+   across the frame. That read well on its own and cost too much:
+   by the end you were looking at a schematic and the product had
+   gone, and the claims pinned to the screen were pointing at
+   nothing. So it lifts a corner now — the screen stays, in its own
+   colours, and what holds it up shows through the fold.
 
-   Both halves are drawn in the page's two colours, so the reveal
-   is about what is there, not about a change of palette.
+   Nothing to click, nothing to drag. Reading the page is the
+   gesture.
    ============================================================ */
 
 export default function Peel({ project: p }: { project: Project }) {
@@ -37,13 +39,10 @@ export default function Peel({ project: p }: { project: Project }) {
       const vh = window.innerHeight;
       const r = el.getBoundingClientRect();
       const mid = r.top + r.height / 2;
-      /* The whole reveal has to happen while the frame is actually
-         on screen. Timed off the band being centred, it finished as
-         the band was leaving the top — you got the gesture but never
-         saw what it uncovered. It now runs from the band settling
-         low in the viewport to it sitting high but still in full
-         view, so the second half is read, not glimpsed. */
-      const t = (vh * 0.74 - mid) / (vh * 0.46);
+      /* The whole lift has to happen while the plate is actually on
+         screen: from it settling low in the viewport to it sitting
+         high but still in full view. */
+      const t = (vh * 0.78 - mid) / (vh * 0.5);
       el.style.setProperty("--peel", String(Math.min(1, Math.max(0, t))));
     };
     const onScroll = () => {
@@ -63,14 +62,11 @@ export default function Peel({ project: p }: { project: Project }) {
   return (
     <div className="peel" ref={boxRef}>
       <img className="peel-under" src={p.under} alt="" aria-hidden="true" loading="lazy" />
-      <img className="peel-over" src={p.coverRest} alt={p.name} loading="lazy" />
-      <span className="peel-seam" aria-hidden="true" />
+      {/* the project in its own colours — which is the only reason
+          to put a screenshot on a page at all */}
+      <img className="peel-over" src={p.coverLive} alt={p.name} loading="lazy" />
 
-      {/* which half you are looking at, said once */}
-      <span className="peel-tag peel-tag-a mono" aria-hidden="true">
-        the screen
-      </span>
-      <span className="peel-tag peel-tag-b mono" aria-hidden="true">
+      <span className="peel-tag mono" aria-hidden="true">
         what holds it up
       </span>
     </div>

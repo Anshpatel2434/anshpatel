@@ -187,71 +187,6 @@ main, .top { position: relative; z-index: 1; }
 .top.shown .top-toggle-bars i:first-child { transform: translateY(2.25px) rotate(45deg); }
 .top.shown .top-toggle-bars i:last-child { transform: translateY(-2.25px) rotate(-45deg); }
 
-/* ============================================================
-   WORK — bands with hard-edged plates
-   ============================================================ */
-.bands { margin-top: clamp(40px, 5vw, 76px); }
-.band { padding-block: clamp(40px, 5.4vw, 86px); border-top: 1px solid var(--rule); }
-.band-in {
-  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: 28px clamp(28px, 4vw, 70px); align-items: center;
-}
-.band.flip .band-plate { order: 2; }
-@media (max-width: 900px) {
-  .band-in { grid-template-columns: 1fr; gap: 22px; }
-  .band.flip .band-plate { order: 0; }
-}
-.band-plate { position: relative; }
-
-/* ------------------------------------------------------------
-   THE PEEL
-
-   Two drawings of the same project stacked in one frame: the
-   screen on top, what holds it up beneath. A seam travels across
-   as the band goes past, so the cover comes off while you are
-   reading rather than because you clicked something.
-   ------------------------------------------------------------ */
-.peel {
-  --peel: 0;
-  position: relative; aspect-ratio: 16 / 10; overflow: hidden;
-  border: 1px solid var(--rule); background: var(--field-dn);
-  isolation: isolate;
-}
-.peel img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%; object-fit: cover; display: block;
-}
-/* The cover comes off from the left, because that is where the
-   drawing underneath starts: its heading and the sentence that
-   earns it are read first, not last. */
-.peel-over {
-  z-index: 1;
-  clip-path: inset(0 0 0 calc(var(--peel) * 100%));
-}
-/* where the two meet */
-.peel-seam {
-  position: absolute; top: 0; bottom: 0; z-index: 2;
-  left: calc(var(--peel) * 100%);
-  width: 2px; margin-left: -1px;
-  background: var(--key);
-  opacity: calc(min(var(--peel), 1 - var(--peel)) * 4);
-  pointer-events: none;
-}
-
-.peel-tag {
-  position: absolute; bottom: 14px; z-index: 3;
-  font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--key-t);
-  pointer-events: none;
-}
-/* each tag sits over the half it names */
-.peel-tag-a { right: 20px; opacity: calc(1 - var(--peel) * 2.2); }
-.peel-tag-b { left: 20px; opacity: calc(var(--peel) * 2.2 - 1.2); }
-
-@media (prefers-reduced-motion: reduce) {
-  .peel-seam { display: none; }
-}
-
 /* A plate carries two renditions of one cover. Underneath, the
    project in its own colours. Over it, the same cover redrawn in
    parchment and umber, blurred and settled into the ground — so
@@ -332,15 +267,176 @@ main, .top { position: relative; z-index: 1; }
   .plate-rest { transition: none; }
   }
 
-.band-plate { position: relative; }
+/* ============================================================
+   WORK, ON THE HOME PAGE — the annotated plate
+
+   A screenshot on one side and a paragraph on the other is the
+   layout every portfolio has, and it leaves the picture doing all
+   the work. Here the screen is smaller and three claims hang off
+   leader lines that point at the exact part of the product each
+   one is about: the claim is the argument, the screen is what
+   makes it checkable.
+   ============================================================ */
+.work-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 24px 48px; flex-wrap: wrap;
+}
+/* the door to the rest, up here rather than stranded under the
+   last plate where it put a dead row before the next section */
+.work-all {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding-bottom: 6px;
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--key-t); text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+.work-all i {
+  width: 26px; height: 1px; background: var(--key); display: block;
+  transition: width 0.3s var(--ease);
+}
+.work-all:hover, .work-all:focus-visible { color: var(--key); border-bottom-color: var(--key); }
+.work-all:hover i { width: 40px; }
+
+.sheets { margin-top: clamp(34px, 4.4vw, 64px); }
+.sheet-row {
+  padding-block: clamp(36px, 4.6vw, 74px);
+  border-top: 1px solid var(--rule);
+}
+
+.sheet-head { max-width: 72ch; }
+.sheet-k {
+  display: flex; align-items: center; gap: 12px; margin: 0;
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--dim);
+}
+.sheet-k i { width: 24px; height: 1px; background: var(--rule); display: block; }
+.sheet-name {
+  margin: 10px 0 0;
+  font-size: clamp(34px, 5.6vw, 84px); font-weight: 900;
+  font-variation-settings: "wdth" 62; letter-spacing: -0.026em;
+  color: var(--ink-strong); line-height: 0.95;
+}
+.sheet-name a {
+  color: inherit; text-decoration: none;
+  background-image: linear-gradient(var(--key), var(--key));
+  background-size: 0% 2px; background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 420ms var(--ease);
+}
+.sheet-name a:hover, .sheet-name a:focus-visible { background-size: 100% 2px; }
+.sheet-what {
+  margin: 16px 0 0; font-size: 16px; line-height: 1.6;
+  color: var(--muted); max-width: 56ch;
+}
+
+/* ---- the sheet itself ---------------------------------------
+   The plate and the claims share one box, so a pin and the note
+   it belongs to are in the same coordinate space and the leader
+   line between them is pure geometry — nothing measured at
+   runtime, nothing to go stale on a resize. */
+.sheet {
+  --draw: 0;
+  position: relative;
+  margin-top: clamp(28px, 3.4vw, 52px);
+  display: grid; align-items: center;
+}
+.sheet-left { grid-template-columns: 56% 1fr; }
+.sheet-right { grid-template-columns: 1fr 56%; }
+.sheet-left .sheet-plate { grid-column: 1; }
+.sheet-right .sheet-plate { grid-column: 2; --tilt: 0.8deg; }
+
+.sheet-plate {
+  position: relative;
+  transform: rotate(var(--tilt, -0.8deg));
+}
+
+/* the pins, on the screen itself */
+.sheet-pins { list-style: none; margin: 0; padding: 0; }
+.sheet-pin {
+  position: absolute; z-index: 4;
+  width: 22px; height: 22px; margin: -11px 0 0 -11px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--key); color: #fff;
+  font-family: var(--mono); font-size: 10px; line-height: 1;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--key) 26%, transparent);
+  opacity: var(--draw);
+  transform: scale(calc(0.6 + 0.4 * var(--draw)));
+  transition: opacity 0.5s var(--ease) calc(var(--i) * 0.16s + 0.5s),
+    transform 0.5s var(--ease) calc(var(--i) * 0.16s + 0.5s);
+}
+
+/* the leader lines */
+.sheet-lines {
+  position: absolute; inset: 0; z-index: 3;
+  width: 100%; height: 100%;
+  overflow: visible; pointer-events: none;
+}
+.sheet-lines path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw));
+  transition: stroke-dashoffset 1.1s var(--ease) calc(var(--i) * 0.16s);
+}
+.sheet-lines .lead-back {
+  stroke: color-mix(in oklab, var(--page) 76%, transparent);
+  stroke-width: 3.5;
+}
+.sheet-lines .lead {
+  stroke: color-mix(in oklab, var(--key) 72%, transparent);
+  stroke-width: 1.1;
+}
+
+/* the claims */
+.sheet-notes { list-style: none; margin: 0; padding: 0; }
+.sheet-note {
+  position: absolute; width: 33%;
+  display: flex; align-items: baseline; gap: 10px;
+  transform: translateY(-50%);
+  opacity: var(--draw);
+  transition: opacity 0.6s var(--ease) calc(var(--i) * 0.16s + 0.35s);
+}
+.sheet-left .sheet-note { left: 63%; }
+.sheet-right .sheet-note { right: 63%; flex-direction: row-reverse; text-align: right; }
+.sheet-note-n { font-size: 10px; letter-spacing: 0.1em; color: var(--key); flex: none; }
+.sheet-note-say {
+  font-size: clamp(14px, 1.25vw, 18px); line-height: 1.45;
+  color: var(--ink-strong); font-weight: 500;
+}
+
+/* the plate number, as a plate number */
+.sheet-no {
+  position: absolute; z-index: 0; bottom: -0.22em;
+  font-size: clamp(90px, 12vw, 190px); line-height: 1;
+  font-weight: 900; font-variation-settings: "wdth" 58;
+  color: color-mix(in oklab, var(--key) 11%, transparent);
+  pointer-events: none; user-select: none;
+}
+.sheet-left .sheet-no { right: 0; }
+.sheet-right .sheet-no { left: 0; }
+
+.sheet-foot {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  justify-content: space-between; gap: 14px 32px;
+  margin-top: clamp(24px, 3vw, 44px);
+  padding-top: 18px;
+  border-top: 1px solid var(--rule-faint);
+}
+.sheet-stack {
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--dim);
+}
+
 
 /* ------------------------------------------------------------
-   THE PEEL
+   THE PEEL — a corner lifts, it does not wipe the cover.
 
-   Two drawings of the same project stacked in one frame: the
-   screen on top, what holds it up beneath. A seam travels across
-   as the band goes past, so the cover comes off while you are
-   reading rather than because you clicked something.
+   It used to travel a seam right across the frame and take the
+   whole screen off. That cost too much: by the end you were
+   looking at a schematic, the product had gone, and the claims
+   pinned to the screen were pointing at nothing.
    ------------------------------------------------------------ */
 .peel {
   --peel: 0;
@@ -352,64 +448,27 @@ main, .top { position: relative; z-index: 1; }
   position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
-/* The cover comes off from the left, because that is where the
-   drawing underneath starts: its heading and the sentence that
-   earns it are read first, not last. */
+/* The legs of the wedge are in a 1.6 : 1 ratio, so the fold reads
+   at a constant 45 degrees in a 16:10 frame however far it has
+   opened. */
 .peel-over {
   z-index: 1;
-  clip-path: inset(0 0 0 calc(var(--peel) * 100%));
+  clip-path: polygon(
+    0 0, 100% 0, 100% 100%,
+    calc(var(--peel) * 30%) 100%,
+    0 calc(100% - var(--peel) * 48%)
+  );
+  /* a hairline along the clipped silhouette — which is the fold,
+     with no angle to compute */
+  filter: drop-shadow(-1px -1px 0 color-mix(in oklab, var(--key) 50%, transparent));
 }
-/* where the two meet */
-.peel-seam {
-  position: absolute; top: 0; bottom: 0; z-index: 2;
-  left: calc(var(--peel) * 100%);
-  width: 2px; margin-left: -1px;
-  background: var(--key);
-  opacity: calc(min(var(--peel), 1 - var(--peel)) * 4);
-  pointer-events: none;
-}
-
 .peel-tag {
-  position: absolute; bottom: 14px; z-index: 3;
+  position: absolute; left: 16px; bottom: 12px; z-index: 3;
   font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--key-t);
+  opacity: calc(var(--peel) * 2.4 - 1.1);
   pointer-events: none;
 }
-/* each tag sits over the half it names */
-.peel-tag-a { right: 20px; opacity: calc(1 - var(--peel) * 2.2); }
-.peel-tag-b { left: 20px; opacity: calc(var(--peel) * 2.2 - 1.2); }
-
-@media (prefers-reduced-motion: reduce) {
-  .peel-seam { display: none; }
-}
-.band-copy { position: relative; }
-.band-n {
-  position: absolute; top: -0.5em; right: 0;
-  font-size: clamp(76px, 11vw, 168px); line-height: 1;
-  font-weight: 900; font-variation-settings: "wdth" 60;
-  color: color-mix(in oklab, var(--key) 13%, transparent);
-  pointer-events: none; user-select: none;
-}
-.band-title {
-  margin: 0;
-  font-size: clamp(30px, 4.6vw, 68px); font-weight: 900;
-  font-variation-settings: "wdth" 64; letter-spacing: -0.022em; color: var(--ink-strong);
-}
-.band-title a {
-  color: inherit; text-decoration: none;
-  background-image: linear-gradient(var(--key), var(--key));
-  background-size: 0% 2px; background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 420ms var(--ease);
-}
-.band-title a:hover, .band-title a:focus-visible { background-size: 100% 2px; }
-.band-stack { margin-top: 10px; }
-.band-what { margin: 16px 0 0; font-size: 15.5px; color: var(--muted); max-width: 52ch; line-height: 1.6; }
-.band-detail { margin: 14px 0 0; padding-left: 16px; font-size: 14px; color: var(--muted); max-width: 52ch; }
-.band-detail li { margin-bottom: 7px; }
-.band-detail li::marker { color: var(--key); }
-.band-foot { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px 26px; margin-top: 24px; }
-.work-all { margin-top: clamp(40px, 5vw, 72px); }
 
 /* ============================================================
    CHIPS
@@ -881,9 +940,17 @@ main, .top { position: relative; z-index: 1; }
 /* ============================================================
    WHAT I CAN DO — tilted labels, no rows, no numbers, no arrows
    ============================================================ */
+/* the labels on the left, the answer in the margin that used to
+   be empty — and the answer stays put while you read the labels */
+.offer-lay {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.76fr);
+  gap: clamp(28px, 4vw, 72px);
+  margin-top: clamp(30px, 4vw, 54px);
+  align-items: start;
+}
 .stickers {
   display: flex; flex-direction: column; align-items: flex-start;
-  gap: clamp(2px, 0.8vw, 10px); margin-top: clamp(30px, 4vw, 54px);
+  gap: clamp(2px, 0.8vw, 10px);
 }
 .sticker {
   font-family: var(--sans); cursor: pointer;
@@ -903,12 +970,45 @@ main, .top { position: relative; z-index: 1; }
 .sticker:hover { transform: rotate(0deg) scale(1.015) !important; }
 .sticker.on { background: var(--key); color: var(--field); }
 
-.sticker-out {
-  margin-top: clamp(40px, 4.4vw, 64px); padding-top: 18px;
-  border-top: 1px solid var(--rule); min-height: 7em;
-  max-width: 62ch;
+.offer-panel { position: sticky; top: clamp(80px, 12vh, 140px); }
+.offer-panel-in {
+  padding: clamp(20px, 2.2vw, 32px);
+  border: 1px solid var(--rule);
+  border-left: 2px solid var(--key);
+  background: var(--field-up);
+  animation: offer-in 0.46s var(--ease) both;
 }
-.sticker-say { margin: 0 0 14px; font-size: clamp(16px, 1.8vw, 21px); color: var(--ink); line-height: 1.5; }
+@keyframes offer-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .offer-panel-in { animation: none; }
+}
+
+/* which of the four you are reading, said in a mark rather than a
+   row of dots */
+.offer-count {
+  display: flex; align-items: center; gap: 9px; margin: 0 0 16px;
+  font-size: 11px; letter-spacing: 0.14em;
+  color: var(--key);
+}
+.offer-count i { width: 20px; height: 1px; background: var(--rule); display: block; }
+.offer-of { color: var(--dim); }
+
+.offer-say {
+  margin: 0; font-size: clamp(16px, 1.55vw, 20px);
+  line-height: 1.55; color: var(--ink);
+}
+.offer-chips { margin-top: 20px; }
+
+/* A sticky panel needs a column to be sticky in. On a phone there
+   is one column, so the answer goes back under the labels — but it
+   keeps the panel, rather than reverting to loose text. */
+@media (max-width: 900px) {
+  .offer-lay { grid-template-columns: 1fr; gap: 26px; }
+  .offer-panel { position: static; }
+}
 
 /* ============================================================
    SECTION HEADINGS — one continuous argument, lit on arrival
@@ -999,132 +1099,7 @@ main, .top { position: relative; z-index: 1; }
    owned by `.sec-sub + *`, which is declared after this reset so it
    wins. Order matters here — both selectors have the same weight. */
 .stickers,
-.roles, .bands, .np-row, .pipe-grid, .about-in { margin-top: 0; }
-
-.sec-sub + * { margin-top: clamp(38px, 4.6vw, 68px) !important; }
-
-/* ============================================================
-   WHAT I CAN DO — tilted labels, no rows, no numbers, no arrows
-   ============================================================ */
-.stickers {
-  display: flex; flex-direction: column; align-items: flex-start;
-  gap: clamp(2px, 0.8vw, 10px); margin-top: clamp(30px, 4vw, 54px);
-}
-.sticker {
-  font-family: var(--sans); cursor: pointer;
-  font-size: clamp(26px, 5.4vw, 76px); line-height: 1.02;
-  font-weight: 900; font-variation-settings: "wdth" 66;
-  letter-spacing: -0.022em;
-  color: var(--ink-strong);
-  border: 0; padding: clamp(6px, 1vw, 14px) clamp(14px, 1.8vw, 26px);
-  transform-origin: center;
-  transition: transform 0.4s var(--ease-out-expo), background 0.3s var(--ease),
-    color 0.3s var(--ease);
-}
-.sticker.s1 { background: color-mix(in oklab, var(--key) 15%, var(--field)); }
-.sticker.s2 { background: color-mix(in oklab, var(--sec, var(--key)) 17%, var(--field)); }
-.sticker.s3 { background: color-mix(in oklab, var(--ink) 11%, var(--field)); }
-.sticker.s4 { background: color-mix(in oklab, var(--key) 9%, var(--field-dn)); }
-.sticker:hover { transform: rotate(0deg) scale(1.015) !important; }
-.sticker.on { background: var(--key); color: var(--field); }
-
-.sticker-out {
-  margin-top: clamp(40px, 4.4vw, 64px); padding-top: 18px;
-  border-top: 1px solid var(--rule); min-height: 7em;
-  max-width: 62ch;
-}
-.sticker-say { margin: 0 0 14px; font-size: clamp(16px, 1.8vw, 21px); color: var(--ink); line-height: 1.5; }
-
-/* ============================================================
-   SECTION HEADINGS — one continuous argument, lit on arrival
-   ============================================================ */
-.sec-say {
-  max-width: 18ch;
-  opacity: 0.52;
-  transition: opacity 0.6s var(--ease), color 0.6s var(--ease);
-}
-.sec-say[data-live="1"] { opacity: 1; }
-
-/* every heading says its line; the subhead explains it, for anyone
-   who would otherwise have to guess what the section is */
-.sec-sub {
-  margin: clamp(18px, 2.2vw, 30px) 0 0;
-  max-width: 58ch;
-  font-size: clamp(14.5px, 1.45vw, 17px);
-  line-height: 1.68;
-  color: var(--muted);
-}
-.sec-sub + * { margin-top: clamp(34px, 4.4vw, 62px); }
-
-/* sections overlap instead of butting together, so the page reads
-   as one document rather than seven stacked panels */
-.section { padding-block: clamp(70px, 9vw, 130px) 0; }
-.section + .section { margin-top: clamp(-26px, -2vw, -8px); }
-
-/* ---------- spine anchors ----------
-   The crawler's waypoints. Invisible themselves; the canvas reads
-   their position each frame. Placed in the margins and alternating
-   sides so the line weaves down the edges of the page rather than
-   straight through the middle of the copy. */
-.spine-node {
-  position: absolute;
-  top: clamp(40px, 7vw, 110px);
-  width: 2px; height: 2px;
-  pointer-events: none;
-}
-.sn-l { left: clamp(-20px, -1vw, -4px); }
-.sn-r { right: clamp(-20px, -1vw, -4px); left: auto; }
-.sn-c { left: 50%; }
-
-@media (max-width: 760px) {
-  .sn-l { left: 2px; }
-  .sn-r { right: 2px; }
-}
-
-/* the fixed nav must not clip a heading that has just arrived */
-.sec-say { scroll-margin-top: 90px; }
-.section:first-of-type { padding-top: clamp(84px, 10vw, 140px); }
-
-/* ============================================================
-   BUTTONS — a real CTA, used sparingly
-   ============================================================ */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  font-family: var(--sans);
-  font-size: clamp(14px, 1.35vw, 16px); font-weight: 600;
-  letter-spacing: -0.008em;
-  padding: clamp(13px, 1.3vw, 17px) clamp(22px, 2.2vw, 32px);
-  background: var(--key); color: var(--field);
-  border: 1px solid var(--key); text-decoration: none; cursor: pointer;
-  transition: background 0.3s var(--ease), color 0.3s var(--ease),
-    border-color 0.3s var(--ease);
-}
-.btn:hover { background: var(--ink-strong); border-color: var(--ink-strong); }
-.btn.ghost { background: transparent; color: var(--ink-strong); border-color: var(--rule); }
-.btn.ghost:hover { border-color: var(--ink-strong); background: var(--field-dn); color: var(--ink-strong); }
-
-/* ---------- hero: CTAs and a way to reach him ---------- */
-
-
-
-
-
-/* a repo we are still waiting on */
-.act-quiet.waiting { color: var(--dim); font-style: italic; }
-
-/* ---------- a proper way back from an inner page ---------- */
-.back-home { margin-bottom: clamp(26px, 3vw, 40px); }
-
-/* ---------- breathing room ----------
-   Headings and their subheads get air; the blocks under them stay
-   tight, so the page feels spacious without getting long. */
-.section { padding-block: clamp(86px, 10vw, 148px) 0; }
-
-/* these blocks set their own top margin; the gap under a subhead is
-   owned by `.sec-sub + *`, which is declared after this reset so it
-   wins. Order matters here — both selectors have the same weight. */
-.stickers,
-.roles, .bands, .np-row, .pipe-grid, .about-in { margin-top: 0; }
+.roles, .sheets, .np-row, .pipe-grid, .about-in { margin-top: 0; }
 
 .sec-sub + * { margin-top: clamp(38px, 4.6vw, 68px) !important; }
 
