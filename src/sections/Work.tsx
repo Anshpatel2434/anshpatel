@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { sections } from "../data/profile";
 import { featured } from "../data/projects";
-import Plate from "../components/Plate";
+import Peel from "../components/Peel";
 
 /* ============================================================
    WORK, ON THE HOME PAGE — the two, and a door.
@@ -27,7 +27,7 @@ export default function Work() {
           <article className={"band" + (i % 2 ? " flip" : "")} key={p.slug}>
             <div className="wrap band-in">
               <div className="band-plate">
-                <Plate project={p} silent />
+                <Peel project={p} />
               </div>
 
               <div className="band-copy">

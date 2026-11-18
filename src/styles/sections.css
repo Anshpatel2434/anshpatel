@@ -203,6 +203,55 @@ main, .top { position: relative; z-index: 1; }
 }
 .band-plate { position: relative; }
 
+/* ------------------------------------------------------------
+   THE PEEL
+
+   Two drawings of the same project stacked in one frame: the
+   screen on top, what holds it up beneath. A seam travels across
+   as the band goes past, so the cover comes off while you are
+   reading rather than because you clicked something.
+   ------------------------------------------------------------ */
+.peel {
+  --peel: 0;
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden;
+  border: 1px solid var(--rule); background: var(--field-dn);
+  isolation: isolate;
+}
+.peel img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+/* The cover comes off from the left, because that is where the
+   drawing underneath starts: its heading and the sentence that
+   earns it are read first, not last. */
+.peel-over {
+  z-index: 1;
+  clip-path: inset(0 0 0 calc(var(--peel) * 100%));
+}
+/* where the two meet */
+.peel-seam {
+  position: absolute; top: 0; bottom: 0; z-index: 2;
+  left: calc(var(--peel) * 100%);
+  width: 2px; margin-left: -1px;
+  background: var(--key);
+  opacity: calc(min(var(--peel), 1 - var(--peel)) * 4);
+  pointer-events: none;
+}
+
+.peel-tag {
+  position: absolute; bottom: 14px; z-index: 3;
+  font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--key-t);
+  pointer-events: none;
+}
+/* each tag sits over the half it names */
+.peel-tag-a { right: 20px; opacity: calc(1 - var(--peel) * 2.2); }
+.peel-tag-b { left: 20px; opacity: calc(var(--peel) * 2.2 - 1.2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .peel-seam { display: none; }
+}
+
 /* A plate carries two renditions of one cover. Underneath, the
    project in its own colours. Over it, the same cover redrawn in
    parchment and umber, blurred and settled into the ground — so
@@ -279,6 +328,55 @@ main, .top { position: relative; z-index: 1; }
   }
 
 .band-plate { position: relative; }
+
+/* ------------------------------------------------------------
+   THE PEEL
+
+   Two drawings of the same project stacked in one frame: the
+   screen on top, what holds it up beneath. A seam travels across
+   as the band goes past, so the cover comes off while you are
+   reading rather than because you clicked something.
+   ------------------------------------------------------------ */
+.peel {
+  --peel: 0;
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden;
+  border: 1px solid var(--rule); background: var(--field-dn);
+  isolation: isolate;
+}
+.peel img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+/* The cover comes off from the left, because that is where the
+   drawing underneath starts: its heading and the sentence that
+   earns it are read first, not last. */
+.peel-over {
+  z-index: 1;
+  clip-path: inset(0 0 0 calc(var(--peel) * 100%));
+}
+/* where the two meet */
+.peel-seam {
+  position: absolute; top: 0; bottom: 0; z-index: 2;
+  left: calc(var(--peel) * 100%);
+  width: 2px; margin-left: -1px;
+  background: var(--key);
+  opacity: calc(min(var(--peel), 1 - var(--peel)) * 4);
+  pointer-events: none;
+}
+
+.peel-tag {
+  position: absolute; bottom: 14px; z-index: 3;
+  font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--key-t);
+  pointer-events: none;
+}
+/* each tag sits over the half it names */
+.peel-tag-a { right: 20px; opacity: calc(1 - var(--peel) * 2.2); }
+.peel-tag-b { left: 20px; opacity: calc(var(--peel) * 2.2 - 1.2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .peel-seam { display: none; }
+}
 .band-copy { position: relative; }
 .band-n {
   position: absolute; top: -0.5em; right: 0;
@@ -309,65 +407,96 @@ main, .top { position: relative; z-index: 1; }
 .work-all { margin-top: clamp(40px, 5vw, 72px); }
 
 /* ============================================================
-   THE ONES THAT NEVER SHIPPED — the narrowest block on the page
+   THE ONES THAT NEVER SHIPPED
+
+   No product to show, so the question each one was built to answer
+   IS the section. Hollow letters while it is unanswered; they
+   flood with ink as the question crosses the screen, and the
+   answer is written underneath as they fill.
    ============================================================ */
+.asks-sub { max-width: 54ch; }
 
-/* Held to a column rather than the full measure. They sit right
-   under the work so the connection reads, but an unshipped thing
-   does not get the same width as a live one. */
-/* The heading keeps the left; the list runs down the right in a
-   column deliberately narrower than the work above it. */
-.cases-in {
-  display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 28px clamp(36px, 5vw, 96px); align-items: start;
+.ask-list {
+  list-style: none; margin: clamp(44px, 6vw, 86px) 0 0; padding: 0;
+  display: grid; gap: clamp(54px, 7vw, 110px);
 }
-@media (max-width: 900px) { .cases-in { grid-template-columns: 1fr; } }
-.cases-head { position: sticky; top: clamp(90px, 14vh, 150px); }
-@media (max-width: 900px) { .cases-head { position: static; } }
-.cases-sub { max-width: 42ch; }
 
-.idx2 { list-style: none; margin: 0 !important; padding: 0; }
-.idx2-row { border-top: 1px solid var(--rule); }
-.idx2-row:last-child { border-bottom: 1px solid var(--rule); }
-
-/* the whole row is the link, so nothing has to be labelled */
-.idx2-hit {
-  display: grid; text-decoration: none; color: inherit;
-  grid-template-columns: minmax(0, 0.44fr) minmax(0, 1fr);
-  gap: 6px clamp(18px, 2.2vw, 34px);
-  padding: clamp(17px, 2vw, 24px) 0;
-  border-left: 2px solid transparent;
-  transition: border-color 380ms var(--ease), padding-left 380ms var(--ease),
-    background 380ms var(--ease);
-}
-.idx2-hit:hover, .idx2-hit:focus-visible {
-  border-left-color: var(--key);
-  padding-left: 14px;
-  background: linear-gradient(
-    to right,
-    color-mix(in oklab, var(--key) 7%, transparent),
-    transparent 62%
-  );
-}
-.idx2-name {
-  font-size: clamp(17px, 2vw, 25px); font-weight: 900;
-  font-variation-settings: "wdth" 70; letter-spacing: -0.015em;
-  color: var(--ink-strong);
-  transition: color 380ms var(--ease);
-}
-.idx2-hit:hover .idx2-name { color: var(--key-t); }
-.idx2-what { font-size: 14px; color: var(--muted); line-height: 1.6; }
-.idx2-ctx {
-  grid-column: 1; font-size: 9.5px; letter-spacing: 0.13em;
-  text-transform: uppercase; color: var(--dim);
-}
-.idx2-stack {
-  grid-column: 2; margin-top: 2px; font-size: 9.5px;
-  letter-spacing: 0.13em; text-transform: uppercase; color: var(--dim);
+.ask-hit {
+  display: grid;
+  grid-template-columns: minmax(0, 54px) minmax(0, 1fr);
+  gap: 4px clamp(18px, 2.4vw, 38px);
+  text-decoration: none; color: inherit;
 }
 @media (max-width: 760px) {
-  .idx2-hit { grid-template-columns: 1fr; padding-left: 0 !important; }
-  .idx2-ctx, .idx2-stack { grid-column: 1; }
+  .ask-hit { grid-template-columns: 1fr; gap: 14px; }
+}
+
+.ask-n {
+  grid-row: 1 / span 2;
+  font-size: 11px; letter-spacing: 0.16em; color: var(--key-t);
+  padding-top: 0.5em;
+}
+@media (max-width: 760px) { .ask-n { grid-row: auto; padding-top: 0; } }
+
+/* ------------------------------------------------------------
+   The question, hollow until it is answered.
+
+   The stroke draws the letterform; the fill is a hard two-stop
+   gradient clipped to that same letterform, with the stop tied to
+   how far the question has crossed the screen. So an unanswered
+   question is an outline and an answered one is solid, which is
+   the whole idea of the section stated in the type itself.
+   ------------------------------------------------------------ */
+.ask-q {
+  --ink: 0;
+  margin: 0;
+  max-width: 22ch;
+  font-size: clamp(30px, 5.4vw, 76px);
+  line-height: 1.02;
+  font-weight: 900;
+  font-variation-settings: "wdth" 72;
+  letter-spacing: -0.028em;
+
+  -webkit-text-stroke: 1px var(--rule);
+  background-image: linear-gradient(
+    90deg,
+    var(--ink-strong) 0 calc(var(--ink) * 100%),
+    transparent calc(var(--ink) * 100%) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.ask-hit:hover .ask-q { -webkit-text-stroke-color: var(--key); }
+
+/* The answer arrives with the ink, so the two read as one event. */
+.ask-ans {
+  max-width: 56ch;
+  opacity: calc(var(--ans, 1) * 1);
+}
+.ask-said {
+  margin: clamp(18px, 2.2vw, 30px) 0 0;
+  font-size: clamp(15px, 1.5vw, 17px); line-height: 1.62; color: var(--muted);
+}
+.ask-who {
+  display: flex; flex-wrap: wrap; gap: 6px 18px;
+  margin: 16px 0 0;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.ask-who span:first-child { color: var(--ink-strong); }
+.ask-ctx { color: var(--key-t); }
+.ask-stack { color: var(--dim); }
+
+/* Clipping to text needs a painted background, which forced colours
+   throws away — there, a question is simply a question. */
+@media (forced-colors: active) {
+  .ask-q {
+    background-image: none;
+    color: currentColor;
+    -webkit-text-fill-color: currentColor;
+    -webkit-text-stroke: 0;
+  }
 }
 
 /* ============================================================
@@ -816,7 +945,7 @@ main, .top { position: relative; z-index: 1; }
    owned by `.sec-sub + *`, which is declared after this reset so it
    wins. Order matters here — both selectors have the same weight. */
 .stickers,
-.roles, .bands, .idx2, .pipe-grid, .about-in { margin-top: 0; }
+.roles, .bands, .ask-list, .pipe-grid, .about-in { margin-top: 0; }
 
 .sec-sub + * { margin-top: clamp(38px, 4.6vw, 68px) !important; }
 
@@ -941,7 +1070,7 @@ main, .top { position: relative; z-index: 1; }
    owned by `.sec-sub + *`, which is declared after this reset so it
    wins. Order matters here — both selectors have the same weight. */
 .stickers,
-.roles, .bands, .idx2, .pipe-grid, .about-in { margin-top: 0; }
+.roles, .bands, .ask-list, .pipe-grid, .about-in { margin-top: 0; }
 
 .sec-sub + * { margin-top: clamp(38px, 4.6vw, 68px) !important; }
 

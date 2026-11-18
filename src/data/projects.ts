@@ -1,3 +1,5 @@
+import PrepToDoUnder from "../assets/shots/preptodo-under.jpg";
+import UniAskUnder from "../assets/shots/uniask-under.jpg";
 import PrepToDoRest from "../assets/shots/preptodo-rest.jpg";
 import PrepToDoLive from "../assets/shots/preptodo-live.jpg";
 import PrepToDoWRest from "../assets/shots/preptodo-w-rest.jpg";
@@ -69,6 +71,14 @@ export type Project = {
   coverLive: string;
   coverWideRest?: string;
   coverWideLive?: string;
+  /* What the cover is hiding. Only the two on the home page have
+     one, because only they get the room to show it. */
+  under?: string;
+  /* An unshipped thing has no product to show, only the question it
+     was built to answer and the answer it arrived at. Those are the
+     whole of it, so they are the whole of how it is shown. */
+  question?: string;
+  answer?: string;
 };
 
 export const projects: Project[] = [
@@ -87,6 +97,7 @@ export const projects: Project[] = [
     coverLive: PrepToDoLive,
     coverWideRest: PrepToDoWRest,
     coverWideLive: PrepToDoWLive,
+    under: PrepToDoUnder,
     blurb:
       "A CAT VARC platform that names the reasoning pattern behind your wrong answers instead of marking them wrong.",
     problem:
@@ -124,6 +135,7 @@ export const projects: Project[] = [
     coverLive: UniAskLive,
     coverWideRest: UniAskWRest,
     coverWideLive: UniAskWLive,
+    under: UniAskUnder,
     blurb:
       "A real-time academic Q&A platform for LJ University, where a doubt reaches a person rather than a help desk.",
     problem:
@@ -182,6 +194,10 @@ export const projects: Project[] = [
   /* ================= never shipped ================= */
   {
     slug: "kavach",
+    question:
+      "Can a firm reconcile a client’s books without the data ever leaving the machine?",
+    answer:
+      "Make uploading optional. The engine runs in the browser, the free tier never leaves IndexedDB, and sync is encrypted so the server holds ciphertext it cannot read.",
     when: 202606,
     name: "Kavach",
     context: "GST reconciliation for CA practices",
@@ -217,6 +233,10 @@ export const projects: Project[] = [
   /* ---------------------------------------------------------- */
   {
     slug: "ouroboros",
+    question:
+      "What stops a coding agent inventing the requirement it was never given?",
+    answer:
+      "Refuse to generate from a spec you would have to guess about. An ambiguity lint blocks on open questions, and there is deliberately no button to override it.",
     when: 202604,
     name: "Ouroboros",
     context: "An agent harness generator",
@@ -252,6 +272,10 @@ export const projects: Project[] = [
   /* ---------------------------------------------------------- */
   {
     slug: "studyshare",
+    question:
+      "Can a library work out what to put in front of you next?",
+    answer:
+      "Rank on what people actually do — rated, viewed, returned to — and let a Random Forest over those signals drive it. That turned a file share into a catalogue.",
     when: 202409,
     name: "StudyShare",
     context: "Tic-Tech-Toe '24 — top 14 of 100+ teams",
