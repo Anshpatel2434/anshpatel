@@ -152,83 +152,25 @@
   .hero-foot { margin-top: 26px; }
 
   /* ----------------------------------------------------------
-     WORK — the plate and its key
+     WORK — name first, picture last
 
-     The leader lines are geometry, and on a phone the geometry
-     would be a lie: there is no margin for a claim to sit in, so a
-     line drawn to one would be decoration pretending to point.
-
-     They go, and the pins stay. Numbered on the screen, numbered
-     again in the key underneath — the same device, read in
-     portrait. The number is the line.
+     Same order as the wide screen, just stacked: the name across
+     the column, what it is, what is in it, and the thumbnail at
+     the end. The name is the one thing that stays large.
      ---------------------------------------------------------- */
-  .work-head { align-items: flex-start; gap: 18px; }
-  .work-all { font-size: 9.5px; }
+  .work-head { align-items: stretch; gap: 18px; }
+  .work-all { justify-content: center; }
 
-  .sheets { margin-top: 26px; }
-  .sheet-row { padding-block: 32px; }
-  .sheet-name { font-size: clamp(32px, 9.4vw, 48px); }
-  .sheet-what { font-size: 15px; margin-top: 12px; }
+  .ledes { margin-top: 24px; }
+  .lede { padding-block: 26px; }
+  .lede-k { font-size: 9px; gap: 8px; }
+  .lede-name { font-size: clamp(40px, 13vw, 62px); margin-top: 8px; }
+  .lede-name a { -webkit-text-stroke-width: 1px; }
 
-  /* the sheet stops being a frame with a margin and becomes a
-     plate with a key under it */
-  .sheet,
-  .sheet-left,
-  .sheet-right {
-    display: block;
-    aspect-ratio: auto;
-    margin-top: 22px;
-  }
-  .sheet-plate,
-  .sheet-left .sheet-plate,
-  .sheet-right .sheet-plate {
-    position: relative; left: auto; right: auto;
-    grid-column: auto;
-    width: 100%; height: auto;
-    transform: rotate(var(--tilt, -0.7deg));
-  }
-  .sheet-right .sheet-plate { --tilt: 0.7deg; }
-  .sheet-plate .peel { aspect-ratio: 16 / 10; height: auto; }
-
-  /* no lines, and no faked ones */
-  .sheet-lines { display: none; }
-
-  .sheet-pin {
-    width: 20px; height: 20px; margin: -10px 0 0 -10px;
-    font-size: 9.5px;
-  }
-
-  /* the key */
-  .sheet-notes {
-    position: static;
-    display: grid; gap: 0;
-    margin-top: 22px;
-  }
-  .sheet-note,
-  .sheet-left .sheet-note,
-  .sheet-right .sheet-note {
-    position: static; width: auto;
-    left: auto; right: auto;
-    transform: none; text-align: left;
-    flex-direction: row; align-items: baseline;
-    gap: 14px;
-    padding: 13px 0;
-    border-top: 1px solid var(--rule-faint);
-  }
-  .sheet-note:first-child { border-top: 0; padding-top: 0; }
-  /* the number is doing the work the line used to do, so it is
-     given the weight of one */
-  .sheet-note-n {
-    font-size: 15px; font-weight: 700;
-    color: var(--key);
-    min-width: 2ch; flex: none;
-  }
-  .sheet-note-say { font-size: 15px; line-height: 1.5; }
-
-  .sheet-no { display: none; }
-
-  .sheet-foot { gap: 12px 20px; margin-top: 22px; padding-top: 16px; }
-  .sheet-acts { gap: 10px 20px; }
+  .lede-row { grid-template-columns: 1fr; gap: 20px; margin-top: 18px; }
+  .lede-what { font-size: 15px; }
+  .lede-says li { font-size: 14.5px; }
+  .lede-shot { grid-column: auto; max-width: none; }
 
   /* the plate names itself on a phone, where there is no hover to
      resolve it with */

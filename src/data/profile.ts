@@ -54,10 +54,8 @@ export const sections = {
 
 export const education = {
   school: "Lok Jagruti Institute of Engineering and Technology",
-  /* DERIVED, not sourced: a four-year B.E. finishing June 2026
-     starts in the August four years earlier. It drives the
-     how-far-through rule in the experience section, so if the
-     intake month was different this is the line to correct. */
+  /* Confirmed, not derived. Drives the span and the rule on the
+     degree record in the experience section. */
   started: "Aug 2022",
   degree: "B.E. Computer Science Engineering",
   place: "Ahmedabad, Gujarat",
