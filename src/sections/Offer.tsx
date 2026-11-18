@@ -21,8 +21,8 @@ import { offers, sections } from "../data/profile";
    with you about what you are reading.
    ============================================================ */
 
-const TILT = [-4.5, 3.2, -2.1, 5.4];
-const OFFSET = ["0%", "9%", "3%", "14%"];
+const TILT = [-4.5, 3.2, -2.1, 5.4, -3.6];
+const OFFSET = ["0%", "9%", "3%", "14%", "6%"];
 
 export default function Offer() {
   const [open, setOpen] = useState(0);

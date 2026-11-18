@@ -927,6 +927,7 @@ main, .top { position: relative; z-index: 1; }
 .sticker.s2 { background: color-mix(in oklab, var(--sec, var(--key)) 17%, var(--field)); }
 .sticker.s3 { background: color-mix(in oklab, var(--ink) 11%, var(--field)); }
 .sticker.s4 { background: color-mix(in oklab, var(--key) 9%, var(--field-dn)); }
+.sticker.s5 { background: color-mix(in oklab, var(--sec, var(--key)) 11%, var(--field)); }
 .sticker:hover { transform: rotate(0deg) scale(1.015) !important; }
 .sticker.on {
   background: var(--key); color: var(--field);

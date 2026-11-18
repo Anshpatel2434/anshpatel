@@ -18,7 +18,7 @@ export const identity = {
   thesisWide: "I build software that",
   thesisTight: "shows its work.",
   intro:
-    "I'm Ansh Patel, a full-stack and AI engineer in Ahmedabad. I build AI-powered applications — retrieval that explains its answers, real-time backends, cross-platform mobile — and I direct AI coding agents inside verification-driven workflows, so what ships has been checked rather than assumed.",
+    "I'm Ansh Patel, a full-stack and AI engineer in Ahmedabad. I build whole products — the interface, the system underneath it, and the AI that has to be right — across web, mobile and real-time backends. I direct AI coding agents inside verification-driven workflows, so what ships has been checked rather than assumed.",
 };
 
 export const links = {
@@ -36,7 +36,7 @@ export const sections = {
   },
   work: {
     say: "Two I would put my name on.",
-    sub: "The bar is narrow — I designed it, I built what sits under it, and it is running where anyone can go and use it. Two things clear it. The rest is one link away.",
+    sub: "The bar is narrow — I designed it, I built what sits under it, and it is running where anyone can go and use it. These two clear it; four more are one link away.",
   },
   experience: {
     say: "Before that, other people's deadlines.",
@@ -59,24 +59,24 @@ export const education = {
   started: "Aug 2022",
   degree: "B.E. Computer Science Engineering",
   place: "Ahmedabad, Gujarat",
-  graduating: "June 2026",
+  graduating: "July 2026",
 };
 
 /* ---------- about ---------- */
 export const about = {
   lead:
-    "I am a final-year computer science student in Ahmedabad who builds both halves of a product — the screen someone actually uses, and the system underneath it that has to be right.",
+    "I am a computer science engineer in Ahmedabad who builds both halves of a product — the screen someone actually uses, and the system underneath it that has to be right. I finished the degree in July 2026 and had been shipping for a while before that.",
   body: [
-    "The work I care about is retrieval. Most AI features answer confidently and leave you no way to check them, which is fine in a demo and useless in a product. PrepToDo was built the other way round: a hybrid pipeline where pgvector finds candidates and a knowledge graph decides which of them are actually about the same thing, so the explanation that comes back is grounded in something a person can go and read.",
-    "I work the same way I build. I direct AI coding agents — Claude Code, Cursor — inside structured, verification-driven workflows, with harnesses and loops around them, because an agent that is not checked is just a faster way to ship a bug. Explanation and verification are the same discipline, applied once to the product and once to the process of making it.",
-    "Before the AI work I shipped for other people: React Native features at Glitch Over, a Figma-to-production site at Unlock Discounts. Two hackathons at DAIICT, one of them a top-14 finish out of a hundred teams.",
+    "I do not have one trick. I have built a prep platform that diagnoses a wrong answer instead of marking it, a real-time Q&A platform where a doubt at eleven at night reaches a person, a cross-platform mobile app that went to both stores, a reconciliation engine that runs entirely in the browser so a client's books never leave the machine, and a harness that interviews a spec until there is nothing left for a coding agent to guess. Different problems, one habit: find the part that genuinely has to be right, and build outward from there.",
+    "I work the same way I build. I direct AI coding agents — Claude Code, Cursor — inside structured, verification-driven workflows, with harnesses and loops around them, because an agent that is not checked is just a faster way to ship a bug. That is also the part of this field moving fastest, and it is the part I would rather be good at than fluent in whatever framework is current.",
+    "I have shipped for other people too: React Native features at Glitch Over, a Figma-to-production site at Unlock Discounts, and two hackathons at DAIICT, one a top-14 finish out of a hundred teams. I take full-time roles, contract work and one-off builds, and I am comfortable being the only engineer on something — which is how most of the above got made.",
   ],
   facts: [
     { k: "Based in", v: "Ahmedabad, Gujarat" },
-    { k: "Studying", v: "B.E. Computer Science, LJIET" },
-    { k: "Graduating", v: "June 2026" },
-    { k: "Working on", v: "Retrieval that explains itself" },
-    { k: "Open to", v: "Full-time roles and project work" },
+    { k: "Studied", v: "B.E. Computer Science, LJIET" },
+    { k: "Graduated", v: "July 2026" },
+    { k: "Works across", v: "Web, mobile, real-time, AI systems" },
+    { k: "Open to", v: "Full-time, contract and project work" },
   ],
 };
 
@@ -119,22 +119,44 @@ export const offers: Offer[] = [
   },
   {
     n: "03",
-    title: "AI that cites its sources",
-    line: "Retrieval that shows what it was grounded in, so an answer can be checked rather than believed. Real-time where it needs to be live.",
+    title: "AI you can audit",
+    line: "Agents with a harness around them, retrieval that shows what it was grounded in, and a loop that tells you when either one starts drifting. Answers that can be checked rather than believed.",
     stack: [
+      "LLM APIs",
+      "Agents & tool use",
       "Retrieval-Augmented Generation",
       "pgvector",
       "Knowledge graph",
-      "OpenAI GPT",
-      "WebSockets",
-      "Django Channels",
+      "Evaluation loops",
+      "Prompt engineering",
     ],
   },
   {
     n: "04",
+    title: "Live, not polled",
+    line: "Open sockets, async consumers and streamed responses — the transport a live thread, a chat surface or a voice agent has to sit on before any of it feels immediate.",
+    stack: [
+      "WebSockets",
+      "Django Channels",
+      "Async consumers",
+      "Daphne",
+      "Streaming responses",
+      "ASGI",
+    ],
+  },
+  {
+    n: "05",
     title: "Shipped, start to finish",
-    line: "Empty repo to something a person can open — design, build, deploy, both app stores. No handoff, because there is nobody to hand off to.",
-    stack: ["React Native", "Expo", "OAuth 2.0", "Vercel", "Git", "Android Studio"],
+    line: "Empty repo to something a person can open — design, build, deploy, both app stores, and the documentation that lets somebody else keep it correct. No handoff, because there is nobody to hand off to.",
+    stack: [
+      "React Native",
+      "Expo",
+      "OAuth 2.0",
+      "Vercel",
+      "Git",
+      "Android Studio",
+      "Technical docs",
+    ],
   },
 ];
 
@@ -166,7 +188,7 @@ export const stages: Stage[] = [
   },
   {
     n: "02",
-    title: "Retrieval",
+    title: "Data & retrieval",
     blurb:
       "The question becomes a vector. Similarity finds candidates; a knowledge graph decides which of them are actually about the same skill.",
     say: "Embedded, then matched. <b>Similarity finds candidates</b>; the graph decides which ones test the same thing.",
@@ -178,9 +200,9 @@ export const stages: Stage[] = [
   },
   {
     n: "03",
-    title: "Reasoning",
+    title: "Reasoning & agents",
     blurb:
-      "The model answers — and has to justify it from the passages it was handed. This is the layer that makes the whole thing worth building.",
+      "The model answers, calls a tool, or hands off to an agent — and has to justify what comes back from what it was actually given. This is the layer that makes the whole thing worth building.",
     say: "The model answers from the passages it was handed — and <b>has to show where it got that</b>.",
     status: "rationale grounded",
     groups: [
