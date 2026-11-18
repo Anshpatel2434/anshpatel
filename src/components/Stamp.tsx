@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 /* ============================================================
    STAMP
 
@@ -12,7 +14,7 @@
    ============================================================ */
 
 type Props = {
-  children: string;
+  children: ReactNode;
   /* oxblood for a status, quiet for a measurement */
   tone?: "key" | "quiet";
 };

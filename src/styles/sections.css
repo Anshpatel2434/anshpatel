@@ -1153,10 +1153,24 @@ main, .top { position: relative; z-index: 1; }
 /* ============================================================
    EXPERIENCE, IN THE ORDER IT MATTERS
 
-   Three tiers, weighted. Paid work takes the full measure, the
-   two sprints share a row, the degree is a line. The duration
-   lives in a stamp rather than in a chart.
+   Weight, not chronology. Each role is a spread: the account at a
+   readable measure on the left, and a docket on the right holding
+   what the account does not say in prose — how long, where, what
+   it was built with. That was the half crammed under the bullets,
+   and it is why the right of this section was empty.
    ============================================================ */
+.exp-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 20px 48px; flex-wrap: wrap;
+}
+.exp-count {
+  display: flex; align-items: center; gap: 10px; margin: 0;
+  padding-bottom: 6px;
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--dim);
+}
+.exp-count i { width: 14px; height: 1px; background: var(--rule); display: block; }
+
 .tier { margin-top: clamp(40px, 5vw, 72px); }
 .tier-k {
   margin: 0 0 clamp(18px, 2vw, 26px);
@@ -1166,12 +1180,14 @@ main, .top { position: relative; z-index: 1; }
   border-bottom: 1px solid var(--rule);
 }
 
-.recs { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(32px, 4vw, 56px); }
+.recs { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(36px, 4.4vw, 64px); }
 
-.rec-top {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 12px 20px; flex-wrap: wrap;
+/* the spread */
+.rec {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.46fr);
+  gap: clamp(22px, 3vw, 52px); align-items: start;
 }
+
 .rec-when {
   display: flex; align-items: center; flex-wrap: wrap; gap: 0 10px;
   margin: 0;
@@ -1182,30 +1198,54 @@ main, .top { position: relative; z-index: 1; }
 
 .rec-name {
   margin: 12px 0 0;
-  font-size: clamp(26px, 3.4vw, 44px); font-weight: 900;
+  font-size: clamp(26px, 3.4vw, 46px); font-weight: 900;
   font-variation-settings: "wdth" 66; letter-spacing: -0.022em;
-  color: var(--ink-strong);
+  color: var(--ink-strong); line-height: 1;
 }
-.rec-role { margin: 7px 0 0; font-size: 14px; color: var(--key-t); }
+.rec-role { margin: 9px 0 0; font-size: 14px; color: var(--key-t); }
 
-.rec-points { margin: 18px 0 0; padding-left: 16px; max-width: 74ch; }
+.rec-points { margin: 20px 0 0; padding-left: 16px; }
 .rec-points li {
   font-size: 14px; line-height: 1.62; color: var(--muted); margin-bottom: 8px;
 }
 .rec-points li::marker { color: var(--key); }
-.rec-chips { margin-top: 18px; }
 
-/* the sprints: a pair, deliberately smaller than a job */
+/* ---- the docket ---- */
+.docket {
+  padding: clamp(16px, 1.6vw, 22px);
+  border: 1px solid var(--rule);
+  background: var(--field-up);
+}
+.docket-rows { margin: 16px 0 0; }
+.docket-rows > div { padding-top: 13px; margin-top: 13px; border-top: 1px solid var(--rule-faint); }
+.docket-rows > div:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
+.docket dt {
+  font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 6px;
+}
+.docket dd { margin: 0; font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+.docket-stack { list-style: none; margin: 0; padding: 0; }
+.docket-stack li {
+  font-family: var(--mono); font-size: 11.5px; color: var(--ink);
+  padding: 5px 0; border-bottom: 1px dotted var(--rule);
+}
+.docket-stack li:last-child { border-bottom: 0; }
+
+/* ---- the sprints: a pair, deliberately smaller than a job ---- */
 .sprints {
   list-style: none; margin: 0; padding: 0;
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(18px, 2.4vw, 34px);
 }
-@media (max-width: 760px) { .sprints { grid-template-columns: 1fr; } }
 .sprint {
+  position: relative; overflow: hidden;
   padding: clamp(16px, 1.8vw, 22px);
   border: 1px solid var(--rule-faint);
   background: var(--field-up);
+}
+.rec-top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px 20px; flex-wrap: wrap;
 }
 .sprint .rec-when { font-size: 10px; letter-spacing: 0.14em; color: var(--muted); }
 .sprint-name {
@@ -1215,22 +1255,52 @@ main, .top { position: relative; z-index: 1; }
   color: var(--ink-strong);
 }
 .sprint-res { margin: 6px 0 14px; font-size: 13.5px; color: var(--key-t); }
+/* the length of the thing, set as a watermark rather than a third
+   label competing with the two real ones */
+.sprint-clock {
+  position: absolute; right: -4px; bottom: -14px; margin: 0;
+  font-size: clamp(30px, 4vw, 52px); line-height: 1;
+  letter-spacing: -0.02em;
+  color: color-mix(in oklab, var(--key) 10%, transparent);
+  pointer-events: none; user-select: none;
+}
 
-/* the degree: background, so one line of it */
-.tier-edu {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 20px;
-  margin: clamp(34px, 4vw, 56px) 0 0;
-  padding-top: 18px;
-  border-top: 1px solid var(--rule);
+/* ---- the one still running ---- */
+.edu {
+  --through: 0;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.46fr);
+  gap: clamp(22px, 3vw, 52px); align-items: center;
+  padding: clamp(18px, 2vw, 28px);
+  border: 1px solid var(--rule);
+  background: var(--field-up);
 }
-.tier-edu-k {
-  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--dim); flex: none;
+.edu-name {
+  margin: 12px 0 0;
+  font-size: clamp(22px, 2.6vw, 34px); font-weight: 900;
+  font-variation-settings: "wdth" 68; letter-spacing: -0.018em;
+  color: var(--ink-strong); line-height: 1.04;
 }
-.tier-edu-v { font-size: 13.5px; color: var(--muted); }
-.tier-edu-v strong {
-  display: block; font-size: 15px; color: var(--ink-strong); font-weight: 600;
-  margin-bottom: 3px;
+.edu-measure { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.edu-bar {
+  width: 100%; height: 3px;
+  background: color-mix(in oklab, var(--ink) 9%, transparent);
+}
+.edu-bar span {
+  display: block; height: 100%; width: calc(var(--through) * 100%);
+  background: var(--key);
+  transition: width 1.3s var(--ease);
+}
+.edu-read {
+  margin: 0; font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* A spread needs two columns to be a spread. Narrow, the docket
+   goes under the account it belongs to rather than beside it. */
+@media (max-width: 880px) {
+  .rec, .edu { grid-template-columns: 1fr; }
+  .sprints { grid-template-columns: 1fr; }
+  .edu-measure { align-items: stretch; }
 }
 
 /* ============================================================

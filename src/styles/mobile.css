@@ -172,15 +172,18 @@
 
   /* the sheet stops being a frame with a margin and becomes a
      plate with a key under it */
-  .sheet {
+  .sheet,
+  .sheet-left,
+  .sheet-right {
+    display: block;
     aspect-ratio: auto;
     margin-top: 22px;
-    padding-top: 0;
   }
   .sheet-plate,
   .sheet-left .sheet-plate,
   .sheet-right .sheet-plate {
     position: relative; left: auto; right: auto;
+    grid-column: auto;
     width: 100%; height: auto;
     transform: rotate(var(--tilt, -0.7deg));
   }
@@ -222,13 +225,7 @@
   }
   .sheet-note-say { font-size: 15px; line-height: 1.5; }
 
-  .sheet-no {
-    font-size: 78px;
-    bottom: auto; top: -14px;
-    opacity: 0.8;
-  }
-  .sheet-left .sheet-no { right: 2px; }
-  .sheet-right .sheet-no { left: 2px; }
+  .sheet-no { display: none; }
 
   .sheet-foot { gap: 12px 20px; margin-top: 22px; padding-top: 16px; }
   .sheet-acts { gap: 10px 20px; }
@@ -241,7 +238,15 @@
      EXPERIENCE AND THE REST
      ---------------------------------------------------------- */
   .rec-when { font-size: 11.5px; gap: 0 8px; }
-  .rec-points { max-width: none; }
+  .rec { gap: 20px; }
+  .exp-head { align-items: flex-start; gap: 14px; }
+  .exp-count { font-size: 9px; gap: 8px; }
+  /* the docket is a sidebar on a wide screen and a footer here,
+     so it reads as the same object laid the other way */
+  .docket { padding: 16px; }
+  .docket-rows { margin-top: 14px; }
+  .edu { padding: 18px; gap: 20px; }
+  .sprint-clock { font-size: 40px; }
 
   /* The label rail needs width to sit beside the prose. It did not
      collapse because the two-column rule is declared after its own

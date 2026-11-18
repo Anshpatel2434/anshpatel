@@ -1,23 +1,25 @@
+import { useEffect, useRef } from "react";
 import { roles, awards, education, sections } from "../data/profile";
 import Stamp from "../components/Stamp";
 
 /* ============================================================
    EXPERIENCE, IN THE ORDER IT MATTERS
 
-   Putting all of it on one date scale sorted it by when, which
-   put two weekend hackathons above both internships — the first
-   thing a reader met was the least important thing in the
-   section.
+   Weight, not chronology: a date scale sorted five entries by
+   when, which put two weekend hackathons above both internships.
 
-   Weight is the answer, not chronology. Three tiers, each
-   introduced by what it is and each given the room it deserves:
-   paid work inside someone else's team takes the full measure,
-   the two sprints share a row, and the degree is one line at the
-   bottom, where background belongs.
+   Each role is a spread now, the way a page out of a work log
+   would be set — the account on the left at a readable measure,
+   and a docket on the right holding what the account does not
+   say in prose: how long, where, and what it was built with. That
+   is the half that used to be crammed under the bullets, and it
+   is why the right of this section was empty.
 
-   The duration survives as a stamp — three months, forty-eight
-   hours — which is the useful half of a timeline without a chart
-   to read it off.
+   The sprints say outright that they are hackathons, because
+   "forty-eight hours" only reads as one if you already knew. And
+   the degree stops being a line of text: it is the one entry
+   still running, so it is the one entry where a measure is the
+   information — a rule showing how much of it is behind me.
    ============================================================ */
 
 const MONTHS = [
@@ -45,12 +47,55 @@ export default function Experience() {
   /* most recent first, inside the tier that matters most */
   const paid = [...roles].sort((a, b) => (at(b.from) ?? 0) - (at(a.from) ?? 0));
 
+  const edu = useRef<HTMLDivElement | null>(null);
+
+  /* how far through the degree, as a fraction — the one measure in
+     this section that is still moving */
+  const start = at(education.started) ?? 0;
+  const end = at(education.graduating) ?? 0;
+  const now = new Date().getFullYear() * 12 + new Date().getMonth();
+  const through =
+    end > start ? Math.min(1, Math.max(0, (now - start) / (end - start))) : 0;
+  /* The data says "graduating June 2026". Whether that is ahead or
+     behind depends on the day the page is read, and a progress rule
+     that claims a degree is still running after it finished is just
+     a wrong fact rendered prettily. So the entry asks. */
+  const done = now >= end;
+
+  useEffect(() => {
+    const el = edu.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (es) =>
+        es.forEach((e) => {
+          if (e.isIntersecting) {
+            el.style.setProperty("--through", String(through));
+            io.disconnect();
+          }
+        }),
+      { rootMargin: "0px 0px -20% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [through]);
+
   return (
     <section className="section exp" id="experience">
       <div className="wrap">
         <span className="spine-node sn-l" data-spine="experience" aria-hidden="true" />
-        <h2 className="h-lg d-tight sec-say">{sections.experience.say}</h2>
-        <p className="sec-sub">{sections.experience.sub}</p>
+
+        <div className="exp-head">
+          <div>
+            <h2 className="h-lg d-tight sec-say">{sections.experience.say}</h2>
+            <p className="sec-sub">{sections.experience.sub}</p>
+          </div>
+          <p className="exp-count mono">
+            {roles.length} internships
+            <i aria-hidden="true" />
+            {awards.length} hackathons
+            <i aria-hidden="true" />1 degree
+          </p>
+        </div>
 
         {/* ---- the main event ---- */}
         <div className="tier">
@@ -59,31 +104,42 @@ export default function Experience() {
           <ol className="recs">
             {paid.map((r) => (
               <li className="rec" key={r.company}>
-                <div className="rec-top">
+                <div className="rec-say">
                   <p className="rec-when mono">
                     <time>{r.from}</time>
                     <i aria-hidden="true" />
                     <time>{r.to}</time>
                   </p>
+                  <h3 className="rec-name d-tight">{r.company}</h3>
+                  <p className="rec-role">{r.title}</p>
+
+                  <ul className="rec-points">
+                    {r.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* what the account does not say in prose */}
+                <aside className="docket">
                   <Stamp tone="quiet">{held(r.from, r.to)}</Stamp>
-                </div>
-
-                <h3 className="rec-name d-tight">{r.company}</h3>
-                <p className="rec-role">
-                  {r.title} &middot; {r.place}
-                </p>
-
-                <ul className="rec-points">
-                  {r.bullets.map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
-                </ul>
-
-                <div className="chips rec-chips">
-                  {r.stack.map((t) => (
-                    <span key={t}>{t}</span>
-                  ))}
-                </div>
+                  <dl className="docket-rows">
+                    <div>
+                      <dt className="mono">Where</dt>
+                      <dd>{r.place}</dd>
+                    </div>
+                    <div>
+                      <dt className="mono">Built with</dt>
+                      <dd>
+                        <ul className="docket-stack">
+                          {r.stack.map((t) => (
+                            <li key={t}>{t}</li>
+                          ))}
+                        </ul>
+                      </dd>
+                    </div>
+                  </dl>
+                </aside>
               </li>
             ))}
           </ol>
@@ -91,7 +147,7 @@ export default function Experience() {
 
         {/* ---- the sprints, sharing one row ---- */}
         <div className="tier">
-          <p className="tier-k mono">Forty-eight hours, twice</p>
+          <p className="tier-k mono">Hackathons &mdash; forty-eight hours, twice</p>
 
           <ol className="sprints">
             {awards.map((a) => (
@@ -100,7 +156,7 @@ export default function Experience() {
                   <p className="rec-when mono">
                     {a.host} &middot; {a.from}
                   </p>
-                  <Stamp>48 hours</Stamp>
+                  <Stamp>Hackathon</Stamp>
                 </div>
 
                 <h3 className="sprint-name d-tight">{a.name}</h3>
@@ -113,20 +169,50 @@ export default function Experience() {
                     ))}
                   </div>
                 )}
+
+                <p className="sprint-clock mono" aria-hidden="true">
+                  48 hours
+                </p>
               </li>
             ))}
           </ol>
         </div>
 
-        {/* ---- and the background ---- */}
-        <p className="tier-edu">
-          <span className="mono tier-edu-k">Studying</span>
-          <span className="tier-edu-v">
-            <strong>{education.school}</strong>
-            {education.degree} &middot; {education.place} &middot; graduating{" "}
-            {education.graduating}
-          </span>
-        </p>
+        {/* ---- and the one still running ---- */}
+        <div className="tier">
+          <p className="tier-k mono">{done ? "Where it started" : "Still running"}</p>
+
+          <div className="edu" ref={edu}>
+            <div className="edu-say">
+              <p className="rec-when mono">
+                <time>{education.started}</time>
+                <i aria-hidden="true" />
+                <time>{education.graduating}</time>
+              </p>
+              <h3 className="edu-name d-tight">{education.school}</h3>
+              <p className="rec-role">
+                {education.degree} &middot; {education.place}
+              </p>
+            </div>
+
+            <div className="edu-measure">
+              <Stamp>
+                {done ? "Graduated " : "Graduating "}
+                {education.graduating}
+              </Stamp>
+              {/* a measure only while there is something left to
+                  measure; afterwards the span is the whole fact */}
+              <div className="edu-bar" aria-hidden="true">
+                <span />
+              </div>
+              <p className="edu-read mono" aria-hidden="true">
+                {done
+                  ? `${Math.round((end - start) / 12)} years, start to finish`
+                  : `${Math.round(through * 100)}% behind me`}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
