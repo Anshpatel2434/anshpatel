@@ -190,7 +190,6 @@
   .proj-prose, .proj-list, .proj-stack { grid-column: 1; }
   .proj-part > .label { padding-top: 0; }
 
-  .cat-grid { gap: 36px; }
   .proj-acts .btn { width: 100%; text-align: center; }
 
   .sec-sub { font-size: 15px; }
