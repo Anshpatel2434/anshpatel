@@ -412,97 +412,107 @@ main, .top { position: relative; z-index: 1; }
 .work-all { margin-top: clamp(40px, 5vw, 72px); }
 
 /* ============================================================
+   CHIPS
+
+   What a thing was built with, named rather than implied. Shared
+   by the roles, the sprints and the cards, so it is kept out here
+   rather than inside any one section that might be rewritten.
+   ============================================================ */
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chips span {
+  font-family: var(--mono); font-size: 11.5px; line-height: 1;
+  color: var(--ink); padding: 6px 9px;
+  border: 1px solid var(--rule); background: var(--field-up);
+}
+.chips-sm span { font-size: 10.5px; padding: 5px 8px; background: transparent; }
+
+/* ============================================================
+   THE STAMP
+
+   One way of marking what a thing is — not shipped, three months,
+   forty-eight hours — that costs no space and still has a voice.
+   Mono, hairline box, pressed a little off square, the way a
+   rubber stamp lands on a paper record.
+   ============================================================ */
+.stamp {
+  display: inline-block;
+  padding: 4px 9px;
+  font-size: 9px; letter-spacing: 0.17em; text-transform: uppercase;
+  color: var(--key);
+  border: 1px solid color-mix(in oklab, var(--key) 55%, transparent);
+  transform: rotate(-2.4deg);
+  white-space: nowrap;
+  flex: none;
+}
+.stamp-q {
+  color: var(--muted);
+  border-color: var(--rule);
+  transform: rotate(1.8deg);
+}
+
+/* ============================================================
    THE ONES THAT NEVER SHIPPED
 
-   No product to show, so the question each one was built to answer
-   IS the section. Hollow letters while it is unanswered; they
-   flood with ink as the question crosses the screen, and the
-   answer is written underneath as they fill.
+   A footnote to the work above, not a rival to it. Three cards in
+   a row: the name is the heading, because that is the thing being
+   named; the question it answered sits under it; the stamp says
+   what it is. The whole section is shorter than one of the
+   questions used to be on its own.
    ============================================================ */
-.asks-sub { max-width: 54ch; }
+.np-head { max-width: 62ch; }
+.np-sub { max-width: 58ch; }
 
-.ask-list {
-  list-style: none; margin: clamp(44px, 6vw, 86px) 0 0; padding: 0;
-  display: grid; gap: clamp(54px, 7vw, 110px);
+.np-row {
+  list-style: none; margin: clamp(30px, 3.6vw, 48px) 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
 }
+@media (max-width: 900px) { .np-row { grid-template-columns: 1fr; } }
 
-.ask-hit {
-  display: grid;
-  grid-template-columns: minmax(0, 54px) minmax(0, 1fr);
-  gap: 4px clamp(18px, 2.4vw, 38px);
+.np-card { display: flex; }
+.np-hit {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 0; width: 100%;
+  padding: clamp(18px, 1.8vw, 24px);
   text-decoration: none; color: inherit;
+  border: 1px solid var(--rule);
+  background: var(--field-up);
+  transition: border-color 0.3s var(--ease), background 0.3s var(--ease),
+    transform 0.3s var(--ease);
 }
-@media (max-width: 760px) {
-  .ask-hit { grid-template-columns: 1fr; gap: 14px; }
+.np-hit:hover,
+.np-hit:focus-visible {
+  border-color: var(--key);
+  background: var(--field);
+  transform: translateY(-2px);
 }
 
-.ask-n {
-  grid-row: 1 / span 2;
-  font-size: 11px; letter-spacing: 0.16em; color: var(--key-t);
-  padding-top: 0.5em;
+.np-name {
+  margin: 14px 0 0;
+  font-size: clamp(21px, 2.1vw, 27px); font-weight: 900;
+  font-variation-settings: "wdth" 70; letter-spacing: -0.018em;
+  color: var(--ink-strong);
 }
-@media (max-width: 760px) { .ask-n { grid-row: auto; padding-top: 0; } }
+.np-ctx {
+  margin: 6px 0 0;
+  font-size: 9.5px; letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--key-t);
+}
+.np-ask {
+  margin: 12px 0 0;
+  font-size: 14px; line-height: 1.55; color: var(--muted);
+}
+.np-chips { margin-top: 14px; }
 
-/* ------------------------------------------------------------
-   The question, hollow until it is answered.
-
-   The stroke draws the letterform; the fill is a hard two-stop
-   gradient clipped to that same letterform, with the stop tied to
-   how far the question has crossed the screen. So an unanswered
-   question is an outline and an answered one is solid, which is
-   the whole idea of the section stated in the type itself.
-   ------------------------------------------------------------ */
-.ask-q {
-  --ink: 0;
-  margin: 0;
-  max-width: 22ch;
-  font-size: clamp(30px, 5.4vw, 76px);
-  line-height: 1.02;
-  font-weight: 900;
-  font-variation-settings: "wdth" 72;
-  letter-spacing: -0.028em;
-
-  -webkit-text-stroke: 1px var(--rule);
-  background-image: linear-gradient(
-    90deg,
-    var(--ink-strong) 0 calc(var(--ink) * 100%),
-    transparent calc(var(--ink) * 100%) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+/* the card says where it goes */
+.np-go {
+  margin-top: auto; padding-top: 16px;
+  font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--key-t);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s var(--ease);
 }
-.ask-hit:hover .ask-q { -webkit-text-stroke-color: var(--key); }
-
-/* The answer arrives with the ink, so the two read as one event. */
-.ask-ans {
-  max-width: 56ch;
-  opacity: calc(var(--ans, 1) * 1);
-}
-.ask-said {
-  margin: clamp(18px, 2.2vw, 30px) 0 0;
-  font-size: clamp(15px, 1.5vw, 17px); line-height: 1.62; color: var(--muted);
-}
-.ask-who {
-  display: flex; flex-wrap: wrap; gap: 6px 18px;
-  margin: 16px 0 0;
-  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
-}
-.ask-who span:first-child { color: var(--ink-strong); }
-.ask-ctx { color: var(--key-t); }
-.ask-stack { color: var(--dim); }
-
-/* Clipping to text needs a painted background, which forced colours
-   throws away — there, a question is simply a question. */
-@media (forced-colors: active) {
-  .ask-q {
-    background-image: none;
-    color: currentColor;
-    -webkit-text-fill-color: currentColor;
-    -webkit-text-stroke: 0;
-  }
-}
+.np-hit:hover .np-go { border-bottom-color: var(--key); }
 
 /* ============================================================
    THE ARCHIVE
@@ -989,7 +999,7 @@ main, .top { position: relative; z-index: 1; }
    owned by `.sec-sub + *`, which is declared after this reset so it
    wins. Order matters here — both selectors have the same weight. */
 .stickers,
-.roles, .bands, .ask-list, .pipe-grid, .about-in { margin-top: 0; }
+.roles, .bands, .np-row, .pipe-grid, .about-in { margin-top: 0; }
 
 .sec-sub + * { margin-top: clamp(38px, 4.6vw, 68px) !important; }
 
@@ -1114,7 +1124,7 @@ main, .top { position: relative; z-index: 1; }
    owned by `.sec-sub + *`, which is declared after this reset so it
    wins. Order matters here — both selectors have the same weight. */
 .stickers,
-.roles, .bands, .ask-list, .pipe-grid, .about-in { margin-top: 0; }
+.roles, .bands, .np-row, .pipe-grid, .about-in { margin-top: 0; }
 
 .sec-sub + * { margin-top: clamp(38px, 4.6vw, 68px) !important; }
 
@@ -1166,87 +1176,87 @@ main, .top { position: relative; z-index: 1; }
    EXPERIENCE — two compact columns, the quietest block here
    ============================================================ */
 /* ============================================================
-   EXPERIENCE, ON A SCALE
+   EXPERIENCE, IN THE ORDER IT MATTERS
 
-   One ruler across the section — the months from the first
-   hackathon to graduation — and every entry placed on it at its
-   true start with a bar at its true width. The two internships
-   abut; forty-eight hours is a sliver; the run to graduation is
-   long and empty. All of that is read before a word is.
+   Three tiers, weighted. Paid work takes the full measure, the
+   two sprints share a row, the degree is a line. The duration
+   lives in a stamp rather than in a chart.
    ============================================================ */
-.scale {
-  position: relative; height: 26px;
-  margin-top: clamp(34px, 4.4vw, 60px);
+.tier { margin-top: clamp(40px, 5vw, 72px); }
+.tier-k {
+  margin: 0 0 clamp(18px, 2vw, 26px);
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--dim);
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--rule);
 }
-.scale-y {
-  position: absolute; bottom: 7px; transform: translateX(-50%);
-  font-size: 10px; letter-spacing: 0.14em; color: var(--dim);
-}
-.scale-y::after {
-  content: ""; position: absolute; left: 50%; bottom: -8px;
-  width: 1px; height: 6px; background: var(--rule);
-}
 
-.runs { list-style: none; margin: 0; padding: 0; }
+.recs { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(32px, 4vw, 56px); }
 
-.run-i {
-  padding-block: clamp(26px, 3vw, 40px);
-  border-bottom: 1px solid var(--rule-faint);
+.rec-top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px 20px; flex-wrap: wrap;
 }
-.run-i:last-child { border-bottom: 0; }
-
-/* the bar: where it sat, and for how long */
-.run-track { position: relative; height: 10px; margin-bottom: 18px; }
-.run-bar {
-  position: absolute; top: 3px; height: 4px;
-  background: var(--key);
-  transform: scaleX(var(--draw, 0)); transform-origin: 0 50%;
-  transition: transform 0.9s var(--ease-out-expo);
-}
-/* a weekend is a mark, not a span — square it off so it reads as a
-   point rather than a very short bar */
-.run-award .run-bar { height: 10px; top: 0; }
-.run-school .run-bar { background: var(--rule); height: 2px; top: 4px; }
-
-.run-when {
+.rec-when {
   display: flex; align-items: center; flex-wrap: wrap; gap: 0 10px;
-  margin: 0 0 9px;
+  margin: 0;
   font-size: 12.5px; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--ink-strong);
 }
-.run-when i { width: 18px; height: 1px; background: var(--key); display: inline-block; }
-.run-held {
-  font-size: 10px; letter-spacing: 0.12em; color: var(--key-t);
-  border-left: 1px solid var(--rule); padding-left: 10px; margin-left: 2px;
-}
+.rec-when i { width: 18px; height: 1px; background: var(--key); display: inline-block; }
 
-.run-name {
-  margin: 0;
-  font-size: clamp(22px, 2.9vw, 38px); font-weight: 900;
-  font-variation-settings: "wdth" 68; letter-spacing: -0.02em;
+.rec-name {
+  margin: 12px 0 0;
+  font-size: clamp(26px, 3.4vw, 44px); font-weight: 900;
+  font-variation-settings: "wdth" 66; letter-spacing: -0.022em;
   color: var(--ink-strong);
 }
-.run-under { margin: 7px 0 0; font-size: 13.5px; color: var(--key-t); }
+.rec-role { margin: 7px 0 0; font-size: 14px; color: var(--key-t); }
 
-.run-points { margin: 16px 0 0; padding-left: 16px; max-width: 76ch; }
-.run-points li {
+.rec-points { margin: 18px 0 0; padding-left: 16px; max-width: 74ch; }
+.rec-points li {
   font-size: 14px; line-height: 1.62; color: var(--muted); margin-bottom: 8px;
 }
-.run-points li::marker { color: var(--key); }
-/* what it was built with, named rather than implied */
-.chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.chips span {
-  font-family: var(--mono); font-size: 11.5px; line-height: 1;
-  color: var(--ink); padding: 6px 9px;
-  border: 1px solid var(--rule); background: var(--field-up);
-}
-.chips-sm span { font-size: 10.5px; padding: 5px 8px; }
-.run-chips { margin-top: 16px; }
+.rec-points li::marker { color: var(--key); }
+.rec-chips { margin-top: 18px; }
 
-/* the degree is background, not an achievement to list out */
-.run-school .run-name { font-size: clamp(17px, 1.9vw, 23px); }
-.run-school .run-when { color: var(--muted); }
+/* the sprints: a pair, deliberately smaller than a job */
+.sprints {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 2.4vw, 34px);
+}
+@media (max-width: 760px) { .sprints { grid-template-columns: 1fr; } }
+.sprint {
+  padding: clamp(16px, 1.8vw, 22px);
+  border: 1px solid var(--rule-faint);
+  background: var(--field-up);
+}
+.sprint .rec-when { font-size: 10px; letter-spacing: 0.14em; color: var(--muted); }
+.sprint-name {
+  margin: 12px 0 0;
+  font-size: clamp(19px, 2vw, 25px); font-weight: 900;
+  font-variation-settings: "wdth" 70; letter-spacing: -0.016em;
+  color: var(--ink-strong);
+}
+.sprint-res { margin: 6px 0 14px; font-size: 13.5px; color: var(--key-t); }
+
+/* the degree: background, so one line of it */
+.tier-edu {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 20px;
+  margin: clamp(34px, 4vw, 56px) 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+.tier-edu-k {
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--dim); flex: none;
+}
+.tier-edu-v { font-size: 13.5px; color: var(--muted); }
+.tier-edu-v strong {
+  display: block; font-size: 15px; color: var(--ink-strong); font-weight: 600;
+  margin-bottom: 3px;
+}
 
 /* ============================================================
    HERO — headline left, crawler right, copy in the lower left
