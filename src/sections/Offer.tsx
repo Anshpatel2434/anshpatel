@@ -27,13 +27,38 @@ const OFFSET = ["0%", "9%", "3%", "14%", "6%"];
 export default function Offer() {
   const [open, setOpen] = useState(0);
   const [pinned, setPinned] = useState(false);
+  /* Says what is actually true of this screen. On a phone nothing
+     advances on its own, so promising that it will is worse than
+     saying nothing. */
+  const [hint, setHint] = useState("Pick one to change this");
   const labels = useRef<(HTMLButtonElement | null)[]>([]);
   const live = offers[open];
+
+  useEffect(() => {
+    const narrow = window.matchMedia("(max-width: 900px)");
+    const say = () =>
+      setHint(
+        narrow.matches
+          ? "Tap one to change this"
+          : pinned
+            ? "Pick another to change this"
+            : "Keep scrolling, or pick one",
+      );
+    say();
+    narrow.addEventListener("change", say);
+    return () => narrow.removeEventListener("change", say);
+  }, [pinned]);
 
   useEffect(() => {
     if (pinned) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) return;
+    /* One column, and the whole section inside one screen: every
+       label crosses the reading line within a single flick, so
+       advancing on scroll just strobes. Below this width the
+       labels wait to be tapped. */
+    const narrow = window.matchMedia("(max-width: 900px)");
+    if (narrow.matches) return;
 
     let raf = 0;
     const read = () => {
@@ -115,9 +140,7 @@ export default function Offer() {
 
             {/* say that the labels do something, rather than hoping
                 somebody tries one */}
-            <p className="offer-hint mono">
-              {pinned ? "Pick another to change this" : "Keep scrolling, or pick one"}
-            </p>
+            <p className="offer-hint mono">{hint}</p>
           </aside>
         </div>
       </div>

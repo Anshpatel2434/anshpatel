@@ -80,6 +80,9 @@
     border-top: 1px solid var(--rule);
   }
   .top-mail {
+    display: inline-flex !important;
+    align-items: center;
+    min-height: 44px;
     font-family: var(--mono) !important;
     font-size: 13px !important;
     font-weight: 400 !important;
@@ -200,6 +203,121 @@
 
   .proj-acts .btn { width: 100%; text-align: center; }
 
+  /* ----------------------------------------------------------
+     THE SMALL PRINT
+
+     The mono labels are 9 to 9.5px on a wide screen, where they
+     are read at arm's length on a big panel. The same sizes on a
+     phone are held closer but rendered smaller in real terms, and
+     several of them — the live link on a project, the hint under
+     the panel — are things you are meant to act on.
+
+     So every label that was under 10px comes up, and anything
+     tappable gets a box a thumb can find.
+     ---------------------------------------------------------- */
+  .lede-k { font-size: 10.5px; }
+  .lede-k a { display: inline-block; padding: 3px 0; }
+  .lede-stack { font-size: 10.5px; }
+  .exp-count { font-size: 10.5px; }
+  .tier-k { font-size: 11px; }
+  .docket dt { font-size: 10px; }
+  .edu-read { font-size: 10.5px; }
+  .stamp { font-size: 10px; padding: 5px 10px; }
+  .sprint .rec-when { font-size: 11px; }
+  .offer-hint { font-size: 10.5px; }
+  .offer-count { font-size: 12px; }
+  .np-ctx, .np-go { font-size: 10.5px; }
+  .arch-meta, .arch-ctx, .arch-stack { font-size: 10.5px; }
+  .peel-tag { font-size: 10.5px; }
+
+  /* a label is the whole interaction in that section, so it has to
+     be at least as big as a thumb */
+  .sticker {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* a link with no box around it still needs somewhere to be hit */
+  .np-go { padding-top: 18px; }
+  .act, .act-quiet { padding-block: 4px; }
+  /* ----------------------------------------------------------
+     THINGS YOU HAVE TO HIT
+
+     Audited at 390px: almost every interactive element on the
+     phone came in under the 44px a thumb needs — the MENU toggle
+     at 31px, the hero's five entry points at 28px, the stack's
+     stage ticks at 19px, both mail links at 18 and 30. The site
+     was legible and close to untappable.
+
+     Padding would move all of them, and these positions are the
+     design. So each one keeps its box and gets a transparent
+     ::after laid over a larger area. The hit region grows, the
+     drawing does not move, and nothing reflows.
+     ---------------------------------------------------------- */
+  .top-mark,
+  .top-toggle,
+  .foot-mail,
+  .p-seg,
+  .act,
+  .act-quiet,
+  .np-go,
+  .lede-k a,
+  .work-all,
+  .crawl-tag,
+  .foot-links a { position: relative; }
+
+  .top-mark::after,
+  .top-toggle::after,
+  .foot-mail::after,
+  .cons-node::after,
+  .act::after,
+  .act-quiet::after,
+  .np-go::after,
+  .lede-k a::after,
+  .foot-links a::after {
+    content: "";
+    position: absolute;
+    left: -6px; right: -6px;
+    top: 50%; transform: translateY(-50%);
+    height: 44px;
+    /* the drawing is what you see; this is only what you touch */
+    z-index: 1;
+  }
+
+  /* the stage ticks are 19px tall and sit in a row, so they widen
+     the other way too rather than overlapping their neighbours */
+  .p-seg::after {
+    content: "";
+    position: absolute;
+    inset: -14px 0;
+  }
+
+  /* the hero's entry points carry a dot and a word; the word is
+     what gets aimed at, so the region follows the whole row */
+  .cons-node::after { left: -10px; right: -10px; }
+
+  /* these two already have a border to aim at — they just need to
+     be tall enough to mean it */
+  .work-all { min-height: 46px; }
+  .btn { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; }
+
+  /* the palette control is the smallest thing on the page */
+  .pal-btn { min-height: 34px; padding-inline: 12px; }
+  .pal-label { font-size: 10px; }
+
+  /* the stage number inside a tick was the last 9px text left */
+  .p-seg em { font-size: 10px; }
+
+  .crawl-tag {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 13px 15px;
+    font-size: 10.5px;
+  }
+
+
   .sec-sub { font-size: 15px; }
 
   /* a fixed bar means an anchored section must clear it */
@@ -219,16 +337,24 @@
      the crawler holds still while the menu is out. */
   .crawl-hud { display: block; }
 
-  /* a thumb needs more than a cursor does */
+  /* A thumb needs more than a cursor does — but this was 132px,
+     a third of a phone's width, transparent, and riding at z-index
+     6 above everything. Wherever the creature happened to be
+     standing, a tap near it opened the menu instead of the link
+     underneath. 72px still clears the 44px a thumb needs and stops
+     it stealing from the page it is walking on. */
   .crawl-hub {
-    width: 132px;
-    height: 132px;
-    margin: -66px 0 0 -66px;
+    width: 72px;
+    height: 72px;
+    margin: -36px 0 0 -36px;
   }
   .crawl-tag {
-    padding: 10px 13px;
-    font-size: 10px;
+    padding: 13px 15px;
+    font-size: 10.5px;
     letter-spacing: 0.12em;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 
   /* nothing resolves on hover, so nothing waits for one */

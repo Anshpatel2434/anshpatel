@@ -981,15 +981,17 @@ main, .top { position: relative; z-index: 1; }
    is one column, so the answer goes back under the labels — but it
    keeps the panel, rather than reverting to loose text. */
 @media (max-width: 900px) {
-  .offer-lay { display: flex; flex-direction: column; gap: 20px; }
-  .offer-panel {
-    order: -1;
-    position: sticky; top: calc(var(--bar-h, 56px) + 8px);
-    z-index: 4;
-    padding-bottom: 10px;
-    background: linear-gradient(var(--page) 86%, transparent);
-  }
-  .offer-hint { margin-top: 10px; }
+  .offer-lay { display: flex; flex-direction: column; gap: 22px; }
+  /* Not sticky, not reordered. A pinned panel needs a column tall
+     enough to pin against; here the whole section is about one
+     screen, so pinning it only meant the labels raced underneath
+     it and it flickered through all five answers in a single
+     flick. It sits under them and waits to be tapped. */
+  .offer-panel { position: static; }
+  /* the labels need room to be separate objects once they are the
+     only thing in the column */
+  .stickers { gap: 7px; }
+  .offer-hint { margin-top: 12px; }
 }
 
 /* ============================================================

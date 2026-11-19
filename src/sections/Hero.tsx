@@ -40,8 +40,9 @@ export default function Hero() {
           <div className="hero-foot">
             <p className="hero-note">
               I&rsquo;m {identity.name}. I design the thing, then I architect
-              what holds it up &mdash; interfaces, retrieval systems, real-time
-              backends, mobile. Based in {identity.city}.
+              what holds it up &mdash; interfaces, the systems under them,
+              real-time backends, mobile, and the AI parts that have to be
+              checkable. Based in {identity.city}.
             </p>
             {/* Two, and no more. One takes you to the evidence, the
                 other opens a mail window — and the second wears the
