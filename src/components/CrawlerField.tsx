@@ -122,6 +122,7 @@ export default function CrawlerField() {
       cv.style.width = W + "px";
       cv.style.height = H + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      narrow = narrowQ.matches || H < 520;
       seedDots();
     }
 
@@ -162,7 +163,12 @@ export default function CrawlerField() {
        is the point of the hero. What it cannot keep is the desktop's
        room to swing, so the meander is damped and the body is held
        inside the screen below. */
-    const narrow = window.matchMedia("(max-width: 760px)").matches;
+    /* Read once, this survived a rotation: a phone turned to
+       landscape is wider than 760px, and the menu went on holding
+       its labels in the narrow column on a screen that had room to
+       fan them. It is re-read on resize, which fires on rotation. */
+    const narrowQ = window.matchMedia("(max-width: 760px)");
+    let narrow = narrowQ.matches || window.innerHeight < 520;
     let mx = -1e4;
     let my = -1e4;
     const held = Array.from({ length: 5 }, () => ({ x: 0, y: 0 }));
@@ -323,16 +329,45 @@ export default function CrawlerField() {
              whichever side of itself has more room. */
           const right = bodyX < W * 0.5;
           const cx = right ? bodyX + 86 : bodyX - 86;
+          /* 46 was right while a tag was 33px tall. They are 44 now,
+             so at 46 they touched. */
+          const STEP = 54;
+          const RUN = STEP * 4;
+          /* Clamping each label on its own puts two of them on the
+             same pixel whenever the body is near an edge — the
+             bottom two literally landed on top of each other. The
+             column is placed as one object instead, so the spacing
+             between them never changes and nothing can collapse. */
+          const top = Math.max(70, Math.min(H - 70 - RUN, bodyY - RUN / 2));
           for (let i = 0; i < 5; i++) {
             held[i].x = Math.max(84, Math.min(W - 84, cx));
-            held[i].y = Math.max(70, Math.min(H - 70, bodyY + (i - 2) * 46));
+            held[i].y = top + i * STEP;
           }
         } else {
           const base = bodyX > W * 0.55 ? Math.PI : 0;
           for (let i = 0; i < 5; i++) {
             const a = base + FAN[i] * (base ? -1 : 1);
-            held[i].x = Math.max(120, Math.min(W - 120, bodyX + Math.cos(a) * OPEN_R));
-            held[i].y = Math.max(74, Math.min(H - 74, bodyY + Math.sin(a) * OPEN_R));
+            held[i].x = bodyX + Math.cos(a) * OPEN_R;
+            held[i].y = bodyY + Math.sin(a) * OPEN_R;
+          }
+          /* The fan had the same fault the column did: clamping each
+             point on its own squashes the ones past the edge onto it
+             and they come to rest on top of each other. Shift the
+             whole fan by however much the worst offender is out, so
+             the shape is preserved and nothing can collide. */
+          let dx = 0;
+          let dy = 0;
+          for (let i = 0; i < 5; i++) {
+            dx = Math.max(dx, 120 - held[i].x);
+            dy = Math.max(dy, 74 - held[i].y);
+          }
+          for (let i = 0; i < 5; i++) {
+            dx = Math.min(dx, W - 120 - held[i].x);
+            dy = Math.min(dy, H - 74 - held[i].y);
+          }
+          for (let i = 0; i < 5; i++) {
+            held[i].x += dx;
+            held[i].y += dy;
           }
         }
       }
